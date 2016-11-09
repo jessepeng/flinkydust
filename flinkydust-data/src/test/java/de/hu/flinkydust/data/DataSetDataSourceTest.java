@@ -1,5 +1,6 @@
 package de.hu.flinkydust.data;
 
+import de.hu.flinkydust.data.aggregator.TupleMaxAggregator;
 import de.hu.flinkydust.data.aggregator.TupleMinAggregator;
 import de.hu.flinkydust.data.comparator.AtLeastComparator;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -27,12 +28,29 @@ public class DataSetDataSourceTest {
     @Test
     public void testMinAggregation() throws Exception {
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
-        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> minLarge = dataSource.aggregation(new TupleMinAggregator<Tuple5<Date, Integer, Integer, Float, Float>, Integer>(2, Integer.class));
+        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> minLarge = dataSource.aggregation(new TupleMinAggregator<>(2, Integer.class));
 
+        long timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> minList = minLarge.collect();
+        long timeAfter = System.nanoTime();
 
         assertThat(minList.size(), Is.is(1));
         assertThat(minList.get(0).f2, Is.is(-161480));
+        System.out.println("MinAggregation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+    }
+
+    @Test
+    public void testMaxAggregation() throws Exception {
+        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
+        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> maxSmall = dataSource.aggregation(new TupleMaxAggregator<>(1, Integer.class));
+
+        long timeBefore = System.nanoTime();
+        List<Tuple5<Date, Integer, Integer, Float, Float>> minList = maxSmall.collect();
+        long timeAfter = System.nanoTime();
+
+        assertThat(minList.size(), Is.is(1));
+        assertThat(minList.get(0).f1, Is.is(1537877));
+        System.out.println("MaxAggregation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
     @Test
@@ -45,7 +63,7 @@ public class DataSetDataSourceTest {
         long timeAfter = System.nanoTime();
 
         assertThat(selectedList.size(), Is.is(409216));
-        System.out.println("Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+        System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
 }

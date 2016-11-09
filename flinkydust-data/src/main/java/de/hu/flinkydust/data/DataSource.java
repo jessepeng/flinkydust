@@ -53,11 +53,8 @@ public interface DataSource<T>
      *          Anzahl Datensätze, die aggregiert werden sollen. Wenn count = -1, aggregiere alle Datensätze.
      * @return
      *          Eine neue DataSource mit dem aggregierten Datensatz.
-     * @param <R>
-     *          Datentyp, der den Zwischenschritt im Aggregator angibt.
-     *
      */
-    default <R> DataSource<T> aggregation(AggregatorFunction<T, R> aggregator, int count) {
+    default DataSource<T> aggregation(AggregatorFunction<T> aggregator, int count) {
         return aggregator.aggregate(this, count);
     }
 
@@ -67,10 +64,8 @@ public interface DataSource<T>
      *          Funktion, die die Datensätze aggregiert.
      * @return
      *          Eine neue DataSource mit dem aggregierten Datensatz.
-     * @param <R>
-     *          Datentyp, der den Zwischenschritt im Aggregator angibt.
      */
-    default <R> DataSource<T> aggregation(AggregatorFunction<T, R> aggregator) {
+    default DataSource<T> aggregation(AggregatorFunction<T> aggregator) {
         return aggregation(aggregator, -1);
     }
 

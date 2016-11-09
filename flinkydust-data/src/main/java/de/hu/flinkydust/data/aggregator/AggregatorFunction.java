@@ -1,47 +1,15 @@
 package de.hu.flinkydust.data.aggregator;
 
 import de.hu.flinkydust.data.DataSource;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
 
 import java.io.Serializable;
 
 /**
- * Abstrakte Basis-Klasse, die Aggregator-Funktionen ermöglicht. Eine Aggregation besteht aus einem
- * optionalen map-Schritt und einem anschließenden reduce-Schritt.
+ * Abstrakte Basis-Klasse, die Aggregator-Funktionen ermöglicht.
  *
  * Created by Jan-Christopher on 09.11.2016.
  */
-public abstract class AggregatorFunction<T, R> implements Serializable {
-
-    /**
-     * Mappt einen Datensatz auf einen anderen Datensatz,
-     * @param value
-     *          Das Objekt, das gemapped werden soll.
-     * @return
-     *          Das gemappte Objekt.
-     */
-    abstract R map(T value);
-
-    /**
-     * Reduziert zwei Datentypen auf einen Datentyp.
-     * @param value1
-     *          Erster Datensatz
-     * @param value2
-     *          Zweiter Datensatz
-     * @return
-     *          Der reduzierte Datensatz
-     */
-    abstract R reduce(R value1, R value2);
-
-    /**
-     * Mappt den neuen Datentyp wieder zurück auf die Klasse des ursprünglichen Datensatzes.
-     * @param value
-     *          Datensatz
-     * @return
-     *          Der gemappted Datensatz.
-     */
-    abstract T mapBack(R value);
+public interface AggregatorFunction<T> extends Serializable {
 
     /**
      * Aggregiert alle oder die angegebene Anzahl an Datensätzen der angegebenen DataSource auf eine neue DataSource.
@@ -52,10 +20,11 @@ public abstract class AggregatorFunction<T, R> implements Serializable {
      * @return
      *          Die neue DataSource mit dem aggregierten Datensatz.
      */
-    public DataSource<T> aggregate(DataSource<T> dataSource, int count) {
+    default DataSource<T> aggregate(DataSource<T> dataSource, int count) {
         DataSource<T> countedDataSource = (count > 0 ? dataSource.firstN(count) : dataSource);
-        DataSource<R> projectedDataSource = countedDataSource.projection((MapFunction<T, R>) this::map);
-        DataSource<R> reducedDataSource = projectedDataSource.reduce((ReduceFunction<R>) (tuple1, tuple2) -> reduce(tuple1, tuple2));
-        return reducedDataSource.projection((MapFunction<R, T>) tuple -> mapBack(tuple));
+        return countedDataSource.reduce((tuple1, tuple2) -> reduce(tuple1, tuple2));
     }
+
+    T reduce(T value1, T value2);
+
 }
