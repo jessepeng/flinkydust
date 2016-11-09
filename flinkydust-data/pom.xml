@@ -112,7 +112,7 @@
                                 </goals>
                                 <configuration>
                                     <artifactSet>
-                                        <excludes combine.self="override"></excludes>
+                                        <excludes combine.self="override"/>
                                     </artifactSet>
                                 </configuration>
                             </execution>
@@ -294,6 +294,37 @@
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>list</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>list</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.basedir}/doc/README</outputFile>
+                            <appendOutput>true</appendOutput>
+                            <outputScope>false</outputScope>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <reportOutputDirectory>${project.basedir}/spec/</reportOutputDirectory>
+                    <destDir>${project.version}/</destDir>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
@@ -309,12 +340,13 @@
                         <source>1.8</source>
                         <target>1.8</target>
                         <compilerId>jdt</compilerId>
+                        <debug>true</debug>
                     </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.eclipse.tycho</groupId>
                             <artifactId>tycho-compiler-jdt</artifactId>
-                            <version>0.21.0</version>
+                            <version>0.26.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
