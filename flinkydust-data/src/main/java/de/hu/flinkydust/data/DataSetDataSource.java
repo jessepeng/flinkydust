@@ -2,7 +2,7 @@ package de.hu.flinkydust.data;
 
 import org.apache.flink.api.java.DataSet;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -35,7 +35,7 @@ public class DataSetDataSource<T> implements DataSource<T> {
     }
 
     @Override
-    public Collection<T> collect() throws Exception {
+    public List<T> collect() throws Exception {
         return wrappedDataSet.collect();
     }
 

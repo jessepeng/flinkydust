@@ -44,7 +44,7 @@ public abstract class AggregatorFunction<T, R> {
      * @param dataSource
      *          Die DataSource mit den Datensätzen.
      * @param count
-     *          Die Anzahl an Datensätzen, die aggregiert werden sollen. Wenn count < 0, dann alle Datensätze.
+     *          Die Anzahl an Datensätzen, die aggregiert werden sollen. Wenn count &lt; 0, dann alle Datensätze.
      * @return
      *          Die neue DataSource mit dem aggregierten Datensatz.
      */

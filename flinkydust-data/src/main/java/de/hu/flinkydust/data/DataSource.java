@@ -2,7 +2,7 @@ package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -53,6 +53,9 @@ public interface DataSource<T>
      *          Anzahl Datensätze, die aggregiert werden sollen. Wenn count = -1, aggregiere alle Datensätze.
      * @return
      *          Eine neue DataSource mit dem aggregierten Datensatz.
+     * @param <R>
+     *          Datentyp, der den Zwischenschritt im Aggregator angibt.
+     *
      */
     default <R> DataSource<T> aggregation(AggregatorFunction<T, R> aggregator, int count) {
         return aggregator.aggregate(this, count);
@@ -64,6 +67,8 @@ public interface DataSource<T>
      *          Funktion, die die Datensätze aggregiert.
      * @return
      *          Eine neue DataSource mit dem aggregierten Datensatz.
+     * @param <R>
+     *          Datentyp, der den Zwischenschritt im Aggregator angibt.
      */
     default  <R> DataSource<T> aggregation(AggregatorFunction<T, R> aggregator) {
         return aggregation(aggregator, -1);
@@ -73,8 +78,10 @@ public interface DataSource<T>
      * Gibt alle Datensätze dieser DataSource als Collection aus.
      * @return
      *          Alle Datensätze, die in dieser DataSource gespeichert, als Collection.
+     * @throws Exception
+     *          Wirft eine Exception, wenn die Datensätze nicht ausgegeben werden konnten.
      */
-    Collection<T> collect() throws Exception;
+    List<T> collect() throws Exception;
 
 
     /**
