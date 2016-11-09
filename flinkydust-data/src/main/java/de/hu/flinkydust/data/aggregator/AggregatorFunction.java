@@ -1,6 +1,10 @@
 package de.hu.flinkydust.data.aggregator;
 
 import de.hu.flinkydust.data.DataSource;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
+
+import java.io.Serializable;
 
 /**
  * Abstrakte Basis-Klasse, die Aggregator-Funktionen ermöglicht. Eine Aggregation besteht aus einem
@@ -8,7 +12,7 @@ import de.hu.flinkydust.data.DataSource;
  *
  * Created by Jan-Christopher on 09.11.2016.
  */
-public abstract class AggregatorFunction<T, R> {
+public abstract class AggregatorFunction<T, R> implements Serializable {
 
     /**
      * Mappt einen Datensatz auf einen anderen Datensatz,
@@ -17,7 +21,7 @@ public abstract class AggregatorFunction<T, R> {
      * @return
      *          Das gemappte Objekt.
      */
-    protected abstract R map(T value);
+    abstract R map(T value);
 
     /**
      * Reduziert zwei Datentypen auf einen Datentyp.
@@ -28,7 +32,7 @@ public abstract class AggregatorFunction<T, R> {
      * @return
      *          Der reduzierte Datensatz
      */
-    protected abstract R reduce(R value1, R value2);
+    abstract R reduce(R value1, R value2);
 
     /**
      * Mappt den neuen Datentyp wieder zurück auf die Klasse des ursprünglichen Datensatzes.
@@ -37,7 +41,7 @@ public abstract class AggregatorFunction<T, R> {
      * @return
      *          Der gemappted Datensatz.
      */
-    protected abstract T mapBack(R value);
+    abstract T mapBack(R value);
 
     /**
      * Aggregiert alle oder die angegebene Anzahl an Datensätzen der angegebenen DataSource auf eine neue DataSource.
@@ -50,7 +54,8 @@ public abstract class AggregatorFunction<T, R> {
      */
     public DataSource<T> aggregate(DataSource<T> dataSource, int count) {
         DataSource<T> countedDataSource = (count > 0 ? dataSource.firstN(count) : dataSource);
-        return countedDataSource.projection(this::map).reduce(this::reduce).projection(this::mapBack);
+        DataSource<R> projectedDataSource = countedDataSource.projection((MapFunction<T, R>) this::map);
+        DataSource<R> reducedDataSource = projectedDataSource.reduce((ReduceFunction<R>) (tuple1, tuple2) -> reduce(tuple1, tuple2));
+        return reducedDataSource.projection((MapFunction<R, T>) tuple -> mapBack(tuple));
     }
-
 }

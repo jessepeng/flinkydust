@@ -11,6 +11,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <flink.version>1.2-SNAPSHOT</flink.version>
+        <junit.version>4.12</junit.version>
+        <tycho.version>0.26.0</tycho.version>
     </properties>
 
     <repositories>
@@ -66,6 +68,12 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-clients_2.10</artifactId>
             <version>${flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -346,7 +354,7 @@
                         <dependency>
                             <groupId>org.eclipse.tycho</groupId>
                             <artifactId>tycho-compiler-jdt</artifactId>
-                            <version>0.26.0</version>
+                            <version>${tycho.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

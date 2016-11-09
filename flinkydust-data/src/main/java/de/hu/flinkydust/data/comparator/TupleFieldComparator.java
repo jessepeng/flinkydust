@@ -1,5 +1,6 @@
 package de.hu.flinkydust.data.comparator;
 
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.tuple.Tuple;
 
 import java.util.function.Predicate;
@@ -9,7 +10,7 @@ import java.util.function.Predicate;
  *
  * Created by Jan-Christopher on 09.11.2016.
  */
-public abstract class TupleFieldComparator<T extends Tuple, R extends Comparable<R>> implements Predicate<T> {
+public abstract class TupleFieldComparator<T extends Tuple, R extends Comparable<R>> implements FilterFunction<T> {
 
     private int field;
     private R compareValue;
@@ -22,7 +23,7 @@ public abstract class TupleFieldComparator<T extends Tuple, R extends Comparable
     }
 
     @Override
-    public boolean test(T t) {
+    public boolean filter(T t) {
         Object tupleValue;
         if ((tupleValue = t.getField(field)).getClass().isAssignableFrom(compareClass)) {
             R value = compareClass.cast(tupleValue);
