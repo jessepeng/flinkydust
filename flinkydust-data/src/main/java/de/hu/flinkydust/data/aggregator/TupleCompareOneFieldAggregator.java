@@ -1,6 +1,5 @@
 package de.hu.flinkydust.data.aggregator;
 
-import de.hu.flinkydust.data.AggregatorFunction;
 import org.apache.flink.api.java.tuple.Tuple;
 
 /**
@@ -41,12 +40,17 @@ public abstract class TupleCompareOneFieldAggregator<T extends Tuple, R extends 
     }
 
     /**
-     * Funktion, die die beiden Tupel auswertet
+     * Funktion, die die beiden Tupel auswertet und einen Wert zurückgibt.
      * @param tuple1
+     *          Erster Tupel
      * @param tuple2
+     *          Zweiter Tupel
      * @param value1
+     *          Vergleichbarer Wert des ersten Tupels
      * @param value2
+     *          Vergleichbarer Wert des zweiten Tupels
      * @return
+     *          Das Tupel, das den Vergleich "gewonnen" hat
      */
     protected abstract T evaluate(T tuple1, T tuple2, R value1, R value2);
 

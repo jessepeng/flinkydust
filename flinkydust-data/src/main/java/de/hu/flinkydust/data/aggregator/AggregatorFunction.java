@@ -50,7 +50,7 @@ public abstract class AggregatorFunction<T, R> {
      */
     public DataSource<T> aggregate(DataSource<T> dataSource, int count) {
         DataSource<T> countedDataSource = (count > 0 ? dataSource.firstN(count) : dataSource);
-        return countedDataSource.firstN(count).projection(this::map).reduce(this::reduce).projection(this::mapBack);
+        return countedDataSource.projection(this::map).reduce(this::reduce).projection(this::mapBack);
     }
 
 }
