@@ -27,12 +27,16 @@ public class DataSetDataSourceTest {
 
     @Test
     public void testMinAggregation() throws Exception {
+        long timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
+        long timeAfter = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> minLarge = dataSource.aggregation(new TupleMinAggregator<>(2, Integer.class));
 
-        long timeBefore = System.nanoTime();
+        System.out.println("MinAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> minList = minLarge.collect();
-        long timeAfter = System.nanoTime();
+        timeAfter = System.nanoTime();
 
         assertThat(minList.size(), Is.is(1));
         assertThat(minList.get(0).f2, Is.is(-161480));
@@ -41,12 +45,16 @@ public class DataSetDataSourceTest {
 
     @Test
     public void testMaxAggregation() throws Exception {
+        long timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
+        long timeAfter = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> maxSmall = dataSource.aggregation(new TupleMaxAggregator<>(1, Integer.class));
 
-        long timeBefore = System.nanoTime();
+        System.out.println("MaxAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> minList = maxSmall.collect();
-        long timeAfter = System.nanoTime();
+        timeAfter = System.nanoTime();
 
         assertThat(minList.size(), Is.is(1));
         assertThat(minList.get(0).f1, Is.is(1537877));
@@ -55,12 +63,16 @@ public class DataSetDataSourceTest {
 
     @Test
     public void testSelection() throws Exception {
+        long timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
+        long timeAfter = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> selected = dataSource.selection(new AtLeastComparator<>(1, 100, Integer.class));
 
-        long timeBefore = System.nanoTime();
+        System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> selectedList = selected.collect();
-        long timeAfter = System.nanoTime();
+        timeAfter = System.nanoTime();
 
         assertThat(selectedList.size(), Is.is(409216));
         System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
