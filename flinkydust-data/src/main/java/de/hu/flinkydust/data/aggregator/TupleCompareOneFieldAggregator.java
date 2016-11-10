@@ -1,12 +1,13 @@
 package de.hu.flinkydust.data.aggregator;
 
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
 
 /**
  * Abstrakte Aggregator Klasse, um ein Feld eines Tupels in einer Aggregation zu verwenden.
  * Created by Jan-Christopher on 09.11.2016.
  */
-public abstract class TupleCompareOneFieldAggregator<T extends Tuple, R extends Comparable<R>> extends AggregatorFunction<T, T> {
+public abstract class TupleCompareOneFieldAggregator<T extends Tuple, R extends Comparable<R>> implements AggregatorFunction<T> {
 
     private int field;
     private Class<R> comparableClass;
@@ -17,12 +18,7 @@ public abstract class TupleCompareOneFieldAggregator<T extends Tuple, R extends 
     }
 
     @Override
-    protected T map(T value) {
-        return value;
-    }
-
-    @Override
-    protected T reduce(T value1, T value2) {
+    public T reduce(T value1, T value2) {
         Object field1;
         Object field2;
         R number1, number2;
@@ -54,8 +50,4 @@ public abstract class TupleCompareOneFieldAggregator<T extends Tuple, R extends 
      */
     protected abstract T evaluate(T tuple1, T tuple2, R value1, R value2);
 
-    @Override
-    protected T mapBack(T value) {
-        return value;
-    }
 }

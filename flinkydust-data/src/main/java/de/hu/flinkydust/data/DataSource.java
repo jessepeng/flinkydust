@@ -1,11 +1,11 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Basis-Interface für die drei Operationen, die auf einer Data Source möglich sein sollen.
@@ -22,7 +22,7 @@ public interface DataSource<T>
      * @return
      *          Eine neue DataSource mit ausschließlich den Datensätzen, die das Prädikat erfüllen.
      */
-    DataSource<T> selection(Predicate<T> predicate);
+    DataSource<T> selection(FilterFunction<T> predicate);
 
     /**
      * Projiziert die Datensätze in dieser Datenquelle auf einen neuen Datentyp.
@@ -34,7 +34,7 @@ public interface DataSource<T>
      * @return
      *          Eine neue DataSource mit allen Datensätzen, nachdem sie in den neuen Datentyp projiziert wurden.
      */
-    <R> DataSource<R> projection(Function<T, R> projector);
+    <R> DataSource<R> projection(MapFunction<T, R> projector);
 
     /**
      * Reduziert die Datensätze in dieser Datenquelle auf einen einzigen Datensatz.
@@ -43,7 +43,7 @@ public interface DataSource<T>
      * @return
      *           Eine neue DataSource mit einem reduzierte Datensatz.
      */
-    DataSource<T> reduce(BiFunction<T, T, T> reducer);
+    DataSource<T> reduce(ReduceFunction<T> reducer);
 
     /**
      * Aggregiert die gewünschte Anzahl Datensätze mit der angegebenen Aggregationsfunktion.
@@ -53,11 +53,8 @@ public interface DataSource<T>
      *          Anzahl Datensätze, die aggregiert werden sollen. Wenn count = -1, aggregiere alle Datensätze.
      * @return
      *          Eine neue DataSource mit dem aggregierten Datensatz.
-     * @param <R>
-     *          Datentyp, der den Zwischenschritt im Aggregator angibt.
-     *
      */
-    default <R> DataSource<T> aggregation(AggregatorFunction<T, R> aggregator, int count) {
+    default DataSource<T> aggregation(AggregatorFunction<T> aggregator, int count) {
         return aggregator.aggregate(this, count);
     }
 
@@ -67,10 +64,8 @@ public interface DataSource<T>
      *          Funktion, die die Datensätze aggregiert.
      * @return
      *          Eine neue DataSource mit dem aggregierten Datensatz.
-     * @param <R>
-     *          Datentyp, der den Zwischenschritt im Aggregator angibt.
      */
-    default  <R> DataSource<T> aggregation(AggregatorFunction<T, R> aggregator) {
+    default DataSource<T> aggregation(AggregatorFunction<T> aggregator) {
         return aggregation(aggregator, -1);
     }
 

@@ -1,5 +1,8 @@
 package de.hu.flinkydust.data;
 
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple5;
@@ -9,9 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * DataSource, die ein Flink {@link DataSet} als Speicherstruktur verwendet.
@@ -57,7 +57,7 @@ public class DataSetDataSource<T> implements DataSource<T> {
      *          Die DataSource mit den Datensätzen aus der CSV-Datei
      */
     public static <T0, T1, T2, T3, T4> DataSource<Tuple5<T0, T1, T2, T3, T4>> readFile(ExecutionEnvironment environment, String path, boolean inMemory, Class<T0> type0, Class<T1> type1, Class<T2> type2, Class<T3> type3, Class<T4> type4) {
-        DataSource<Tuple5<T0, T1, T2, T3, T4>> dataSource = new DataSetDataSource<>(environment.readCsvFile(path).types(type0, type1, type2, type3, type4));
+        DataSource<Tuple5<T0, T1, T2, T3, T4>> dataSource = new DataSetDataSource<>(environment.readCsvFile(path).fieldDelimiter(";").ignoreFirstLine().types(type0, type1, type2, type3, type4));
         if (inMemory) {
             return createInMemoryDataSource(environment, dataSource);
         }
@@ -65,17 +65,22 @@ public class DataSetDataSource<T> implements DataSource<T> {
     }
 
     public static DataSource<Tuple5<Date, Integer, Integer, Float, Float>> readFile(ExecutionEnvironment environment, String path) {
-        DataSource<Tuple5<String, Integer, Integer, Float, Float>> csvDataSource = readFile(
+        DataSource<Tuple5<String, String, String, String, String>> csvDataSource = readFile(
                 environment,
                 path,
                 false,
                 String.class,
-                Integer.class,
-                Integer.class,
-                Float.class,
-                Float.class
+                String.class,
+                String.class,
+                String.class,
+                String.class
         );
-        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dateDataSource = csvDataSource.projection(tuple -> {
+        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dateDataSource = csvDataSource.projection(new DateParseProjection());
+        return createInMemoryDataSource(environment, dateDataSource);
+    }
+
+    private static class DateParseProjection implements  MapFunction<Tuple5<String, String, String, String, String>, Tuple5<Date, Integer, Integer, Float, Float>> {
+        public Tuple5<Date, Integer, Integer, Float, Float> map(Tuple5<String, String, String, String, String> tuple) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date date = new Date();
             try {
@@ -83,9 +88,12 @@ public class DataSetDataSource<T> implements DataSource<T> {
             } catch (ParseException e) {
                 // Ignore
             }
-            return new Tuple5<>(date, tuple.f1, tuple.f2, tuple.f3, tuple.f4);
-        });
-        return createInMemoryDataSource(environment, dateDataSource);
+            return new Tuple5<Date, Integer, Integer, Float, Float>(date,
+                    (tuple.f1.equals("NA") ? 0 : Integer.valueOf(tuple.f1)),
+                    (tuple.f2.equals("NA") ? 0 : Integer.valueOf(tuple.f2)),
+                    (tuple.f3.equals("NA") ? 0 : Float.valueOf(tuple.f3)),
+                    (tuple.f4.equals("NA") ? 0 : Float.valueOf(tuple.f4)));
+        }
     }
 
     /**
@@ -117,18 +125,18 @@ public class DataSetDataSource<T> implements DataSource<T> {
     }
 
     @Override
-    public DataSource<T> selection(Predicate<T> predicate) {
-        return new DataSetDataSource<>(wrappedDataSet.filter(predicate::test));
+    public DataSource<T> selection(FilterFunction<T> predicate) {
+        return new DataSetDataSource<T>(wrappedDataSet.filter(predicate));
     }
 
     @Override
-    public <R> DataSource<R> projection(Function<T, R> projector) {
-        return new DataSetDataSource<>(wrappedDataSet.map(projector::apply));
+    public <R> DataSource<R> projection(MapFunction<T, R> projector) {
+        return new DataSetDataSource<R>(wrappedDataSet.map(projector));
     }
 
     @Override
-    public DataSource<T> reduce(BiFunction<T, T, T> reducer) {
-        return new DataSetDataSource<>(wrappedDataSet.reduce(reducer::apply));
+    public DataSource<T> reduce(ReduceFunction<T> reducer) {
+        return new DataSetDataSource<T>(wrappedDataSet.reduce(reducer));
     }
 
     @Override
