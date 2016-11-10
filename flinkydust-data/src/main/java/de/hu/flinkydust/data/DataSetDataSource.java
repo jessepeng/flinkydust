@@ -148,4 +148,14 @@ public class DataSetDataSource<T> implements DataSource<T> {
     public DataSource<T> firstN(int count) {
         return new DataSetDataSource<>(wrappedDataSet.first(count));
     }
+
+    @Override
+    public void print(){
+        /** Vorsicht: kann viele Daten enthalten **/
+        try {
+            this.wrappedDataSet.print();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

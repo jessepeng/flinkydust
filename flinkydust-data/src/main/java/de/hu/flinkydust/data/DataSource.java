@@ -88,4 +88,10 @@ public interface DataSource<T>
      */
     DataSource<T> firstN(int count);
 
+
+    /**
+     * Gibt die Elemente der DataSource auf standard out aus.
+     * Vorsicht: DataSource kann viele Daten enthalten
+     */
+    void print();
 }
