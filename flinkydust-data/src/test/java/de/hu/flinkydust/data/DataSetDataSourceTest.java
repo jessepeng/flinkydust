@@ -30,20 +30,17 @@ public class DataSetDataSourceTest {
         long timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        System.out.println("MinAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
-
-        timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> minLarge = dataSource.aggregation(new TupleMinAggregator<>(2, Integer.class));
-        timeAfter = System.nanoTime();
-        System.out.println("MinAggregation Operation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        System.out.println("MinAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> minList = minLarge.collect();
         timeAfter = System.nanoTime();
-        System.out.println("MinAggregation Convert to List: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         assertThat(minList.size(), Is.is(1));
         assertThat(minList.get(0).f2, Is.is(-161480));
+        System.out.println("MinAggregation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
     @Test
@@ -51,21 +48,17 @@ public class DataSetDataSourceTest {
         long timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        System.out.println("MaxAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
-
-        timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> maxSmall = dataSource.aggregation(new TupleMaxAggregator<>(1, Integer.class));
-        timeAfter = System.nanoTime();
-        System.out.println("MaxAggregation Operation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
-        maxSmall.print();
+
+        System.out.println("MaxAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> minList = maxSmall.collect();
         timeAfter = System.nanoTime();
-        System.out.println("Selection Convert to List: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         assertThat(minList.size(), Is.is(1));
         assertThat(minList.get(0).f1, Is.is(1537877));
+        System.out.println("MaxAggregation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
     @Test
@@ -73,19 +66,16 @@ public class DataSetDataSourceTest {
         long timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dataSource = DataSetDataSource.readFile(executionEnvironment, "data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
-
-        timeBefore = System.nanoTime();
         DataSource<Tuple5<Date, Integer, Integer, Float, Float>> selected = dataSource.selection(new AtLeastComparator<>(1, 100, Integer.class));
-        timeAfter = System.nanoTime();
-        System.out.println("Selection Operation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         timeBefore = System.nanoTime();
         List<Tuple5<Date, Integer, Integer, Float, Float>> selectedList = selected.collect();
         timeAfter = System.nanoTime();
-        System.out.println("Selection Convert to List: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         assertThat(selectedList.size(), Is.is(409216));
+        System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
 }
