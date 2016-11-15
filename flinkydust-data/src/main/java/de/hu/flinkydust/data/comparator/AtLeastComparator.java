@@ -14,6 +14,20 @@ public class AtLeastComparator<T extends Tuple, R extends Comparable<R>> extends
 
     @Override
     protected boolean evaluate(R value, R compareValue) {
-        return value.compareTo(compareValue) >= 0;
+        boolean result;
+        /*
+         * Wir unboxen die Variablen hier, da wir Float.NaN bzw. Double.NaN
+         * als Missing Values interpretieren. Das normale Verhalten von compareTo
+         * betrachtet diese Zahlen jedoch als größer als jede beliebige andere Zahl.
+         */
+        if (value instanceof Float) {
+            result = (Float) value >= (Float) compareValue;
+        } else if (value instanceof Double) {
+            result = (Double) value >= (Double) compareValue;
+        } else {
+            result = value.compareTo(compareValue) >= 0;
+        }
+
+        return result;
     }
 }

@@ -96,7 +96,7 @@ public class DataSetDataSourceTest {
         timeAfter = System.nanoTime();
 
         assertThat(avgList.size(), Is.is(1));
-        assertThat(avgList.get(0).f1, Is.is(27961.98));
+        assertThat(avgList.get(0).f1, Is.is(27961.975451166792));
         System.out.println("AvgAggregation: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 

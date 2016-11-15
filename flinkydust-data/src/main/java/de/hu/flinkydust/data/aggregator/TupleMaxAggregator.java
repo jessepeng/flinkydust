@@ -20,6 +20,21 @@ public class TupleMaxAggregator<T extends Tuple, R extends Comparable<R>> extend
 
     @Override
     protected T evaluate(T tuple1, T tuple2, R value1, R value2) {
-        return (value1.compareTo(value2) > 0 ? tuple1 : tuple2);
+        boolean left;
+        /*
+         * Wir unboxen die Variablen hier, da wir Float.NaN bzw. Double.NaN
+         * als Missing Values interpretieren. Das normale Verhalten von compareTo
+         * betrachtet diese Zahlen jedoch als größer als jede beliebige andere Zahl.
+         */
+        if (value1 instanceof Float && value2 instanceof Float &&
+                (((Float) value1).isNaN() ^ ((Float) value2).isNaN())) {
+            left = (!((Float) value1).isNaN() || ((Float) value2).isNaN());
+        } else if (value1 instanceof Double && value2 instanceof Double &&
+                (((Double) value1).isNaN() ^ ((Double) value2).isNaN())) {
+            left = (!((Double) value1).isNaN() || ((Double) value2).isNaN());
+        } else {
+            left = value1.compareTo(value2) > 0;
+        }
+        return (left ? tuple1 : tuple2);
     }
 }

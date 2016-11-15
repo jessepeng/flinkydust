@@ -48,6 +48,9 @@ public class TupleAvgAggregator<T extends Tuple, R extends Number> implements Ag
 
         T newTuple = value1.f0;
 
+        boolean oneNaN = false;
+        boolean twoNaN = false;
+
         if (field1Class.isAssignableFrom(Integer.class) && field2Class.isAssignableFrom(Integer.class)) {
             newTuple.setField(number1.intValue() + number2.intValue(), field);
         } else if (field1Class.isAssignableFrom(Long.class) && field2Class.isAssignableFrom(Long.class)) {
@@ -55,11 +58,19 @@ public class TupleAvgAggregator<T extends Tuple, R extends Number> implements Ag
         } else if (field1Class.isAssignableFrom(Short.class) && field2Class.isAssignableFrom(Short.class)) {
             newTuple.setField(number1.shortValue() + number2.shortValue(), field);
         } else if (field1Class.isAssignableFrom(Double.class) && field2Class.isAssignableFrom(Double.class)) {
-            newTuple.setField(number1.doubleValue() + number2.doubleValue(), field);
+            Double double1 = number1.doubleValue();
+            Double double2 = number2.doubleValue();
+            oneNaN = double1.isNaN();
+            twoNaN = double2.isNaN();
+            newTuple.setField((oneNaN ? 0.0 : double1) + (twoNaN ? 0.0 : double2), field);
         } else if (field1Class.isAssignableFrom(Float.class) && field2Class.isAssignableFrom(Float.class)) {
-            newTuple.setField(number1.floatValue() + number2.floatValue(), field);
+            Float float1 = number1.floatValue();
+            Float float2 = number2.floatValue();
+            oneNaN = float1.isNaN();
+            twoNaN = float2.isNaN();
+            newTuple.setField((oneNaN ? 0.0 : float1) + (twoNaN ? 0.0 : float2), field);
         }
-        return new Tuple2<>(newTuple, value1.f1 + value2.f1);
+        return new Tuple2<>(newTuple, (oneNaN ? 0L : value1.f1) + (twoNaN ? 0L : value2.f1));
     }
 
     @Override
