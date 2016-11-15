@@ -1,0 +1,9 @@
+v1.0: 
+- Bereistellung eines Interfaces für die DataSource
+- Implementierung der DataSource (selection und aggregation)
+- Implementierung von Komparatoren (atLeast, lessThan, same) 
+- Implementierung von Aggregatoren (min und max)
+- Definieren und Implementieren von Test-Cases
+
+Known Issues:
+-
