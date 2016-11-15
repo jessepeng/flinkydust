@@ -3,6 +3,7 @@ package de.hu.flinkydust.data.comparator;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.tuple.Tuple;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -24,8 +25,15 @@ public abstract class TupleFieldComparator<T extends Tuple, R extends Comparable
 
     @Override
     public boolean filter(T t) {
-        Object tupleValue;
-        if ((tupleValue = t.getField(field)).getClass().isAssignableFrom(compareClass)) {
+        Object tupleValue = t.getField(field);
+        if (tupleValue instanceof Optional<?>) {
+            if (((Optional) tupleValue).isPresent()) {
+                tupleValue = ((Optional) tupleValue).get();
+            } else {
+                return false;
+            }
+        }
+        if (tupleValue.getClass().isAssignableFrom(compareClass)) {
             R value = compareClass.cast(tupleValue);
             return (evaluate(value, compareValue));
         }

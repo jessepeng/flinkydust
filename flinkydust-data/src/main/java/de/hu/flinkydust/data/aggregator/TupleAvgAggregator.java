@@ -32,7 +32,21 @@ public class TupleAvgAggregator<T extends Tuple, R extends Number> implements Ag
 
     private Tuple2<T, Long> reduce(Tuple2<T, Long> value1, Tuple2<T, Long> value2) {
         Object field1 = value1.f0.getField(field);
+        if (field1 instanceof Optional<?>) {
+            if (((Optional) field1).isPresent()) {
+                field1 = ((Optional) field1).get();
+            } else {
+                return value2;
+            }
+        }
         Object field2 = value2.f0.getField(field);
+        if (field2 instanceof Optional<?>) {
+            if (((Optional) field2).isPresent()) {
+                field2 = ((Optional) field2).get();
+            } else {
+                return value1;
+            }
+        }
         R number1, number2;
         Class<?> field1Class, field2Class;
         if ((field1Class = field1.getClass()).isAssignableFrom(numberClass)) {
@@ -49,15 +63,15 @@ public class TupleAvgAggregator<T extends Tuple, R extends Number> implements Ag
         T newTuple = value1.f0;
 
         if (field1Class.isAssignableFrom(Integer.class) && field2Class.isAssignableFrom(Integer.class)) {
-            newTuple.setField(number1.intValue() + number2.intValue(), field);
+            newTuple.setField(Optional.of(number1.intValue() + number2.intValue()), field);
         } else if (field1Class.isAssignableFrom(Long.class) && field2Class.isAssignableFrom(Long.class)) {
-            newTuple.setField(number1.longValue() + number2.longValue(), field);
+            newTuple.setField(Optional.of(number1.longValue() + number2.longValue()), field);
         } else if (field1Class.isAssignableFrom(Short.class) && field2Class.isAssignableFrom(Short.class)) {
-            newTuple.setField(number1.shortValue() + number2.shortValue(), field);
+            newTuple.setField(Optional.of(number1.shortValue() + number2.shortValue()), field);
         } else if (field1Class.isAssignableFrom(Double.class) && field2Class.isAssignableFrom(Double.class)) {
-            newTuple.setField(number1.doubleValue() + number2.doubleValue(), field);
+            newTuple.setField(Optional.of(number1.doubleValue() + number2.doubleValue()), field);
         } else if (field1Class.isAssignableFrom(Float.class) && field2Class.isAssignableFrom(Float.class)) {
-            newTuple.setField(number1.floatValue() + number2.floatValue(), field);
+            newTuple.setField(Optional.of(number1.floatValue() + number2.floatValue()), field);
         }
         return new Tuple2<>(newTuple, value1.f1 + value2.f1);
     }
@@ -76,6 +90,16 @@ public class TupleAvgAggregator<T extends Tuple, R extends Number> implements Ag
             @Override
             public T map(Tuple2<T, Long> value) throws Exception {
                 Object fieldValue = value.f0.getField(field);
+                if (fieldValue instanceof Optional<?>) {
+                    if (((Optional) fieldValue).isPresent()) {
+                        fieldValue = ((Optional) fieldValue).get();
+                    } else {
+                        T tuple = value.f0;
+                        tuple.setField(Optional.empty(), field);
+
+                        return tuple;
+                    }
+                }
                 R number;
                 Class<?> fieldClass;
                 if ((fieldClass = fieldValue.getClass()).isAssignableFrom(numberClass)) {
@@ -83,15 +107,15 @@ public class TupleAvgAggregator<T extends Tuple, R extends Number> implements Ag
                     T tuple = value.f0;
 
                     if (fieldClass.isAssignableFrom(Integer.class)) {
-                        tuple.setField(number.intValue() / value.f1, field);
+                        tuple.setField(Optional.of(number.intValue() / value.f1), field);
                     } else if (fieldClass.isAssignableFrom(Long.class)) {
-                        tuple.setField(number.longValue() / value.f1, field);
+                        tuple.setField(Optional.of(number.longValue() / value.f1), field);
                     } else if (fieldClass.isAssignableFrom(Short.class)) {
-                        tuple.setField(number.shortValue() / value.f1, field);
+                        tuple.setField(Optional.of(number.shortValue() / value.f1), field);
                     } else if (fieldClass.isAssignableFrom(Double.class)) {
-                        tuple.setField(number.doubleValue() / value.f1, field);
+                        tuple.setField(Optional.of(number.doubleValue() / value.f1), field);
                     } else if (fieldClass.isAssignableFrom(Float.class)) {
-                        tuple.setField(number.floatValue() / value.f1, field);
+                        tuple.setField(Optional.of(number.floatValue() / value.f1), field);
                     }
                     
                     return tuple;

@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * DataSource, die ein Flink {@link DataSet} als Speicherstruktur verwendet.
@@ -79,7 +80,7 @@ public class DataSetDataSource<T> implements DataSource<T> {
      * @return
      *          Die DataSource mit den Datensätzen aus der CSV-Datei
      */
-    public static DataSource<Tuple5<Date, Double, Double, Double, Double>> readFile(ExecutionEnvironment environment, String path) {
+    public static DataSource<Tuple5<Date, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>>> readFile(ExecutionEnvironment environment, String path) {
         DataSource<Tuple5<String, String, String, String, String>> csvDataSource = readFile(
                 environment,
                 path,
@@ -90,7 +91,7 @@ public class DataSetDataSource<T> implements DataSource<T> {
                 String.class,
                 String.class
         );
-        DataSource<Tuple5<Date, Double, Double, Double, Double>> dateDataSource = csvDataSource.projection(new TupleParseProjection());
+        DataSource<Tuple5<Date, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>>> dateDataSource = csvDataSource.projection(new TupleParseProjection());
         return createInMemoryDataSource(environment, dateDataSource);
     }
 
@@ -98,8 +99,8 @@ public class DataSetDataSource<T> implements DataSource<T> {
     /**
      * Projection-Funktion, die den eingelesenen Tupeln die korrekten Datentypen gibt und die Werte parst.
      */
-    private static class TupleParseProjection implements MapFunction<Tuple5<String, String, String, String, String>, Tuple5<Date, Double, Double, Double, Double>> {
-        public Tuple5<Date, Double, Double, Double, Double> map(Tuple5<String, String, String, String, String> tuple) {
+    private static class TupleParseProjection implements MapFunction<Tuple5<String, String, String, String, String>, Tuple5<Date, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>>> {
+        public Tuple5<Date, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>> map(Tuple5<String, String, String, String, String> tuple) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date date = new Date();
             try {
@@ -107,11 +108,11 @@ public class DataSetDataSource<T> implements DataSource<T> {
             } catch (ParseException e) {
                 // Ignore
             }
-            return new Tuple5<Date, Double, Double, Double, Double>(date,
-                    (tuple.f1.equals("NA") ? Double.NaN : Double.valueOf(tuple.f1)),
-                    (tuple.f2.equals("NA") ? Double.NaN : Double.valueOf(tuple.f2)),
-                    (tuple.f3.equals("NA") ? Double.NaN : Double.valueOf(tuple.f3)),
-                    (tuple.f4.equals("NA") ? Double.NaN : Double.valueOf(tuple.f4)));
+            return new Tuple5<Date, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>>(date,
+                    (tuple.f1.equals("NA") ? Optional.empty() : Optional.of(Double.valueOf(tuple.f1))),
+                    (tuple.f2.equals("NA") ? Optional.empty() : Optional.of(Double.valueOf(tuple.f2))),
+                    (tuple.f3.equals("NA") ? Optional.empty() : Optional.of(Double.valueOf(tuple.f3))),
+                    (tuple.f4.equals("NA") ? Optional.empty() : Optional.of(Double.valueOf(tuple.f4))));
         }
     }
 

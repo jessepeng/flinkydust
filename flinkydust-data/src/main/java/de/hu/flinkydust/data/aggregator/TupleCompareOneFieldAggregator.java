@@ -2,6 +2,8 @@ package de.hu.flinkydust.data.aggregator;
 
 import org.apache.flink.api.java.tuple.Tuple;
 
+import java.util.Optional;
+
 /**
  * Abstrakte Aggregator Klasse, um ein Feld eines Tupels in einer Aggregation zu verwenden.
  * Created by Jan-Christopher on 09.11.2016.
@@ -18,12 +20,26 @@ public abstract class TupleCompareOneFieldAggregator<T extends Tuple, R extends 
 
     @Override
     public T reduce(T value1, T value2) {
-        Object field1;
-        Object field2;
+        Object field1 = value1.getField(field);
+        if (field1 instanceof Optional<?>) {
+            if (((Optional) field1).isPresent()) {
+                field1 = ((Optional) field1).get();
+            } else {
+                return value2;
+            }
+        }
+        Object field2 = value2.getField(field);
+        if (field2 instanceof Optional<?>) {
+            if (((Optional) field2).isPresent()) {
+                field2 = ((Optional) field2).get();
+            } else {
+                return value1;
+            }
+        }
         R number1, number2;
-        if ((field1 = value1.getField(field)).getClass().isAssignableFrom(comparableClass)) {
+        if (field1.getClass().isAssignableFrom(comparableClass)) {
             number1 = comparableClass.cast(field1);
-            if ((field2 = value2.getField(field)).getClass().isAssignableFrom(comparableClass)) {
+            if (field2.getClass().isAssignableFrom(comparableClass)) {
                 number2 = comparableClass.cast(field2);
             } else {
                 throw new ClassCastException("Das Feld " + field + " von Tupel " + value2.toString() + " kann nicht zu Comparable gecasted werden.");
