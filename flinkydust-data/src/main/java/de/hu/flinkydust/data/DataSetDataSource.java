@@ -21,6 +21,12 @@ public class DataSetDataSource<T> implements DataSource<T> {
 
     private DataSet<T> wrappedDataSet;
 
+    /**
+     * Erzeugt eine neue DataSetDataSource aus einem vorhandenen Flink {@link DataSet}.
+     *
+     * @param dataSource
+     *          Das Flink {@link DataSet}, das als Speicherstruktur verwendet werden soll.
+     */
     public DataSetDataSource(DataSet<T> dataSource) {
         this.wrappedDataSet = dataSource;
     }
@@ -64,6 +70,15 @@ public class DataSetDataSource<T> implements DataSource<T> {
         return dataSource;
     }
 
+    /**
+     * Liest eine CSV-Datei mit den Staubdaten ein und erzeugt eine neue DataSetDataSource mit einer In-Memory-Collection der Daten.
+     * @param environment
+     *          Die Flink Ausführungsumgebung
+     * @param path
+     *          Der Pfad zur CSV-Datei mit den Staubdaten
+     * @return
+     *          Die DataSource mit den Datensätzen aus der CSV-Datei
+     */
     public static DataSource<Tuple5<Date, Integer, Integer, Float, Float>> readFile(ExecutionEnvironment environment, String path) {
         DataSource<Tuple5<String, String, String, String, String>> csvDataSource = readFile(
                 environment,
@@ -75,11 +90,15 @@ public class DataSetDataSource<T> implements DataSource<T> {
                 String.class,
                 String.class
         );
-        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dateDataSource = csvDataSource.projection(new DateParseProjection());
+        DataSource<Tuple5<Date, Integer, Integer, Float, Float>> dateDataSource = csvDataSource.projection(new TupleParseProjection());
         return createInMemoryDataSource(environment, dateDataSource);
     }
 
-    private static class DateParseProjection implements  MapFunction<Tuple5<String, String, String, String, String>, Tuple5<Date, Integer, Integer, Float, Float>> {
+
+    /**
+     * Projection-Funktion, die den eingelesenen Tupeln die korrekten Datentypen gibt und die Werte parst.
+     */
+    private static class TupleParseProjection implements  MapFunction<Tuple5<String, String, String, String, String>, Tuple5<Date, Integer, Integer, Float, Float>> {
         public Tuple5<Date, Integer, Integer, Float, Float> map(Tuple5<String, String, String, String, String> tuple) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date date = new Date();
