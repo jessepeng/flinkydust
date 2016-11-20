@@ -9,10 +9,16 @@ import de.hu.flinkydust.data.DataSource;
  */
 public abstract class ReduceAggregatorFunction<T> implements AggregatorFunction<T> {
 
+    private T identity;
+
+    public ReduceAggregatorFunction(T identity) {
+        this.identity = identity;
+    }
+
     @Override
     public DataSource<T> aggregate(DataSource<T> dataSource, int count) {
         DataSource<T> countedDataSource = (count > 0 ? dataSource.firstN(count) : dataSource);
-        return countedDataSource.reduce((tuple1, tuple2) -> reduce(tuple1, tuple2));
+        return countedDataSource.reduce(identity, this::reduce);
     }
 
     /**

@@ -1,11 +1,11 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
-import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Basis-Interface für die drei Operationen, die auf einer Data Source möglich sein sollen.
@@ -22,28 +22,30 @@ public interface DataSource<T>
      * @return
      *          Eine neue DataSource mit ausschließlich den Datensätzen, die das Prädikat erfüllen.
      */
-    DataSource<T> selection(FilterFunction<T> predicate);
+    DataSource<T> selection(Predicate<? super T> predicate);
 
     /**
      * Projiziert die Datensätze in dieser Datenquelle auf einen neuen Datentyp.
+     * @param <R>
+     *          Typ des neuen Datensatzes
      * @param projector
      *          Funktion, die einen Datensatz das ursprünglich in dieser DataSource gespeicherten Datensätze
      *          in den gewünschten neuen Datensatz umwandelt.
-     * @param <R>
-     *          Typ des neuen Datensatzes
      * @return
      *          Eine neue DataSource mit allen Datensätzen, nachdem sie in den neuen Datentyp projiziert wurden.
      */
-    <R> DataSource<R> projection(MapFunction<T, R> projector);
+    <R> DataSource<R> projection(Function<? super T, ? extends R> projector);
 
     /**
      * Reduziert die Datensätze in dieser Datenquelle auf einen einzigen Datensatz.
+     *
+     * @param identity
      * @param reducer
      *           Funktion, die zwei Datensätze des in dieser DataSource gespeicherten Typs erhält und einen kombinierten zurückgibt.
      * @return
      *           Eine neue DataSource mit einem reduzierte Datensatz.
      */
-    DataSource<T> reduce(ReduceFunction<T> reducer);
+    DataSource<T> reduce(T identity, BinaryOperator<T> reducer);
 
     /**
      * Aggregiert die gewünschte Anzahl Datensätze mit der angegebenen Aggregationsfunktion.
