@@ -76,20 +76,34 @@ public class StreamDataSourceTest {
     public void testProjection() throws Exception {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
+        List<DataPoint> dataSourceList = dataSource.collect();
         long timeAfter = System.nanoTime();
+
         String[] projectionTarget = {"date","small"};
-        FieldnameProjector p = new FieldnameProjector(dataSource,projectionTarget);
+        FieldnameProjector p = new FieldnameProjector(new StreamDataSource<DataPoint>(dataSourceList.stream()),projectionTarget);
         DataSource<DataPoint> projected = p.project();
+
+        String[] projectionTarget2 = {"large","relHumid"};
+        FieldnameProjector p2 = new FieldnameProjector(new StreamDataSource<DataPoint>(dataSourceList.stream()),projectionTarget2);
+        DataSource<DataPoint> projected2 = p2.project();
 
         System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
         timeBefore = System.nanoTime();
         List<DataPoint> selectedList = projected.collect();
+
+        List<DataPoint> selectedList2 = projected2.collect();
         timeAfter = System.nanoTime();
 
-        //assertThat(selectedList.size(), Is.is(409216));
         System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
         System.out.println(selectedList.get(0));
+        System.out.println(selectedList2.get(0));
+
+        assertThat(selectedList.get(0).getSmall(), Is.is(3680.0));
+        assertThat(selectedList.get(0).getLarge(), Is.is(0.0));
+
+        assertThat(selectedList2.get(0).getLarge(), Is.is(10.0));
+        assertThat(selectedList2.get(0).getSmall(), Is.is(0.0));
     }
 
     @Test
@@ -166,7 +180,7 @@ public class StreamDataSourceTest {
         System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and select, project and aggregate: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0 ));
     }
 
-    @Test
+    @Ignore
     public void testProfile() throws Exception {
         long cumulatedTime = 0;
         for (int i = 0; i < 10; i++) {
