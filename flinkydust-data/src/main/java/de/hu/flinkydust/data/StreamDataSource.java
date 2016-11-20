@@ -117,17 +117,16 @@ public class StreamDataSource<T> implements DataSource<T> {
         //generate data for humidity
         Double humidity = ThreadLocalRandom.current().nextDouble(0.0, 100.0 + 1);
 
-        /*
         double randomError = ThreadLocalRandom.current().nextDouble(0.0, 1.0);
         if (randomError > 0.00 && randomError < 0.01) {
             smallParticles = Double.NaN;
         } else if (randomError > 0.01 && randomError < 0.02) {
-            largeParticels = Double.NaN;
+            largeParticles = Double.NaN;
         } else if (randomError > 0.02 && randomError < 0.03) {
             temperature = Double.NaN;
         } else if (randomError > 0.03 && randomError < 0.04) {
             humidity = Double.NaN;
-        }*/
+        }
 
         return new DataPoint(date, smallParticles, largeParticles, humidity, temperature);
     }
