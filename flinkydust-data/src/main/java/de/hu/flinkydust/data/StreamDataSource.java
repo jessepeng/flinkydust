@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -70,6 +71,71 @@ public class StreamDataSource<T> implements DataSource<T> {
             System.err.println("Konnte datei nicht einlesen: " + e.getMessage());
             return new StreamDataSource<>(Stream.empty());
         }
+    }
+
+    public static DataSource<DataPoint> generateRandomData(Integer size) {
+        List<DataPoint> dataPoints = new LinkedList<>();
+
+        for (int i = 0; i < size; i++) {
+            dataPoints.add(generateRandomTuple());
+        }
+
+        return new StreamDataSource<>(dataPoints.stream());
+    }
+
+    private static DataPoint generateRandomTuple() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+        DataPoint dataPoint = new DataPoint();
+        //generate new dates
+        String randomMonth = String.valueOf(ThreadLocalRandom.current().nextDouble(1, 12 + 1));
+        String randomDay = String.valueOf(ThreadLocalRandom.current().nextDouble(1, 31 + 1));
+        String randomHour = String.valueOf(ThreadLocalRandom.current().nextDouble(0, 23 + 1));
+        String randomMinute = String.valueOf(ThreadLocalRandom.current().nextDouble(0, 59 + 1));
+
+        //Add prefix zeroes
+        randomMonth = addLeadingZeroes(randomMonth);
+        randomDay = addLeadingZeroes(randomDay);
+        randomHour = addLeadingZeroes(randomHour);
+        randomMinute = addLeadingZeroes(randomMinute);
+
+        String dateString = "2014-" + randomMonth + "-" + randomDay + " " + randomHour + ":" + randomMinute + ":00";
+        Date date = new Date();
+
+        try {
+            date = dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            // Ignore
+        }
+
+        //generate data for small particles
+        Double smallParticles = ThreadLocalRandom.current().nextDouble(0.0, 100000.0 + 1);
+        //generate data for large particles
+        Double largeParticles = ThreadLocalRandom.current().nextDouble(0.0, 50000.0 + 1);
+        //generate data for temperature
+        Double temperature = ThreadLocalRandom.current().nextDouble(-50.0, 60.0 + 1);
+        //generate data for humidity
+        Double humidity = ThreadLocalRandom.current().nextDouble(0.0, 100.0 + 1);
+
+        /*
+        double randomError = ThreadLocalRandom.current().nextDouble(0.0, 1.0);
+        if (randomError > 0.00 && randomError < 0.01) {
+            smallParticles = Double.NaN;
+        } else if (randomError > 0.01 && randomError < 0.02) {
+            largeParticels = Double.NaN;
+        } else if (randomError > 0.02 && randomError < 0.03) {
+            temperature = Double.NaN;
+        } else if (randomError > 0.03 && randomError < 0.04) {
+            humidity = Double.NaN;
+        }*/
+
+        return new DataPoint(date, smallParticles, largeParticles, humidity, temperature);
+    }
+
+    private static String addLeadingZeroes(String string) {
+        if (string.length() == 1)
+            return "0" + string;
+        return string;
     }
 
     @Override

@@ -109,4 +109,14 @@ public class StreamDataSourceTest {
         System.out.println("Multiple Operators: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
+    @Test
+    public void testDataGeneration() throws Exception {
+        long timeBefore = System.nanoTime();
+        DataSource<DataPoint> dataSource = StreamDataSource.generateRandomData(1000);
+        long timeAfter = System.nanoTime();
+
+        System.out.print("The time to generate " + 1000 + " random DataPoint objects: " + String.valueOf(timeAfter - timeBefore));
+
+    }
+
 }
