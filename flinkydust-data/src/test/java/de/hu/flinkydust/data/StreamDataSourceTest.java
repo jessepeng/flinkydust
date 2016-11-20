@@ -118,6 +118,8 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(1000);
 
         DataSource<DataPoint> selected1 = dataSource1.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
+
+        dataSource1 = StreamDataSource.generateRandomData(1000);
         DataSource<DataPoint> maxSmall1 = dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
 
         long timeAfter1k = System.nanoTime();
@@ -127,6 +129,7 @@ public class StreamDataSourceTest {
         long timeBefore10k = System.nanoTime();
         DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(10000);
         DataSource<DataPoint> selected2 = dataSource2.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
+        dataSource2 = StreamDataSource.generateRandomData(10000);
         DataSource<DataPoint> maxSmall2 = dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
         long timeAfter10k = System.nanoTime();
 
@@ -135,6 +138,7 @@ public class StreamDataSourceTest {
         long timeBefore100k = System.nanoTime();
         DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(100000);
         DataSource<DataPoint> selected3 = dataSource3.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
+        dataSource3 = StreamDataSource.generateRandomData(100000);
         DataSource<DataPoint> maxSmall3 = dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
         long timeAfter100k = System.nanoTime();
 
@@ -142,7 +146,6 @@ public class StreamDataSourceTest {
     }
 
     @Test
-    @Ignore
     public void testProfile() throws Exception {
         long cumulatedTime = 0;
         for (int i = 0; i < 10; i++) {
