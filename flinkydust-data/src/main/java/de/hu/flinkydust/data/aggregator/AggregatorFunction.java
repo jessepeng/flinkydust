@@ -5,7 +5,10 @@ import de.hu.flinkydust.data.DataSource;
 import java.io.Serializable;
 
 /**
- * Abstrakte Basis-Klasse, die Aggregator-Funktionen ermöglicht.
+ * Interfaces, das Aggregator-Funktionen ermöglicht.
+ *
+ * @param <T>
+ *          Datentyp, der aggregiert werden soll.
  *
  * Created by Jan-Christopher on 09.11.2016.
  */
@@ -20,11 +23,6 @@ public interface AggregatorFunction<T> extends Serializable {
      * @return
      *          Die neue DataSource mit dem aggregierten Datensatz.
      */
-    default DataSource<T> aggregate(DataSource<T> dataSource, int count) {
-        DataSource<T> countedDataSource = (count > 0 ? dataSource.firstN(count) : dataSource);
-        return countedDataSource.reduce((tuple1, tuple2) -> reduce(tuple1, tuple2));
-    }
-
-    T reduce(T value1, T value2);
+    DataSource<T> aggregate(DataSource<T> dataSource, int count);
 
 }
