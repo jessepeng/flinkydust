@@ -5,6 +5,7 @@ import de.hu.flinkydust.data.aggregator.MaxAggregator;
 import de.hu.flinkydust.data.aggregator.MinAggregator;
 import de.hu.flinkydust.data.comparator.AtLeastComparator;
 import de.hu.flinkydust.data.comparator.LessThanComparator;
+import de.hu.flinkydust.data.projector.FieldnameProjector;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -72,6 +73,26 @@ public class StreamDataSourceTest {
     }
 
     @Test
+    public void testProjection() throws Exception {
+        long timeBefore = System.nanoTime();
+        DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
+        long timeAfter = System.nanoTime();
+        String[] projectionTarget = {"date","small"};
+        FieldnameProjector p = new FieldnameProjector(dataSource,projectionTarget);
+        DataSource<DataPoint> projected = p.project();
+
+        System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        timeBefore = System.nanoTime();
+        List<DataPoint> selectedList = projected.collect();
+        timeAfter = System.nanoTime();
+
+        //assertThat(selectedList.size(), Is.is(409216));
+        System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+        System.out.println(selectedList.get(0));
+    }
+
+    @Test
     public void testAvgAggregation() throws Exception {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
@@ -111,7 +132,7 @@ public class StreamDataSourceTest {
         System.out.println("Multiple Operators: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
     }
 
-    @Test
+    @Ignore
     //TODO: Add project
     public void testProfileRandomNumbers() throws Exception {
         long timeBefore1k = System.nanoTime();
