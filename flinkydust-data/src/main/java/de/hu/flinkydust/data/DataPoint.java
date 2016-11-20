@@ -61,6 +61,10 @@ public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional
         return fieldIndexMap.get(fieldName);
     }
 
+    public void setValue(String fieldName, Object value){
+        setField((fieldName.equals("date"))? (Date)value: (Double)value , getFieldIndex(fieldName));
+    }
+
     public <T> Optional<T> getOptionalValue(int fieldIndex) {
         return getField(fieldIndex);
     }
