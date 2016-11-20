@@ -24,7 +24,7 @@ public class AvgAggregator<R extends Number> implements AggregatorFunction<DataP
 
     private Tuple<DataPoint, Long> reduce(Tuple<DataPoint, Long> value1, Tuple<DataPoint, Long> value2) {
         Object field1 = value1.f0.getField(Integer.valueOf(field));
-        Object field2 = value2.f0.getField(Integer.valueOf(field));
+        Object field2 = value2.f0.getFieldIndex(field);
         R number1, number2;
         Class<?> field1Class, field2Class;
         if ((field1Class = field1.getClass()).isAssignableFrom(numberClass)) {

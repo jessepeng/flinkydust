@@ -64,7 +64,7 @@ public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional
     public Double getField(Integer field) {
         switch (field) {
             case 1:
-                return (Double) getSmall();
+                return getSmall();
             case 2:
                 return (Double) getLarge();
             case 3:
