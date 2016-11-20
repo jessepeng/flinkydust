@@ -97,12 +97,14 @@ public class AvgAggregator<R extends Number> implements AggregatorFunction<DataP
         });
     }
 
-    public class Tuple<X, Y> {
-        public final X f0;
+    public class Tuple<DataPoint, Y> {
+        public final DataPoint f0;
         public final Y f1;
-        public Tuple(X f0, Y f1) {
+        public Tuple(DataPoint f0, Y f1) {
             this.f0 = f0;
             this.f1 = f1;
         }
+
+
     }
 }
