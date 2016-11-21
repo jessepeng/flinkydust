@@ -1,0 +1,19 @@
+- Welche Datenstrukturen wurden verwendet?
+
+eigene Klasse DataPoint - diese werden eingefügt in eine LinkedList und anschließend als Stream weiterverwendet
+
+
+
+- Wie werden Daten in die Datenstrukturen eingefügt/gelöscht?
+Parsing der Datenpunkte und einfaches anfügen
+
+
+
+- Skizzieren Sie Ihre Lösung der Aufgabe in PseudoCode! Verweisen Sie im Pseudo-Code auf die entsprechenden Stellen im Source-Code! 
+
+	LinkedList data;
+	While(readLine from File){
+		parse DataPoint p;
+		add p to data;
+	}
+	return data as stream;
