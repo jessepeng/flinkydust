@@ -77,16 +77,14 @@ public class StreamDataSourceTest {
     public void testProjection() throws Exception {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
-        List<DataPoint> dataSourceList = dataSource.collect();
         long timeAfter = System.nanoTime();
 
         String[] projectionTarget = {"date","small"};
-        FieldnameProjector p = new FieldnameProjector(new StreamDataSource<DataPoint>(dataSourceList.stream()),projectionTarget);
-        DataSource<DataPoint> projected = p.project();
+        DataSource<DataPoint> projected = dataSource.projection(new FieldnameProjector(projectionTarget));
 
         String[] projectionTarget2 = {"large","relHumid"};
-        FieldnameProjector p2 = new FieldnameProjector(new StreamDataSource<DataPoint>(dataSourceList.stream()),projectionTarget2);
-        DataSource<DataPoint> projected2 = p2.project();
+        dataSource = StreamDataSource.readFile("data/dust-2014.dat");
+        DataSource<DataPoint> projected2 = dataSource.projection(new FieldnameProjector(projectionTarget2));
 
         System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
@@ -155,7 +153,7 @@ public class StreamDataSourceTest {
 
         dataSource1 = StreamDataSource.generateRandomData(1000);
         String[] projectionTarget = {"small"};
-        DataSource<DataPoint> projection1 = new FieldnameProjector(dataSource1,projectionTarget).project();
+        DataSource<DataPoint> projection1 = dataSource1.projection(new FieldnameProjector(projectionTarget));
 
         dataSource1 = StreamDataSource.generateRandomData(1000);
         DataSource<DataPoint> maxSmall1 = dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
@@ -171,7 +169,7 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> selected2 = dataSource2.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
 
         dataSource2 = StreamDataSource.generateRandomData(10000);
-        DataSource<DataPoint> projection2 = new FieldnameProjector(dataSource2,projectionTarget).project();
+        DataSource<DataPoint> projection2 = dataSource2.projection(new FieldnameProjector(projectionTarget));
 
         dataSource2 = StreamDataSource.generateRandomData(10000);
         DataSource<DataPoint> maxSmall2 = dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
@@ -186,7 +184,7 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> selected3 = dataSource3.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
 
         dataSource3 = StreamDataSource.generateRandomData(10000);
-        DataSource<DataPoint> projection3 = new FieldnameProjector(dataSource3,projectionTarget).project();
+        DataSource<DataPoint> projection3 = dataSource3.projection(new FieldnameProjector(projectionTarget));
 
         dataSource3 = StreamDataSource.generateRandomData(100000);
         DataSource<DataPoint> maxSmall3 = dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
