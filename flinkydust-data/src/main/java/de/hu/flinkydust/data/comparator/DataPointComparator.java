@@ -28,7 +28,7 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
     @Override
     public boolean test(DataPoint t) {
         Object tupleValue;
-        if ((tupleValue = t.getOptionalValue(t.getFieldIndex(field)).orElse(missingValue)).getClass().isAssignableFrom(compareClass)) {
+        if ((tupleValue = t.getOptionalValue(field).orElse(missingValue)).getClass().isAssignableFrom(compareClass)) {
             R value = compareClass.cast(tupleValue);
             return (evaluate(value, compareValue));
         }
