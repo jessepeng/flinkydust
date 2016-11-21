@@ -1,7 +1,6 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
-
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
