@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertThat;
+import java.util.Optional;
 
 /**
  * Created by Jan-Christopher on 09.11.2016.
@@ -111,7 +112,7 @@ public class StreamDataSourceTest {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        DataSource<DataPoint> avgSmall = dataSource.aggregation(new AvgAggregator("1", Double.class));
+        DataSource<DataPoint> avgSmall = dataSource.aggregation(new AvgAggregator("small", Optional.class));
 
         System.out.println("AvgAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
