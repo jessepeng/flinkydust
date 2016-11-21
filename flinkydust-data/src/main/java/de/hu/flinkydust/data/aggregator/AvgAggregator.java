@@ -17,7 +17,7 @@ public class AvgAggregator<R extends Number> implements AggregatorFunction<DataP
     private Class<R> numberClass;
 
     private String field;
-    int index;
+    private int index;
 
     public AvgAggregator(String field, Class<R> numberClass) {
         if(field.equals("date")){
@@ -36,8 +36,8 @@ public class AvgAggregator<R extends Number> implements AggregatorFunction<DataP
 
 
         DataPoint newTuple = value1.f0;
-        Double f1 = (field1.isPresent())? field1.get() : 0.0;
-        Double f2 = (field2.isPresent())? field2.get() : 0.0;
+        Double f1 = field1.orElse(0.0);
+        Double f2 = field2.orElse(0.0);
 
         Optional<Double> v = Optional.of(f1+f2);
         newTuple.setField(v, index);

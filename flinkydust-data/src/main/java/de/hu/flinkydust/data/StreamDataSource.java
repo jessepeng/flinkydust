@@ -2,6 +2,8 @@ package de.hu.flinkydust.data;
 
 
 
+import de.hu.flinkydust.data.aggregator.AggregatorFunction;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,7 +21,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * DataSource, die einen Java8 Stream als Speicherstruktur verwendet.
+ * DataSource, die einen Java8 Stream als Speicherstruktur verwendet. Die Methoden {@link DataSource#projection(Function)},
+ * {@link DataSource#selection(Predicate)} und {@link DataSource#aggregation(AggregatorFunction)}
+ * sind dabei intermediäre Operationen, das heißt sie arbeiten nicht unmittelbar sofort auf den Daten.
+ * Erst ein Aufruf der Methode {@link DataSource#collect()} oder {@link DataSource#print()}
+ * führt dazu, dass die eigentlichen Daten bearbeitet werden.<br><br>
+ *
+ * Dies erlaubt das Aneinanderketten verschiedener Operatoren, wie bspw. <code>DataSource.projection(...).selection(...).aggregation(...)</code>.<br><br>
+ *
  * Created by Jan-Christopher on 09.11.2016.
  */
 public class StreamDataSource<T> implements DataSource<T> {
