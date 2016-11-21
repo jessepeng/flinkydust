@@ -31,7 +31,7 @@ public class FieldnameProjector {
             DataPoint p = new DataPoint();
 
             for(String field: fieldNames){
-                p.setValue(field, value.getOptionalValue(value.getFieldIndex(field)));
+                p.setField(field, value.getOptionalValue(value.getFieldIndex(field)).orElse(null));
             }
 
             return p;
