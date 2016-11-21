@@ -39,6 +39,7 @@ public interface DataSource<T>
      * Reduziert die Datensätze in dieser Datenquelle auf einen einzigen Datensatz.
      *
      * @param identity
+     *           Identität, mit der der erste Datensatz reduziert wird.
      * @param reducer
      *           Funktion, die zwei Datensätze des in dieser DataSource gespeicherten Typs erhält und einen kombinierten zurückgibt.
      * @return
