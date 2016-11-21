@@ -5,6 +5,7 @@ import de.hu.flinkydust.data.aggregator.MaxAggregator;
 import de.hu.flinkydust.data.aggregator.MinAggregator;
 import de.hu.flinkydust.data.comparator.AtLeastComparator;
 import de.hu.flinkydust.data.comparator.LessThanComparator;
+import de.hu.flinkydust.data.projector.FieldnameProjector;
 import org.hamcrest.core.Is;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertThat;
+import java.util.Optional;
 
 /**
  * Created by Jan-Christopher on 09.11.2016.
@@ -72,11 +74,43 @@ public class StreamDataSourceTest {
     }
 
     @Test
+    public void testProjection() throws Exception {
+        long timeBefore = System.nanoTime();
+        DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
+        long timeAfter = System.nanoTime();
+
+        String[] projectionTarget = {"date","small"};
+        DataSource<DataPoint> projected = dataSource.projection(new FieldnameProjector(projectionTarget));
+
+        String[] projectionTarget2 = {"large","relHumid"};
+        dataSource = StreamDataSource.readFile("data/dust-2014.dat");
+        DataSource<DataPoint> projected2 = dataSource.projection(new FieldnameProjector(projectionTarget2));
+
+        System.out.println("Selection Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        timeBefore = System.nanoTime();
+        List<DataPoint> selectedList = projected.collect();
+
+        List<DataPoint> selectedList2 = projected2.collect();
+        timeAfter = System.nanoTime();
+
+        System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+        System.out.println(selectedList.get(0));
+        System.out.println(selectedList2.get(0));
+
+        assertThat(selectedList.get(0).getSmall(), Is.is(3680.0));
+        assertThat(selectedList.get(0).getLarge(), Is.is(0.0));
+
+        assertThat(selectedList2.get(0).getLarge(), Is.is(10.0));
+        assertThat(selectedList2.get(0).getSmall(), Is.is(0.0));
+    }
+
+    @Test
     public void testAvgAggregation() throws Exception {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        DataSource<DataPoint> avgSmall = dataSource.aggregation(new AvgAggregator("1", Double.class));
+        DataSource<DataPoint> avgSmall = dataSource.aggregation(new AvgAggregator("small", Optional.class));
 
         System.out.println("AvgAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
@@ -112,14 +146,16 @@ public class StreamDataSourceTest {
     }
 
     @Test
-    //TODO: Add project
     public void testProfileRandomNumbers() throws Exception {
         long timeBefore10k = System.nanoTime();
-        DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(10000);
-
+        DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(1000);
         DataSource<DataPoint> selected1 = dataSource1.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
 
-        dataSource1 = StreamDataSource.generateRandomData(10000);
+        dataSource1 = StreamDataSource.generateRandomData(1000);
+        String[] projectionTarget = {"small"};
+        DataSource<DataPoint> projection1 = dataSource1.projection(new FieldnameProjector(projectionTarget));
+
+        dataSource1 = StreamDataSource.generateRandomData(1000);
         DataSource<DataPoint> maxSmall1 = dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
 
         long timeAfter10k = System.nanoTime();
@@ -127,18 +163,27 @@ public class StreamDataSourceTest {
         System.out.println("The time in s to generate " + 10000 + " random DataPoint objects and select, project and aggregate: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
 
         long timeBefore100k = System.nanoTime();
-        DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(100000);
+        DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(10000);
         DataSource<DataPoint> selected2 = dataSource2.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
-        dataSource2 = StreamDataSource.generateRandomData(100000);
+
+        dataSource2 = StreamDataSource.generateRandomData(10000);
+        DataSource<DataPoint> projection2 = dataSource2.projection(new FieldnameProjector(projectionTarget));
+
+        dataSource2 = StreamDataSource.generateRandomData(10000);
         DataSource<DataPoint> maxSmall2 = dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
         long timeAfter100k = System.nanoTime();
 
         System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and select, project and aggregate: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
 
+
         long timeBefore1000k = System.nanoTime();
-        DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(1000000);
+        DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(100000);
         DataSource<DataPoint> selected3 = dataSource3.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
-        dataSource3 = StreamDataSource.generateRandomData(1000000);
+
+        dataSource3 = StreamDataSource.generateRandomData(100000);
+        DataSource<DataPoint> projection3 = dataSource3.projection(new FieldnameProjector(projectionTarget));
+
+        dataSource3 = StreamDataSource.generateRandomData(100000);
         DataSource<DataPoint> maxSmall3 = dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
         long timeAfter1000k = System.nanoTime();
 
@@ -232,23 +277,25 @@ public class StreamDataSourceTest {
 
     @Test
     public void testProfileRandomNumbersProjection() throws Exception {
+        String[] projectionTarget = {"small"};
+
         long timeBefore10k = System.nanoTime();
         DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(10000);
-        //TODO
+        DataSource<DataPoint> projection1 = dataSource1.projection(new FieldnameProjector(projectionTarget));
         long timeAfter10k = System.nanoTime();
 
         System.out.println("The time in s to generate " + 10000 + " random DataPoint objects and project: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
 
         long timeBefore100k = System.nanoTime();
         DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(100000);
-        //TODO
+        DataSource<DataPoint> projection2 = dataSource2.projection(new FieldnameProjector(projectionTarget));
         long timeAfter100k = System.nanoTime();
 
         System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and project: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
 
         long timeBefore1000k = System.nanoTime();
         DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(1000000);
-        //TODO
+        DataSource<DataPoint> projection3 = dataSource3.projection(new FieldnameProjector(projectionTarget));
         long timeAfter1000k = System.nanoTime();
 
         System.out.println("The time in s to generate " + 1000000 + " random DataPoint objects and project: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));

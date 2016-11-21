@@ -4,6 +4,7 @@ v1.0:
 - Implementierung von Komparatoren (atLeast, lessThan, same) 
 - Implementierung von Aggregatoren (min und max)
 - Definieren und Implementieren von Test-Cases
+- Profiling
 
 Known Issues:
 -

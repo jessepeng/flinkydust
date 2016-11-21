@@ -1,6 +1,6 @@
 package de.hu.flinkydust.data;
 
-import org.apache.flink.api.java.DataSet;
+
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * DataSource, die ein Flink {@link DataSet} als Speicherstruktur verwendet.
+ * DataSource, die einen Java8 Stream als Speicherstruktur verwendet.
  * Created by Jan-Christopher on 09.11.2016.
  */
 public class StreamDataSource<T> implements DataSource<T> {
@@ -27,10 +27,10 @@ public class StreamDataSource<T> implements DataSource<T> {
     private Stream<T> wrappedStream;
 
     /**
-     * Erzeugt eine neue StreamDataSource aus einem vorhandenen Flink {@link DataSet}.
+     * Erzeugt eine neue StreamDataSource aus einem vorhandenen Java8 Stream.
      *
      * @param dataSource
-     *          Das Flink {@link DataSet}, das als Speicherstruktur verwendet werden soll.
+     *           Der Java8 Stream, das als Speicherstruktur verwendet werden soll.
      */
     public StreamDataSource(Stream<T> dataSource) {
         this.wrappedStream = dataSource;
