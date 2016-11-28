@@ -1,0 +1,1 @@
+java -jar flinkydust-main-1.0-SNAPSHOT.jar
