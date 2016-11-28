@@ -194,6 +194,7 @@ public class StreamDataSourceTest {
     }
 
     @Test
+    @Ignore
     public void testProfile() throws Exception {
         long cumulatedTime = 0;
         System.out.println("Running profile (10 times 1.000.000 data points: ");
