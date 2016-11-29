@@ -1,6 +1,6 @@
 package de.hu.flinkydust.data;
 
-import org.apache.flink.api.java.tuple.Tuple5;
+import de.hu.flinkydust.data.tuple.Tuple5;
 
 import java.util.Date;
 import java.util.HashMap;

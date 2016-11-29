@@ -1,8 +1,6 @@
 package de.hu.flinkydust.data.comparator;
 
 import de.hu.flinkydust.data.DataPoint;
-import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.java.tuple.Tuple;
 
 import java.util.function.Predicate;
 

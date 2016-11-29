@@ -7,25 +7,19 @@ import java.util.Optional;
 /**
  * Aggregiert mehrere Tupel auf ein Tupel mit dem durchschnittlichen Wert.
  *
- * @param <R>
- *     Klasse des Feldes des Tupels, das aggregiert werden soll. Muss das Interface {@link Number} implentieren.
- *
  * Created by Jan-Christopher on 09.11.2016.
  */
-public class AvgAggregator<R extends Number> implements AggregatorFunction<DataPoint> {
-
-    private Class<R> numberClass;
+public class AvgAggregator implements AggregatorFunction<DataPoint> {
 
     private String field;
     private int index;
 
-    public AvgAggregator(String field, Class<R> numberClass) {
+    public AvgAggregator(String field) {
         if(field.equals("date")){
             throw new ClassCastException("Kann keinen Durschnitt über 'date' bilden.");
         }
 
         this.field = field;
-        this.numberClass = numberClass;
     }
 
     private Tuple<DataPoint, Long> reduce(Tuple<DataPoint, Long> value1, Tuple<DataPoint, Long> value2) {
@@ -39,7 +33,7 @@ public class AvgAggregator<R extends Number> implements AggregatorFunction<DataP
         Double f1 = field1.orElse(0.0);
         Double f2 = field2.orElse(0.0);
 
-        Optional<Double> v = Optional.of(f1+f2);
+        Optional<Double> v = Optional.of(f1 + f2);
         newTuple.setField(v, index);
 
         return new Tuple<>(newTuple, (field1.isPresent() ? value1.f1 : 0L ) + (field2.isPresent() ? value2.f1 : 0L));
@@ -53,14 +47,10 @@ public class AvgAggregator<R extends Number> implements AggregatorFunction<DataP
         return reducedDataSource.projection(value -> {
             Optional<Double> fieldValue = value.f0.getOptionalValue(index);
 
-            if (fieldValue.isPresent()) {
-                DataPoint tuple = value.f0;
-                Double number = fieldValue.get();
-                tuple.setField(number / value.f1, index);
-                return tuple;
-            } else {
-                throw new ClassCastException("Das Feld " + field + " von Tupel " + value.toString() + " kann nicht zu " + numberClass.getSimpleName() + " gecasted werden.");
-            }
+            DataPoint tuple = value.f0;
+            Double number = fieldValue.orElse(0.0);
+            tuple.setField(field, number / value.f1);
+            return tuple;
         });
     }
 

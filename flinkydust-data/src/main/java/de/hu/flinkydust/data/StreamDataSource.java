@@ -162,7 +162,7 @@ public class StreamDataSource<T> implements DataSource<T> {
     }
 
     @Override
-    public List<T> collect() throws Exception {
+    public List<T> collect() {
         return wrappedStream.collect(Collectors.toList());
     }
 
@@ -179,5 +179,12 @@ public class StreamDataSource<T> implements DataSource<T> {
         } catch (Exception e) {
             throw new RuntimeException("Konnte Daten nicht ausgeben. Grund: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public long profile() {
+        long currentTime = System.nanoTime();
+        collect();
+        return System.nanoTime() - currentTime;
     }
 }
