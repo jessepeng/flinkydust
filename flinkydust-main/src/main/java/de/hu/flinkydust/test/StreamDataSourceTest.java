@@ -199,11 +199,10 @@ public class StreamDataSourceTest {
         long cumulatedTime = 0;
         System.out.println("Running profile (10 times 1.000.000 data points: ");
         for (int i = 0; i < 10; i++) {
-            long timeBefore = System.nanoTime();
             DataSource<DataPoint> dataSource = StreamDataSource.generateRandomData(1000000);
 
-            DataSource<DataPoint> selected = dataSource.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
-
+            long timeBefore = System.nanoTime();
+            dataSource.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class)).collect();
             long timeAfter = System.nanoTime();
 
             System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
@@ -213,97 +212,96 @@ public class StreamDataSourceTest {
 
         System.out.println("Average run for 1.000.000 dataPoints: " + (cumulatedTime / 10 / 1000000000.0));
 
-        cumulatedTime = 0;
-        System.out.println("Running profile (10 times 10.000.000 data points, will take a long time!: ");
-        for (int i = 0; i < 10; i++) {
-            long timeBefore = System.nanoTime();
-            DataSource<DataPoint> dataSource = StreamDataSource.generateRandomData(10000000);
-
-            DataSource<DataPoint> selected = dataSource.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
-
-            long timeAfter = System.nanoTime();
-
-            System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
-
-            cumulatedTime += timeAfter - timeBefore;
-        }
-
-        System.out.println("Average run for 10.000.000 dataPoints: " + (cumulatedTime / 10 / 1000000000.0));
+//        cumulatedTime = 0;
+//        System.out.println("Running profile (10 times 10.000.000 data points, will take a long time!: ");
+//        for (int i = 0; i < 10; i++) {
+//            DataSource<DataPoint> dataSource = StreamDataSource.generateRandomData(10000000);
+//
+//            long timeBefore = System.nanoTime();
+//            dataSource.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class)).collect();
+//            long timeAfter = System.nanoTime();
+//
+//            System.out.println("Selection: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
+//
+//            cumulatedTime += timeAfter - timeBefore;
+//        }
+//
+//        System.out.println("Average run for 10.000.000 dataPoints: " + (cumulatedTime / 10 / 1000000000.0));
     }
 
     @Test
     public void testProfileRandomNumbersSelection() throws Exception {
         DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(10000);
         long timeBefore10k = System.nanoTime();
-        DataSource<DataPoint> selected1 = dataSource1.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
+        dataSource1.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class)).collect();
         long timeAfter10k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 10000 + " random DataPoint objects and select: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
+        System.out.println("The time in s to select " + 10000 + " random DataPoint objects: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
 
         DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(100000);
         long timeBefore100k = System.nanoTime();
-        DataSource<DataPoint> selected2 = dataSource2.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
+        dataSource2.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class)).collect();
         long timeAfter100k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and select: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
+        System.out.println("The time in s to select " + 100000 + " random DataPoint objects: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
 
         DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(1000000);
         long timeBefore1000k = System.nanoTime();
-        DataSource<DataPoint> selected3 = dataSource3.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class));
+        dataSource3.selection(new AtLeastComparator<>("small", 100.0, 0.0, Double.class)).collect();
         long timeAfter1000k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 1000000 + " random DataPoint objects and select: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
+        System.out.println("The time in s to select " + 1000000 + " random DataPoint objects: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
     }
 
     @Test
     public void testProfileRandomNumbersAggregation() throws Exception {
         DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(10000);
         long timeBefore10k = System.nanoTime();
-        DataSource<DataPoint> maxSmall1 = dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class)).collect();
         long timeAfter10k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 10000 + " random DataPoint objects and aggregate: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
+        System.out.println("The time in s to aggregate " + 10000 + " random DataPoint objects: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
 
 
         DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(100000);
         long timeBefore100k = System.nanoTime();
-        DataSource<DataPoint> maxSmall2 = dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class)).collect();
         long timeAfter100k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and aggregate: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
+        System.out.println("The time in s to aggregate " + 100000 + " random DataPoint objects: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
 
 
         DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(1000000);
         long timeBefore1000k = System.nanoTime();
-        DataSource<DataPoint> maxSmall3 = dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class)).collect();
         long timeAfter1000k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 1000000 + " random DataPoint objects and aggregate: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
+        System.out.println("The time in s to aggregate " + 1000000 + " random DataPoint objects: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
     }
 
     @Test
     public void testProfileRandomNumbersProjection() throws Exception {
         String[] projectionTarget = {"small"};
 
-        long timeBefore10k = System.nanoTime();
         DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(10000);
-        DataSource<DataPoint> projection1 = dataSource1.projection(new FieldnameProjector(projectionTarget));
+        long timeBefore10k = System.nanoTime();
+        dataSource1.projection(new FieldnameProjector(projectionTarget)).collect();
         long timeAfter10k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 10000 + " random DataPoint objects and project: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
+        System.out.println("The time in s to project " + 10000 + " random DataPoint objects: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
 
-        long timeBefore100k = System.nanoTime();
         DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(100000);
-        DataSource<DataPoint> projection2 = dataSource2.projection(new FieldnameProjector(projectionTarget));
+        long timeBefore100k = System.nanoTime();
+        dataSource2.projection(new FieldnameProjector(projectionTarget)).collect();
         long timeAfter100k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and project: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
+        System.out.println("The time in s to project " + 100000 + " random DataPoint objects: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
 
-        long timeBefore1000k = System.nanoTime();
         DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(1000000);
-        DataSource<DataPoint> projection3 = dataSource3.projection(new FieldnameProjector(projectionTarget));
+        long timeBefore1000k = System.nanoTime();
+        dataSource3.projection(new FieldnameProjector(projectionTarget)).collect();
         long timeAfter1000k = System.nanoTime();
 
-        System.out.println("The time in s to generate " + 1000000 + " random DataPoint objects and project: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
+        System.out.println("The time in s to project " + 1000000 + " random DataPoint objects: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
     }
 }
