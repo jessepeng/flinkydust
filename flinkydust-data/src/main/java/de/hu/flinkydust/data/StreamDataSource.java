@@ -51,8 +51,10 @@ public class StreamDataSource<T> implements DataSource<T> {
      *          Der Pfad zur CSV-Datei mit den Staubdaten
      * @return
      *          Die DataSource mit den Datensätzen aus der CSV-Datei
+     * @throws IOException
+     *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
      */
-    public static DataSource<DataPoint> readFile(String path) {
+    public static DataSource<DataPoint> readFile(String path) throws IOException {
         try (BufferedReader fileReader = new BufferedReader(new FileReader(path))) {
             String line;
             // Erste Zeile überspringen
@@ -78,7 +80,7 @@ public class StreamDataSource<T> implements DataSource<T> {
             return new StreamDataSource<>(dataPoints.stream());
         } catch (IOException e) {
             System.err.println("Konnte datei nicht einlesen: " + e.getMessage());
-            return new StreamDataSource<>(Stream.empty());
+            throw e;
         }
     }
 
