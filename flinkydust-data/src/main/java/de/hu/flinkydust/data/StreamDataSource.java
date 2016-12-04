@@ -187,4 +187,8 @@ public class StreamDataSource<T> implements DataSource<T> {
         collect();
         return System.nanoTime() - currentTime;
     }
+
+    public Stream<T> stream() {
+        return this.wrappedStream;
+    }
 }

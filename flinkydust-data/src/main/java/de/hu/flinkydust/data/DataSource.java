@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Basis-Interface für die drei Operationen, die auf einer Data Source möglich sein sollen.
@@ -103,4 +104,11 @@ public interface DataSource<T>
      *          Dauer der Ausführung in Nanosekunden
      */
     long profile();
+
+    /**
+     * Gibt die Datenquelle als Stream zurück.
+     * @return
+     *          Die Datenquelle als Stream.
+     */
+    Stream<T> stream();
 }
