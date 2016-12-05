@@ -66,7 +66,6 @@ public abstract class DataPointRestEndpoint {
                 }
             });
             jsonGenerator.writeEndObject();
-            jsonGenerator.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
