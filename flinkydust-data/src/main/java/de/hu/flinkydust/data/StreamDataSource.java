@@ -36,6 +36,15 @@ public class StreamDataSource<T> implements DataSource<T> {
     private Stream<T> wrappedStream;
 
     /**
+     * Erzeugt eine neue StreamDataSource aus einer Liste
+     * @param list
+     *          Die Liste, aus der die DataSource erzeugt werden soll.
+     */
+    public StreamDataSource(List<T> list) {
+        this.wrappedStream = list.stream();
+    }
+
+    /**
      * Erzeugt eine neue StreamDataSource aus einem vorhandenen Java8 Stream.
      *
      * @param dataSource
@@ -55,6 +64,10 @@ public class StreamDataSource<T> implements DataSource<T> {
      *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
      */
     public static DataSource<DataPoint> readFile(String path) throws IOException {
+        return new StreamDataSource<>(parseFile(path));
+    }
+
+    public static List<DataPoint> parseFile(String path) throws IOException {
         try (BufferedReader fileReader = new BufferedReader(new FileReader(path))) {
             String line;
             // Erste Zeile überspringen
@@ -65,7 +78,7 @@ public class StreamDataSource<T> implements DataSource<T> {
                 String[] fields = line.split(";");
                 Date date = null;
                 try {
-                   date = dateFormat.parse(fields[0]);
+                    date = dateFormat.parse(fields[0]);
                 } catch (ParseException e) {
                 }
                 dataPoints.add(new DataPoint(
@@ -76,8 +89,7 @@ public class StreamDataSource<T> implements DataSource<T> {
                         fields[4].equals("NA") ? null : Double.valueOf(fields[4])
                 ));
             }
-
-            return new StreamDataSource<>(dataPoints.stream());
+            return dataPoints;
         } catch (IOException e) {
             System.err.println("Konnte datei nicht einlesen: " + e.getMessage());
             throw e;
