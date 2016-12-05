@@ -7,6 +7,7 @@ import de.hu.flinkydust.data.DataPoint;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -41,6 +42,13 @@ public abstract class DataPointRestEndpoint {
             jsonGenerator.writeStartArray();
 
             dataStream.forEach(dataPoint -> writeDataPointToJsonGenerator(dataPoint, jsonGenerator));
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            dataStream.map(DataPointRestEndpoint::writeDataPointAsJson).forEach((json) -> {
+//                try {
+//                    byteArrayOutputStream.write(json.getBytes());
+//                } catch (IOException e) { }
+//            });
+//            stream.write(byteArrayOutputStream.toByteArray());
 
             jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
@@ -69,5 +77,20 @@ public abstract class DataPointRestEndpoint {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //TODO: Better JSON encoding
+    protected static String writeDataPointAsJson(DataPoint dataPoint) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{");
+        dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
+            Optional<?> optionalValue = dataPoint.getField(fieldIndexEntry.getValue());
+            if (optionalValue.isPresent()) {
+                stringBuilder.append("\"").append(fieldIndexEntry.getKey()).append("\": \"");
+                stringBuilder.append(optionalValue.get().toString()).append("\"");
+            }
+        });
+        stringBuilder.append("}");
+        return stringBuilder.toString();
     }
 }
