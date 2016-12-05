@@ -4,9 +4,7 @@ package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +54,23 @@ public class StreamDataSource<T> implements DataSource<T> {
 
     /**
      * Liest eine CSV-Datei mit den Staubdaten ein und erzeugt eine neue StreamDataSource mit einer In-Memory-Collection der Daten.
+     * @param inputStream
+     *          Ein InputStream, der die Daten zur Verfügung stellt
+     * @return
+     *          Die DataSource mit den Datensätzen aus der CSV-Datei
+     * @throws IOException
+     *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
+     */
+    public static DataSource<DataPoint> readFile(InputStream inputStream) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            return new StreamDataSource<>(readFromReader(reader));
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Liest eine CSV-Datei mit den Staubdaten ein und erzeugt eine neue StreamDataSource mit einer In-Memory-Collection der Daten.
      * @param path
      *          Der Pfad zur CSV-Datei mit den Staubdaten
      * @return
@@ -67,33 +82,64 @@ public class StreamDataSource<T> implements DataSource<T> {
         return new StreamDataSource<>(parseFile(path));
     }
 
+    /**
+     * Lese eine Datei mit Staubdaten ein und gib sie als Liste zurück.
+     * @param path
+     *          Pfad zur Datei
+     * @return
+     *          Liste mit Datenpunkten
+     * @throws IOException
+     *          Exception bei Lesefehlern
+     */
     public static List<DataPoint> parseFile(String path) throws IOException {
         try (BufferedReader fileReader = new BufferedReader(new FileReader(path))) {
-            String line;
-            // Erste Zeile überspringen
-            fileReader.readLine();
-            List<DataPoint> dataPoints = new LinkedList<>();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            while ((line = fileReader.readLine()) != null) {
-                String[] fields = line.split(";");
-                Date date = null;
-                try {
-                    date = dateFormat.parse(fields[0]);
-                } catch (ParseException e) {
-                }
-                dataPoints.add(new DataPoint(
-                        date,
-                        fields[1].equals("NA") ? null : Double.valueOf(fields[1]),
-                        fields[2].equals("NA") ? null : Double.valueOf(fields[2]),
-                        fields[3].equals("NA") ? null : Double.valueOf(fields[3]),
-                        fields[4].equals("NA") ? null : Double.valueOf(fields[4])
-                ));
-            }
-            return dataPoints;
+            return readFromReader(fileReader);
         } catch (IOException e) {
             System.err.println("Konnte datei nicht einlesen: " + e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Parst eine Datei aus einem InputStream und gibt eine Liste an DataPoints zurück
+     * @param inputStream
+     *          Der InputStream, von dem gelesen werden soll
+     * @return
+     *          Die Liste der DataPoints
+     * @throws IOException
+     *          Wenn ein Fehler beim Lesen aufgetreten ist
+     */
+    public static List<DataPoint> parseFile(InputStream inputStream) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            return readFromReader(reader);
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    private static List<DataPoint> readFromReader(BufferedReader reader) throws IOException {
+        String line;
+        // Erste Zeile überspringen
+        reader.readLine();
+        List<DataPoint> dataPoints = new LinkedList<>();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        while ((line = reader.readLine()) != null) {
+            String[] fields = line.split(";");
+            Date date = null;
+            try {
+                date = dateFormat.parse(fields[0]);
+            } catch (ParseException e) {
+            }
+            dataPoints.add(new DataPoint(
+                    date,
+                    fields[1].equals("NA") ? null : Double.valueOf(fields[1]),
+                    fields[2].equals("NA") ? null : Double.valueOf(fields[2]),
+                    fields[3].equals("NA") ? null : Double.valueOf(fields[3]),
+                    fields[4].equals("NA") ? null : Double.valueOf(fields[4])
+            ));
+        }
+
+        return dataPoints;
     }
 
     public static DataSource<DataPoint> generateRandomData(Integer size) {

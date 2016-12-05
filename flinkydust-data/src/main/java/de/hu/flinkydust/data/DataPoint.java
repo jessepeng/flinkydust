@@ -57,7 +57,7 @@ public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional
         return ((Optional<Date>)getField(0)).orElseThrow(NullPointerException::new);
     }
 
-    public int getFieldIndex(String fieldName) {
+    public Integer getFieldIndex(String fieldName) {
         return fieldIndexMap.get(fieldName);
     }
 
