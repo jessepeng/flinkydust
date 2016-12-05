@@ -1,5 +1,6 @@
 package de.hu.flinkydust.server.main;
 
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -16,7 +17,7 @@ public class Server {
         String baseUrl = (args.length > 0) ? "http://localhost:" + args[0] + "/rest    ": "http://localhost:80/rest";
 
         final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUrl), new ResourceConfig().packages("de.hu.flinkydust.server.rest"));
-        //final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUrl));
+        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(Server.class.getClassLoader(), "/web/"), "/");
         Runtime.getRuntime().addShutdownHook(new Thread(server::shutdownNow));
         server.start();
 
