@@ -38,7 +38,9 @@ function refreshScatterplot(){
               //chart.scatter.onlyCircles(false);
 
               d3.select('#svg-container')
-                  .data(dustData)
+                  .data(function(d){
+                    return [ d[x], d[y] ];
+                  }
                   .call(chart);
 
               nv.utils.windowResize(chart.update);
