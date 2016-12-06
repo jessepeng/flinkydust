@@ -15,11 +15,10 @@ import java.util.stream.Collectors;
 /**
  * Created by Jan-Christopher on 06.12.2016.
  */
-@Path("/availability")
 public class TimeAvailabilityEndpoint extends DataPointRestEndpoint {
 
     @GET
-    @Path("/")
+    @Path("/availability")
     public Response getTimeAvailability() {
         DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
 
