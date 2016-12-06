@@ -8,7 +8,6 @@ import de.hu.flinkydust.data.DataPoint;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -78,7 +77,7 @@ public abstract class DataPointRestEndpoint {
      *          Der JsonGenerator
      */
     //TODO: Better error handling
-    protected static void writeDataPointToJsonGenerator(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+    protected static void writeDataPointAsObject(DataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartObject();
             dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
@@ -93,6 +92,29 @@ public abstract class DataPointRestEndpoint {
                 }
             });
             jsonGenerator.writeEndObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static void writeDataPointAsXYObject(DataPoint dataPoint, JsonGenerator jsonGenerator, String x, String y) {
+
+    }
+
+    protected static void writeDataPointAsArray(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+        try {
+            jsonGenerator.writeStartArray();
+            dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
+                Optional<?> optionalValue = dataPoint.getField(fieldIndexEntry.getValue());
+                if (optionalValue.isPresent()) {
+                    try {
+                        jsonGenerator.writeObject(optionalValue.get());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            jsonGenerator.writeEndArray();
         } catch (IOException e) {
             e.printStackTrace();
         }

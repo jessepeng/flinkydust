@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script type="text/javascript">
+        function refreshScatterplot() {
+            var x = $('#xAxis').val();
+            var y = $('#yAxis').val();
+//            $.ajax('/rest/projection/' + x + '/' + y + '/date/xyobject').done(function(data) {
+//                var chart = new CanvasJS.Chart("chart",
+//                    {
+//                        title: {
+//                            text: "Verteilung " + x + " gegen " + y
+//                        },
+//                        axisX: {
+//                            title: x
+//                        },
+//                        axisY: {
+//                            title: y
+//                        },
+//                        data: [{
+//                            type: "scatter",
+//                            color: '#778899',
+//                            dataPoints: data.data
+//                        }]
+//                    });
+//
+//                chart.render();
+//            });
+
+            var dataPoints = [];
+            $.getJSON('/rest/projection/' + x + '/' + y + '/date', function(data) {
+                $.each(data.data, function(key, value){
+                    dataPoints.push({x: value[x], y: value[y], toolTipContent: x + ': {x}, ' + y + ': {y}, date: ' + value['date']});
+                });
+                var chart = new CanvasJS.Chart("chart",
+                    {
+                        title: {
+                            text: "Verteilung " + x + " gegen " + y
+                        },
+                        axisX: {
+                            title: x
+                        },
+                        axisY: {
+                            title: y
+                        },
+                        data: [{
+                            type: "scatter",
+                            color: '#778899',
+                            dataPoints: dataPoints
+                        }]
+                    });
+                chart.render();
+            });
+        }
+    </script>
+    <title>Canvas JS Test</title>
+</head>
+<body>
+<div class="col-md-offset-2 col-md-8">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12" id="timelineContainer" style="margin-top:50px;">
+            </div>
+        </div>
+        <div class="row">
+            <div style="margin-top:50px;"></div>
+            <div class="col-md-3">
+                <select name="xAxis" id="xAxis">
+                    <option value="date">Date</option>
+                    <option selected="selected" value="small">Small</option>
+                    <option value="large">Large</option>
+                    <option value="relHumid">Rel. Humidity</option>
+                    <option value="temp">Temperature</option>
+                </select>
+                <select name="yAxis" id="yAxis">
+                    <option value="date">Date</option>
+                    <option value="small">Small</option>
+                    <option selected="selected" value="large">Large</option>
+                    <option value="relHumid">Rel. Humidity</option>
+                    <option value="temp">Temperature</option>
+                </select>
+                <button name="refresh" onclick="refreshScatterplot()" type="button" class="btn btn-default">
+                    Refresh
+                </button>
+            </div>
+            <div class="col-md-9">
+                <div id="chart" style="width: 800px; height: 800px">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
