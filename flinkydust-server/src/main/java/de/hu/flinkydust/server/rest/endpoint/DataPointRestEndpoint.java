@@ -17,6 +17,13 @@ import java.util.stream.Stream;
  */
 public abstract class DataPointRestEndpoint {
 
+    /**
+     * Erzeugt eine einfache Fehler Response mit der angegebenen Nachricht.
+     * @param message
+     *          Die Nachricht
+     * @return
+     *          Die Response
+     */
     protected static Response createErrorResponse(final String message) {
        return Response.ok().entity((StreamingOutput) (stream) -> {
             JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
@@ -32,6 +39,17 @@ public abstract class DataPointRestEndpoint {
         }).type(MediaType.APPLICATION_JSON).build();
     }
 
+    /**
+     * Erzeugt eine OK Response aus dem angegebenen DataStream, unter Nutzung des angegebenen JsonGeneratorConsumers.
+     * @param dataStream
+     *          Der Stream
+     * @param jsonGeneratorConsumer
+     *          Der JsonGeneratorConsumer, der jedes Element des Streams erhält
+     * @param <T>
+     *          Der Typ des Streams
+     * @return
+     *          Die Response
+     */
     protected static <T> Response createOkResponse(final Stream<T> dataStream, JsonGeneratorConsumer<T> jsonGeneratorConsumer) {
         return Response.ok().entity((StreamingOutput) (stream) -> {
             final JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
@@ -51,6 +69,13 @@ public abstract class DataPointRestEndpoint {
         }).type(MediaType.APPLICATION_JSON).build();
     }
 
+    /**
+     * Schreibt einen DataPoint mittels eines JsonGenerators
+     * @param dataPoint
+     *          Der DataPoint
+     * @param jsonGenerator
+     *          Der JsonGenerator
+     */
     //TODO: Better error handling
     protected static void writeDataPointToJsonGenerator(DataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
@@ -70,6 +95,24 @@ public abstract class DataPointRestEndpoint {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Erzeugt eine OK Response ohne weiteren Inhalt
+     * @return
+     *          Die Response
+     */
+    protected static Response createOkResponse() {
+        return Response.ok().entity((StreamingOutput) (stream) -> {
+            JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeFieldName("status");
+            jsonGenerator.writeObject("ok");
+            jsonGenerator.writeEndObject();
+
+            jsonGenerator.flush();
+            jsonGenerator.close();
+        }).type(MediaType.APPLICATION_JSON).build();
     }
 
     /**
