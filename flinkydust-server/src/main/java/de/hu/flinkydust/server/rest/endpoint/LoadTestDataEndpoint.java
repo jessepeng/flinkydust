@@ -6,9 +6,7 @@ import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.StreamDataSource;
 import de.hu.flinkydust.server.rest.datastore.DataStore;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -41,5 +39,11 @@ public class LoadTestDataEndpoint extends DataPointRestEndpoint {
             jsonGenerator.close();
         }).type(MediaType.APPLICATION_JSON).build();
     }
+
+//    @POST
+//    @Path("/load/file")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    public Response uploadFile(@)
 
 }
