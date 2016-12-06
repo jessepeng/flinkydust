@@ -13,7 +13,7 @@ import java.net.URI;
 public class Server {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String baseUrl = (args.length > 0) ? "http://localhost:" + args[0] + "/rest    ": "http://localhost:80/rest";
+        String baseUrl = (args.length > 0) ? "http://localhost:" + args[0] + "/rest": "http://localhost:80/rest";
 
         final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUrl), new FlinkydustServerApplication());
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(Server.class.getClassLoader(), "web/"), "/");
