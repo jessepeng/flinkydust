@@ -107,7 +107,7 @@ public abstract class DataPointRestEndpoint {
             JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("status");
-            jsonGenerator.writeString("ok");
+            jsonGenerator.writeObject("ok");
             jsonGenerator.writeEndObject();
 
             jsonGenerator.flush();
