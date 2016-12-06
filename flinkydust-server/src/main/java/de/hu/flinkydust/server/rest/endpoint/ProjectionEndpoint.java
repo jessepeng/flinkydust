@@ -31,7 +31,15 @@ public class ProjectionEndpoint extends DataPointRestEndpoint {
             return createErrorResponse("Keine DataSource geladen.");
         }
 
-        dataSource = dataSource.projection(
+        dataSource = dataSource
+                .selection(dataPoint -> {
+                    boolean result = true;
+                    for (PathSegment pathSegment : fieldList) {
+                        String field = pathSegment.getPath();
+                        result &= dataPoint.getOptionalValue(dataPoint.getFieldIndex(field)).isPresent();
+                    }
+                    return result;
+                }).projection(
                 new FieldnameProjector(
                         new ArrayList<>(fieldList).stream()
                                 .map(PathSegment::getPath)
