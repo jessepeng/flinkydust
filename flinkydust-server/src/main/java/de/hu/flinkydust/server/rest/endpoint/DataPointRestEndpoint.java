@@ -85,7 +85,7 @@ public abstract class DataPointRestEndpoint {
                 if (optionalValue.isPresent()) {
                     try {
                         jsonGenerator.writeFieldName(fieldIndexEntry.getKey());
-                        jsonGenerator.writeString(optionalValue.get().toString());
+                        jsonGenerator.writeObject(optionalValue.get());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -107,7 +107,7 @@ public abstract class DataPointRestEndpoint {
             JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("status");
-            jsonGenerator.writeObject("ok");
+            jsonGenerator.writeString("ok");
             jsonGenerator.writeEndObject();
 
             jsonGenerator.flush();
