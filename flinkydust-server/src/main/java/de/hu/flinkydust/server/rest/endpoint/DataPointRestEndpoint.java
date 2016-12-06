@@ -2,6 +2,7 @@ package de.hu.flinkydust.server.rest.endpoint;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.hu.flinkydust.data.DataPoint;
 
 import javax.ws.rs.core.MediaType;
@@ -52,7 +53,7 @@ public abstract class DataPointRestEndpoint {
      */
     protected static <T> Response createOkResponse(final Stream<T> dataStream, JsonGeneratorConsumer<T> jsonGeneratorConsumer) {
         return Response.ok().entity((StreamingOutput) (stream) -> {
-            final JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
+            final JsonGenerator jsonGenerator = new ObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).getFactory().createGenerator(stream);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("status");
             jsonGenerator.writeString("ok");
