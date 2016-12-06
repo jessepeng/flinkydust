@@ -28,7 +28,11 @@ public class DataStore {
 
     @SuppressWarnings("unchecked")
     public <T> DataSource<T> getDataSource(Class<T> dataSourceClass) {
-        return new StreamDataSource<>((List<T>) dataSourceMap.get(dataSourceClass));
+        if (dataSourceMap.containsKey(dataSourceClass)) {
+            return new StreamDataSource<>((List<T>) dataSourceMap.get(dataSourceClass));
+        } else {
+            return null;
+        }
     }
 
 }

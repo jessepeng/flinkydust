@@ -32,7 +32,7 @@ public abstract class DataPointRestEndpoint {
         }).type(MediaType.APPLICATION_JSON).build();
     }
 
-    protected static Response createOkResponse(final Stream<DataPoint> dataStream) {
+    protected static <T> Response createOkResponse(final Stream<T> dataStream, JsonGeneratorConsumer<T> jsonGeneratorConsumer) {
         return Response.ok().entity((StreamingOutput) (stream) -> {
             final JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
             jsonGenerator.writeStartObject();
@@ -41,14 +41,7 @@ public abstract class DataPointRestEndpoint {
             jsonGenerator.writeFieldName("data");
             jsonGenerator.writeStartArray();
 
-            dataStream.forEach(dataPoint -> writeDataPointToJsonGenerator(dataPoint, jsonGenerator));
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            dataStream.map(DataPointRestEndpoint::writeDataPointAsJson).forEach((json) -> {
-//                try {
-//                    byteArrayOutputStream.write(json.getBytes());
-//                } catch (IOException e) { }
-//            });
-//            stream.write(byteArrayOutputStream.toByteArray());
+            dataStream.forEach(dataPoint -> jsonGeneratorConsumer.consume(dataPoint, jsonGenerator));
 
             jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
@@ -59,7 +52,7 @@ public abstract class DataPointRestEndpoint {
     }
 
     //TODO: Better error handling
-    private static void writeDataPointToJsonGenerator(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+    protected static void writeDataPointToJsonGenerator(DataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartObject();
             dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
@@ -79,18 +72,15 @@ public abstract class DataPointRestEndpoint {
         }
     }
 
-    //TODO: Better JSON encoding
-    protected static String writeDataPointAsJson(DataPoint dataPoint) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("{");
-        dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
-            Optional<?> optionalValue = dataPoint.getField(fieldIndexEntry.getValue());
-            if (optionalValue.isPresent()) {
-                stringBuilder.append("\"").append(fieldIndexEntry.getKey()).append("\": \"");
-                stringBuilder.append(optionalValue.get().toString()).append("\"");
-            }
-        });
-        stringBuilder.append("}");
-        return stringBuilder.toString();
+    /**
+     * Interface, das einen Consumer zur Verfügung steht, der aus einem Objekt des Typs T
+     * ein Json-String generiert
+     * @param <T>
+     */
+    @FunctionalInterface
+    public interface JsonGeneratorConsumer<T> {
+
+        void consume(T object, JsonGenerator jsonGenerator);
+
     }
 }
