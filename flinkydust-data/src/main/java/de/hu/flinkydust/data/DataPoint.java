@@ -1,6 +1,6 @@
 package de.hu.flinkydust.data;
 
-import org.apache.flink.api.java.tuple.Tuple5;
+import de.hu.flinkydust.data.tuple.Tuple5;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -57,8 +57,12 @@ public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional
         return ((Optional<Date>)getField(0)).orElseThrow(NullPointerException::new);
     }
 
-    public int getFieldIndex(String fieldName) {
+    public Integer getFieldIndex(String fieldName) {
         return fieldIndexMap.get(fieldName);
+    }
+
+    public Map<String, Integer> getFieldIndexMap() {
+        return fieldIndexMap;
     }
 
     public <T> Optional<T> getOptionalValue(int fieldIndex) {

@@ -20,8 +20,10 @@ public class FieldnameProjector implements Function<DataPoint, DataPoint> {
     public DataPoint apply(DataPoint source){
         DataPoint p = new DataPoint();
 
-        for(String field: fieldNames){
-            p.setField(field, source.getOptionalValue(source.getFieldIndex(field)).orElse(null));
+        for (String field: fieldNames){
+            if (source.getFieldIndex(field) != null) {
+                p.setField(field, source.getOptionalValue(source.getFieldIndex(field)).orElse(null));
+            }
         }
 
         return p;

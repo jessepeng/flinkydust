@@ -1,10 +1,12 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
+
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Basis-Interface für die drei Operationen, die auf einer Data Source möglich sein sollen.
@@ -75,10 +77,8 @@ public interface DataSource<T>
      * Gibt alle Datensätze dieser DataSource als Collection aus.
      * @return
      *          Alle Datensätze, die in dieser DataSource gespeichert, als Collection.
-     * @throws Exception
-     *          Wirft eine Exception, wenn die Datensätze nicht ausgegeben werden konnten.
      */
-    List<T> collect() throws Exception;
+    List<T> collect();
 
 
     /**
@@ -96,4 +96,19 @@ public interface DataSource<T>
      * Vorsicht: DataSource kann viele Daten enthalten
      */
     void print();
+
+    /**
+     * Gibt die Anzahl in Nanosekunden zurück, die die Ausführung aller geketteten Transformationen
+     * dieser DataSource benötigt.
+     * @return
+     *          Dauer der Ausführung in Nanosekunden
+     */
+    long profile();
+
+    /**
+     * Gibt die Datenquelle als Stream zurück.
+     * @return
+     *          Die Datenquelle als Stream.
+     */
+    Stream<T> stream();
 }
