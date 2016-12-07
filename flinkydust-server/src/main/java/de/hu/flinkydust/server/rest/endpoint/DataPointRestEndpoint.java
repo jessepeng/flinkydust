@@ -2,12 +2,12 @@ package de.hu.flinkydust.server.rest.endpoint;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.hu.flinkydust.data.DataPoint;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -52,7 +52,7 @@ public abstract class DataPointRestEndpoint {
      */
     protected static <T> Response createOkResponse(final Stream<T> dataStream, JsonGeneratorConsumer<T> jsonGeneratorConsumer) {
         return Response.ok().entity((StreamingOutput) (stream) -> {
-            final JsonGenerator jsonGenerator = new ObjectMapper().getFactory().createGenerator(stream);
+            final JsonGenerator jsonGenerator = new ObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).getFactory().createGenerator(stream);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("status");
             jsonGenerator.writeString("ok");
@@ -77,7 +77,7 @@ public abstract class DataPointRestEndpoint {
      *          Der JsonGenerator
      */
     //TODO: Better error handling
-    protected static void writeDataPointToJsonGenerator(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+    protected static void writeDataPointAsObject(DataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartObject();
             dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
@@ -92,6 +92,29 @@ public abstract class DataPointRestEndpoint {
                 }
             });
             jsonGenerator.writeEndObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static void writeDataPointAsXYObject(DataPoint dataPoint, JsonGenerator jsonGenerator, String x, String y) {
+
+    }
+
+    protected static void writeDataPointAsArray(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+        try {
+            jsonGenerator.writeStartArray();
+            dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
+                Optional<?> optionalValue = dataPoint.getField(fieldIndexEntry.getValue());
+                if (optionalValue.isPresent()) {
+                    try {
+                        jsonGenerator.writeObject(optionalValue.get());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            jsonGenerator.writeEndArray();
         } catch (IOException e) {
             e.printStackTrace();
         }
