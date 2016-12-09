@@ -15,7 +15,6 @@
             var x = $('#xAxis').val();
             var y = $('#yAxis').val();
 
-
             var graphDiv = document.getElementById('chart');
             var dataPoints = {
               x: [],
@@ -23,8 +22,38 @@
               mode: 'markers',
               type: 'scattergl',
               text: [],
-              marker: { size: 3}
+              marker: { size: 3,color:'blue'}
             };
+
+            var selection = false;
+            function selectionToggle(gr, ev){
+                /*console.debug(gr,ev);
+
+                selection = !selection;
+
+                if(selection){
+
+                    var chart = $("#chart");
+                    $('.main-svg').css('pointer-events','none');
+                    chart.on('click mousedown', function(ev,gr) {
+                        ev.cancelBubble = true;
+                        ev.originalEvent.cancelBubble = true;
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        ev.stopImmediatePropagation();
+
+                        $.each(dataPoints, function(key,value){
+                            console.debug(key,value);
+
+                        });
+
+                        console.debug(ev,gr);
+                    })
+                }else{
+                    chart.off('.flinkydust');
+                }*/
+            }
+
             $.getJSON('/rest/projection/' + x + '/' + y + '/date', function(data) {
                 $.each(data.data, function(key, value){
                     dataPoints.x.push(value[x]);
@@ -44,8 +73,23 @@
 
                 };
 
-                Plotly.newPlot(graphDiv, [dataPoints], layout );
 
+
+                Plotly.newPlot('chart', [dataPoints], layout,
+                    {
+                        displaylogo: false,
+                        modeBarButtonsToAdd:[
+                            {
+                            name: 'select',
+                            title: 'Box Select',
+                            attr: 'dragmode',
+                            val: 'select',
+                            icon: Plotly.Icons.selectbox,
+                            click: selectionToggle
+                            }
+                        ]
+                    }
+                );
             });
 
         }
@@ -53,7 +97,7 @@
     <title>Plotly JS Test</title>
 </head>
 <body>
-<div class="col-md-12" style="margin-left:20px;">
+<div class="col-md-12">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12" id="timelineContainer" style="margin-top:50px;">
