@@ -8,9 +8,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <!-- Latest compiled and minified plotly.js JavaScript -->
-    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="plotly-latest.js"></script>
 
     <script type="text/javascript">
+
         function refreshScatterplot() {
             var x = $('#xAxis').val();
             var y = $('#yAxis').val();
@@ -25,14 +26,13 @@
               marker: { size: 3,color:'blue'}
             };
 
-            var selection = false;
+           /* var selection = false;
             function selectionToggle(gr, ev){
-                /*console.debug(gr,ev);
+                console.debug(gr,ev);
 
                 selection = !selection;
 
                 if(selection){
-
                     var chart = $("#chart");
                     $('.main-svg').css('pointer-events','none');
                     chart.on('click mousedown', function(ev,gr) {
@@ -51,8 +51,8 @@
                     })
                 }else{
                     chart.off('.flinkydust');
-                }*/
-            }
+                }
+            }*/
 
             $.getJSON('/rest/projection/' + x + '/' + y + '/date', function(data) {
                 $.each(data.data, function(key, value){
@@ -75,21 +75,49 @@
 
 
 
-                Plotly.newPlot('chart', [dataPoints], layout,
+                Plotly.newPlot(graphDiv, [dataPoints], layout,
                     {
                         displaylogo: false,
-                        modeBarButtonsToAdd:[
+                       /* modeBarButtonsToAdd:[
                             {
                             name: 'select',
                             title: 'Box Select',
                             attr: 'dragmode',
                             val: 'select',
                             icon: Plotly.Icons.selectbox,
-                            click: selectionToggle
+                            toggle: true,
+                            click: handleCartesian
                             }
-                        ]
+                        ] */
                     }
                 );
+
+          /*      graphDiv.on('plotly_relayout', function(opt){
+                    console.debug(opt);
+                    if(opt.dragmode == 'select'){
+                        var isDragging = false;
+                        $('.gl-container <div></div>')
+                        .mousedown(function() {
+
+                            isDragging = false;
+                        })
+                        .mousemove(function() {
+                            isDragging = true;
+                         })
+                        .mouseup(function() {
+                            var wasDragging = isDragging;
+                            isDragging = false;
+                            if (!wasDragging) {
+                                console.debug('dragged');
+                                //$("#throbble").toggle();
+                            }
+                        });
+                    }
+                    else{
+
+                    }
+                });*/
+
             });
 
         }
