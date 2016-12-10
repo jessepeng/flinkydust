@@ -1,4 +1,4 @@
-package de.hu.flinkydust.server.rest.endpoint;
+package de.hu.flinkydust.server.rest;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 /**
  * Created by Jan-Christopher on 04.12.2016.
  */
-public abstract class DataPointRestEndpoint {
+public abstract class AbstractResourceResponse {
 
     /**
      * Erzeugt eine einfache Fehler Response mit der angegebenen Nachricht.

@@ -2,6 +2,7 @@ package de.hu.flinkydust.server.rest.endpoint;
 
 import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.StreamDataSource;
+import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 import de.hu.flinkydust.server.rest.datastore.DataStore;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -16,7 +17,7 @@ import java.io.InputStream;
  * Created by Jan-Christopher on 04.12.2016.
  */
 @Path("/data")
-public class LoadTestDataEndpoint extends DataPointRestEndpoint {
+public class LoadTestDataEndpoint extends AbstractResourceResponse {
 
     /**
      * Lädt die Testdaten ein.

@@ -3,7 +3,9 @@ package de.hu.flinkydust.server.rest.endpoint;
 import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.DataSource;
 import de.hu.flinkydust.data.projector.FieldnameProjector;
+import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 import de.hu.flinkydust.server.rest.datastore.DataStore;
+import de.hu.flinkydust.server.rest.resource.ProjectionResource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,26 +24,17 @@ import java.util.List;
  * Created by Jan-Christopher on 04.12.2016.
  */
 @Path("/projection")
-public class ProjectionEndpoint extends DataPointRestEndpoint {
+public class ProjectionEndpoint extends AbstractResourceResponse {
 
-    @GET
-    @Path("{fields:(/?[^/]+)+}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response projectAsJsonObject(@PathParam("fields") List<PathSegment> fieldList) {
+    @Path("{fields:(/?(?!array|filter)[^/]+)+}")
+    public ProjectionResource getProjection(@PathParam("fields") List<PathSegment> fieldList) {
         DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
 
         if (dataSource == null) {
-            return createErrorResponse("Keine DataSource geladen.");
+            return new ProjectionResource(null);
         }
 
-        dataSource = getProjection(fieldList, dataSource);
-
-
-        return createOkResponse(dataSource.stream(), ProjectionEndpoint::writeDataPointAsObject);
-    }
-
-    private DataSource<DataPoint> getProjection(List<PathSegment> fieldList, DataSource<DataPoint> dataSource) {
-        return dataSource
+        return new ProjectionResource(dataSource
                 .selection(dataPoint -> {
                     boolean result = true;
                     for (PathSegment pathSegment : fieldList) {
@@ -53,53 +46,8 @@ public class ProjectionEndpoint extends DataPointRestEndpoint {
                         new FieldnameProjector(
                                 new ArrayList<>(fieldList).stream()
                                         .map(PathSegment::getPath)
-                                        .toArray(String[]::new)));
+                                        .toArray(String[]::new))));
     }
 
-    @GET
-    @Path("{fields:(/?[^/]+)+}/array")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response projectAsArray(@PathParam("fields") List<PathSegment> fieldList) {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
 
-        if (dataSource == null) {
-            return createErrorResponse("Keine DataSource geladen.");
-        }
-
-        dataSource = getProjection(fieldList, dataSource);
-
-
-        return createOkResponse(dataSource.stream(), ProjectionEndpoint::writeDataPointAsArray);
-    }
-
-    @GET
-    @Path("{fields:(/?[^/]+)+}/xyobject")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response projectAsXYObject(@PathParam("fields") List<PathSegment> fieldList) {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
-
-        if (dataSource == null) {
-            return createErrorResponse("Keine DataSource geladen.");
-        }
-
-        dataSource = getProjection(fieldList, dataSource);
-        final String x = fieldList.get(0).getPath();
-        final String y = fieldList.get(1).getPath();
-        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
-
-        return createOkResponse(dataSource.stream(), (dataPoint, jsonGenerator) -> {
-            try {
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeFieldName("x");
-                jsonGenerator.writeObject(dataPoint.getOptionalValue(dataPoint.getFieldIndex(x)).orElse(""));
-                jsonGenerator.writeFieldName("y");
-                jsonGenerator.writeObject(dataPoint.getOptionalValue(dataPoint.getFieldIndex(y)).orElse(""));
-                jsonGenerator.writeFieldName("toolTipContent");
-                jsonGenerator.writeString(x + ": {x}, " + y + ": {y}, " + dateFormat.format(dataPoint.getDate()));
-                jsonGenerator.writeEndObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
 }

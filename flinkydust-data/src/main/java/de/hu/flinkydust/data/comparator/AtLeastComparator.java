@@ -12,6 +12,6 @@ public class AtLeastComparator<R extends Comparable<R>> extends DataPointCompara
 
     @Override
     protected boolean evaluate(R value, R compareValue) {
-        return value.compareTo(compareValue) >= 0;
+        return value.compareTo(compareValue) > 0;
     }
 }
