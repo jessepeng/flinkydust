@@ -18,26 +18,27 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
 
     private String field;
     private R compareValue;
-    private R missingValue;
     private Class<R> compareClass;
-    private int index;
 
-    public DataPointComparator(String field, R compareValue, R missingValue, Class<R> compareClass) {
+    public DataPointComparator(String field, R compareValue, Class<R> compareClass) {
         this.field = field;
         this.compareValue = compareValue;
-        this.missingValue = missingValue;
         this.compareClass = compareClass;
     }
 
     @Override
     public boolean test(DataPoint t) {
-        this.index = t.getFieldIndex(field);
+        int index = t.getFieldIndex(field);
         Object tupleValue;
-        if ((tupleValue = t.getOptionalValue(index).orElse(missingValue)).getClass().isAssignableFrom(compareClass)) {
-            R value = compareClass.cast(tupleValue);
-            return (evaluate(value, compareValue));
+        if (t.getOptionalValue(index).isPresent()) {
+            if ((tupleValue = t.getOptionalValue(index).get()).getClass().isAssignableFrom(compareClass)) {
+                R value = compareClass.cast(tupleValue);
+                return (evaluate(value, compareValue));
+            }
+            throw new ClassCastException("Das Feld " + field + " von Tupel " + t.toString() + " kann nicht zu Comparable gecasted werden.");
+        } else {
+            return false;
         }
-        throw new ClassCastException("Das Feld " + field + " von Tupel " + t.toString() + " kann nicht zu Comparable gecasted werden.");
     }
 
     /**
@@ -60,9 +61,9 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
             } catch (ParseException e) {
                 return null;
             }
-            return new AtLeastComparator<>(field, date, new Date(0), Date.class);
+            return new AtLeastComparator<>(field, date, Date.class);
         } else {
-            return new AtLeastComparator<>(field, Double.valueOf(compareValue), Double.MIN_VALUE, Double.class);
+            return new AtLeastComparator<>(field, Double.valueOf(compareValue), Double.class);
         }
     }
 
@@ -75,9 +76,9 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
             } catch (ParseException e) {
                 return null;
             }
-            return new LessThanComparator<>(field, date, Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)), Date.class);
+            return new LessThanComparator<>(field, date, Date.class);
         } else {
-            return new LessThanComparator<>(field, Double.valueOf(compareValue), Double.MAX_VALUE, Double.class);
+            return new LessThanComparator<>(field, Double.valueOf(compareValue), Double.class);
         }
     }
 
@@ -90,9 +91,9 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
             } catch (ParseException e) {
                 return null;
             }
-            return new SameComparator<>(field, date, Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)), Date.class);
+            return new SameComparator<>(field, date, Date.class);
         } else {
-            return new SameComparator<>(field, Double.valueOf(compareValue), Double.MAX_VALUE, Double.class);
+            return new SameComparator<>(field, Double.valueOf(compareValue), Double.class);
         }
     }
 
