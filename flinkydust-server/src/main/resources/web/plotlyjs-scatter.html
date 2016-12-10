@@ -5,160 +5,83 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <!-- Latest compiled and minified plotly.js JavaScript -->
     <script type="text/javascript" src="plotly-latest.js"></script>
 
-    <script type="text/javascript">
+    <script type="text/javascript" src="plotly-scatter.js"></script>
 
-        function refreshScatterplot() {
-            var x = $('#xAxis').val();
-            var y = $('#yAxis').val();
-
-            var graphDiv = document.getElementById('chart');
-            var dataPoints = {
-              x: [],
-              y: [],
-              mode: 'markers',
-              type: 'scattergl',
-              text: [],
-              marker: { size: 3,color:'blue'}
-            };
-
-           /* var selection = false;
-            function selectionToggle(gr, ev){
-                console.debug(gr,ev);
-
-                selection = !selection;
-
-                if(selection){
-                    var chart = $("#chart");
-                    $('.main-svg').css('pointer-events','none');
-                    chart.on('click mousedown', function(ev,gr) {
-                        ev.cancelBubble = true;
-                        ev.originalEvent.cancelBubble = true;
-                        ev.preventDefault();
-                        ev.stopPropagation();
-                        ev.stopImmediatePropagation();
-
-                        $.each(dataPoints, function(key,value){
-                            console.debug(key,value);
-
-                        });
-
-                        console.debug(ev,gr);
-                    })
-                }else{
-                    chart.off('.flinkydust');
-                }
-            }*/
-
-            $.getJSON('/rest/projection/' + x + '/' + y + '/date', function(data) {
-                $.each(data.data, function(key, value){
-                    dataPoints.x.push(value[x]);
-                    dataPoints.y.push(value[y]);
-                    //dataPoints.text.push(x + ': ' + value[x] + ', ' + y + ': ' + value[y] + ',  date: ' + value['date']);
-                    dataPoints.text.push('Date: ' + value['date']);
-                });
-
-                var layout = {
-                  xaxis: {
-                   title: x,
-                  },
-                  yaxis: {
-                    title: y
-                  },
-                  title: x + ' vs. ' + y,
-
-                };
-
-
-
-                Plotly.newPlot(graphDiv, [dataPoints], layout,
-                    {
-                        displaylogo: false,
-                       /* modeBarButtonsToAdd:[
-                            {
-                            name: 'select',
-                            title: 'Box Select',
-                            attr: 'dragmode',
-                            val: 'select',
-                            icon: Plotly.Icons.selectbox,
-                            toggle: true,
-                            click: handleCartesian
-                            }
-                        ] */
-                    }
-                );
-
-          /*      graphDiv.on('plotly_relayout', function(opt){
-                    console.debug(opt);
-                    if(opt.dragmode == 'select'){
-                        var isDragging = false;
-                        $('.gl-container <div></div>')
-                        .mousedown(function() {
-
-                            isDragging = false;
-                        })
-                        .mousemove(function() {
-                            isDragging = true;
-                         })
-                        .mouseup(function() {
-                            var wasDragging = isDragging;
-                            isDragging = false;
-                            if (!wasDragging) {
-                                console.debug('dragged');
-                                //$("#throbble").toggle();
-                            }
-                        });
-                    }
-                    else{
-
-                    }
-                });*/
-
-            });
-
-        }
-    </script>
     <title>Plotly JS Test</title>
 </head>
 <body>
-<div class="col-md-12">
+<div class="col-md-12" style="margin-bottom:50px;">
+
+        <h1 align="center">Dust Data 2014</h1>
+
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12" id="timelineContainer" style="margin-top:50px;">
+            <div class="col-md-12">
+                <h2>Timeline</h2>
+                <div class="col-md-12" id="timelineContainer" style="margin-top:50px;">
+                    <div class="timeline" style="height:80px; width:98%;">
+
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
-            <div style="margin-top:50px;"></div>
+            <div style="margin-top:50px; margin-bottom:50px;"></div>
             <div class="col-md-2">
-                <select name="xAxis" id="xAxis">
-                    <option value="date">Date</option>
-                    <option selected="selected" value="small">Small</option>
-                    <option value="large">Large</option>
-                    <option value="relHumid">Rel. Humidity</option>
-                    <option value="temp">Temperature</option>
-                </select>
-                <select name="yAxis" id="yAxis">
-                    <option value="date">Date</option>
-                    <option value="small">Small</option>
-                    <option selected="selected" value="large">Large</option>
-                    <option value="relHumid">Rel. Humidity</option>
-                    <option value="temp">Temperature</option>
-                </select>
-                <button name="refresh" onclick="refreshScatterplot()" type="button" class="btn btn-default">
-                    Refresh
-                </button>
+                <h2>Options</h2>
+                <div class="col-md-12">
+                    <label for="xAxis">x-Axis</label>
+                    <select name="xAxis" id="xAxis">
+                        <option value="date">Date</option>
+                        <option selected="selected" value="small">Small</option>
+                        <option value="large">Large</option>
+                        <option value="relHumid">Rel. Humidity</option>
+                        <option value="temp">Temperature</option>
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <label for="yAxis">y-Axis</label>
+                    <select name="yAxis" id="yAxis">
+                        <option value="date">Date</option>
+                        <option value="small">Small</option>
+                        <option selected="selected" value="large">Large</option>
+                        <option value="relHumid">Rel. Humidity</option>
+                        <option value="temp">Temperature</option>
+                    </select>
+                </div>
+                <div class="col-md-12" style="margin-top:10px;">
+                    <b>Filter:   <span style="color:blue;font-size:1.3em;cursor:pointer" onclick="addFilter()">+</span></b>
+                    <div id="filter-container">
+
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="margin-top:20px;">
+                    <button name="refresh" onclick="refreshScatterplot()" type="button" class="btn btn-default">
+                        Refresh
+                    </button>
+                </div>
+
             </div>
             <div class="col-md-10">
-                <div id="chart" style="width: 100%; height: 1000px">
+                <h2>Scatterplot</h2>
+                <div style="width: 97%; height: 600px; border:2px solid black;">
+                    <div id="chart" style="width:98%; height:98%">
+                        <div id="loading" style="display:none; position:absolute; left:44%;top:48%;">
+                            <i class='fa fa-refresh fa-spin fa-5x'></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 </body>
 </html>
