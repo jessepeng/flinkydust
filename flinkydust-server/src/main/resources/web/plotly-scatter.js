@@ -1,6 +1,7 @@
 function refreshScatterplot() {
-            $('#loading').css('display','block');
-            $('#nodata').css('display','none');
+            $('#chart').empty();
+            $('#chart').append('<div id="loading" style="display:block; position:absolute; left:44%;top:48%;"><i class="fa fa-refresh fa-spin fa-5x"></i></div><div id="nodata" style="display:none; position:absolute; left:44%;top:48%;">Sorry, no results were found for your request.</div>');
+            $('#errors').css('display','none');
             var x = $('#xAxis').val();
             var y = $('#yAxis').val();
 
@@ -8,22 +9,29 @@ function refreshScatterplot() {
             $('#filter-container .filter').each(function(){
                 var dim = $(this).find('.dimension').val();
                 var fil = $(this).find('.filterVal').val();
-
-
+                var com =  $(this).find('.comparator').val();
                 if(dim=='date'){
                     selDate = $(this).find('.filterDate').datepicker('getDate');
+                    if(selDate == null){
+                        $('#errors').text('Filter not completely set!').css({'display':'block','color':'red'});
+                        return true;
+                    }
                     mon = selDate.getMonth();
                     month = ( mon < 10)? '0' + mon : mon;
                     fil = selDate.getFullYear() + '-' + month + '-' + selDate.getDate() + '%2000:00:00';
                 }
 
+                if(dim!='' && fil!='' && com!=''){
+                    filters.push(
+                            {
+                                'dimension': dim,
+                                'comparator': com,
+                                'filterVal': fil,
+                            });
+                }else{
+                    $('#errors').text('Filter not completely set!').css({'display':'block','color':'red'});
+                }
 
-                filters.push(
-                    {
-                        'dimension': dim,
-                        'comparator': $(this).find('.comparator').val(),
-                        'filterVal': fil,
-                    });
             });
 
             var restlink = '/rest/projection/' + x + '/' + y + '/date/';
@@ -34,8 +42,6 @@ function refreshScatterplot() {
                             restlink += val.dimension + '/' + val.comparator + '/' + val.filterVal + '/';
                 });
             }
-
-
 
 
 
