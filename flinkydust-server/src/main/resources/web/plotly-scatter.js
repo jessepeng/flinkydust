@@ -1,10 +1,13 @@
 function refreshScatterplot() {
             $('#chart').empty();
-            $('#chart').append('<div id="loading" style="display:block; position:absolute; left:44%;top:48%;"><i class="fa fa-refresh fa-spin fa-5x"></i></div><div id="nodata" style="display:none; position:absolute; left:44%;top:48%;">Sorry, no results were found for your request.</div>');
+            $('#timeline').empty();
+            $('#chart').append('<div class="loading" style="display:block; position:absolute; left:44%;top:48%;"><i class="fa fa-refresh fa-spin fa-5x"></i></div><div class="nodata" style="display:none; position:absolute; left:44%;top:48%;">Sorry, no results were found for your request.</div>');
+            $('#timeline').append('<div class="loading" style="display:block; position:absolute; left:44%;top:48%;"><i class="fa fa-refresh fa-spin fa-5x"></i></div><div class="nodata" style="display:none; position:absolute; left:44%;top:48%;">Sorry, no results were found for your request.</div>');
             $('#errors').css('display','none');
+
+            // Retrieve Option values
             var x = $('#xAxis').val();
             var y = $('#yAxis').val();
-
             var filters = [];
             $('#filter-container .filter').each(function(){
                 var dim = $(this).find('.dimension').val();
@@ -34,6 +37,7 @@ function refreshScatterplot() {
 
             });
 
+            // Create REST URL
             var restlink = '/rest/projection/' + x + '/' + y + '/date/';
 
             if(filters.length > 0){
@@ -44,9 +48,19 @@ function refreshScatterplot() {
             }
 
 
-
-
+            // Create Charts
             var graphDiv = document.getElementById('chart');
+            var timelineDiv = document.getElementById('timeline');
+
+            var timelinePoints={
+                x: [],
+                y: [],
+                mode: 'markers',
+                type: 'scattergl',
+                text: [],
+                marker: {symbol:'square-open',size:20, color:'blue'}
+            };
+
             var dataPoints = {
               x: [],
               y: [],
@@ -87,17 +101,39 @@ function refreshScatterplot() {
             $.getJSON(restlink, function(data) {
 
                 $.each(data.data, function(key, value){
-                    dataPoints.x.push(value[x]);
-                    dataPoints.y.push(value[y]);
+                    var date = value['date'].slice(0,10);
+                    if(timelinePoints.x.indexOf(date) == -1){
+                        timelinePoints.x.push(date);
+                        timelinePoints.y.push(1);
+                        timelinePoints.text.push('Date:' + date);
+                    }
+                    dataPoints.x.push((x=='date')? date : value[x]);
+                    dataPoints.y.push((y=='date')? date : value[y]);
                     //dataPoints.text.push(x + ': ' + value[x] + ', ' + y + ': ' + value[y] + ',  date: ' + value['date']);
                     dataPoints.text.push('Date: ' + value['date']);
                 });
 
                 if(dataPoints.x.length == 0){
-                    $('#loading').css('display','none');
-                    $('#nodata').css('display','block');
+                    $('.loading').css('display','none');
+                    $('.nodata').css('display','block');
                     return;
                 }
+
+                var timeLineLayout = {
+                    yaxis: {range: [0,2],
+                            autorange: false,
+                            showgrid: false,
+                            zeroline: false,
+                            showline: false,
+                            autotick: true,
+                            ticks: '',
+                            showticklabels: false,
+                            fixedrange: true
+                           },
+                    xaxis: {type:'date', title:'Data Availability', fixedrange:true}
+                };
+
+                Plotly.newPlot(timelineDiv, [timelinePoints], timeLineLayout);
 
                 var layout = {
                   xaxis: {
@@ -156,7 +192,7 @@ function refreshScatterplot() {
                     }
                 });*/
 
-                $('#loading').css('display','none');
+                $('.loading').css('display','none');
             });
 
 }
