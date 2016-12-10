@@ -6,8 +6,8 @@ package de.hu.flinkydust.data.comparator;
  */
 public class SameComparator<R extends Comparable<R>> extends DataPointComparator<R> {
 
-    public SameComparator(String field, R compareValue, R missingValue, Class<R> compareClass) {
-        super(field, compareValue, missingValue, compareClass);
+    public SameComparator(String field, R compareValue, Class<R> compareClass) {
+        super(field, compareValue, compareClass);
     }
 
     @Override

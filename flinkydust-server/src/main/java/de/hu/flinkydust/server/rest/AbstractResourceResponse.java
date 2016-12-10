@@ -1,21 +1,25 @@
-package de.hu.flinkydust.server.rest.endpoint;
+package de.hu.flinkydust.server.rest;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.DataSource;
+import de.hu.flinkydust.data.comparator.DataPointComparator;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
  * Created by Jan-Christopher on 04.12.2016.
  */
-public abstract class DataPointRestEndpoint {
+public abstract class AbstractResourceResponse {
 
     /**
      * Erzeugt eine einfache Fehler Response mit der angegebenen Nachricht.
@@ -97,10 +101,6 @@ public abstract class DataPointRestEndpoint {
         }
     }
 
-    protected static void writeDataPointAsXYObject(DataPoint dataPoint, JsonGenerator jsonGenerator, String x, String y) {
-
-    }
-
     protected static void writeDataPointAsArray(DataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartArray();
@@ -136,6 +136,26 @@ public abstract class DataPointRestEndpoint {
             jsonGenerator.flush();
             jsonGenerator.close();
         }).type(MediaType.APPLICATION_JSON).build();
+    }
+
+    protected DataSource<DataPoint> filterDataSource(List<PathSegment> filterList, DataSource<DataPoint> dataSource) {
+        for (int i = 0; i < filterList.size(); i += 3) {
+            String field = filterList.get(i).getPath();
+            String op = filterList.get(i + 1).getPath();
+            String value = filterList.get(i + 2).getPath();
+            switch (op) {
+                case "atLeast":
+                    dataSource = dataSource.selection(DataPointComparator.dataPointAtLeastComparator(field, value));
+                    break;
+                case "lessThan":
+                    dataSource = dataSource.selection(DataPointComparator.dataPointLessThanComparator(field, value));
+                    break;
+                case "same":
+                    dataSource = dataSource.selection(DataPointComparator.dataPointSameComparator(field, value));
+                    break;
+            }
+        }
+        return dataSource;
     }
 
     /**

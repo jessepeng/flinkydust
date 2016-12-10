@@ -6,12 +6,12 @@ package de.hu.flinkydust.data.comparator;
  */
 public class AtLeastComparator<R extends Comparable<R>> extends DataPointComparator<R> {
 
-    public AtLeastComparator(String field, R compareValue, R missingValue, Class<R> compareClass) {
-        super(field, compareValue, missingValue, compareClass);
+    public AtLeastComparator(String field, R compareValue, Class<R> compareClass) {
+        super(field, compareValue, compareClass);
     }
 
     @Override
     protected boolean evaluate(R value, R compareValue) {
-        return value.compareTo(compareValue) >= 0;
+        return value.compareTo(compareValue) > 0;
     }
 }

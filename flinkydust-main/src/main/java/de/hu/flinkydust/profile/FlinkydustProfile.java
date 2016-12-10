@@ -108,9 +108,9 @@ public class FlinkydustProfile {
                                     printInstructions();
                                     return;
                                 }
-                                predicate = new AtLeastComparator<>(args[4], date, new Date(0), Date.class);
+                                predicate = new AtLeastComparator<>(args[4], date, Date.class);
                             } else {
-                                predicate = new AtLeastComparator<>(args[4], Double.valueOf(args[5]), Double.MIN_VALUE, Double.class);
+                                predicate = new AtLeastComparator<>(args[4], Double.valueOf(args[5]), Double.class);
                             }
                             break;
                         case "lessThan":
@@ -123,9 +123,9 @@ public class FlinkydustProfile {
                                     printInstructions();
                                     return;
                                 }
-                                predicate = new LessThanComparator<>(args[4], date, Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)), Date.class);
+                                predicate = new LessThanComparator<>(args[4], date, Date.class);
                             } else {
-                                predicate = new LessThanComparator<>(args[4], Double.valueOf(args[5]), Double.MAX_VALUE, Double.class);
+                                predicate = new LessThanComparator<>(args[4], Double.valueOf(args[5]), Double.class);
                             }
                             break;
                         case "same":
@@ -138,9 +138,9 @@ public class FlinkydustProfile {
                                     printInstructions();
                                     return;
                                 }
-                                predicate = new SameComparator<>(args[4], date, Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)), Date.class);
+                                predicate = new SameComparator<>(args[4], date, Date.class);
                             } else {
-                                predicate = new SameComparator<>(args[4], Double.valueOf(args[5]), Double.MAX_VALUE, Double.class);
+                                predicate = new SameComparator<>(args[4], Double.valueOf(args[5]), Double.class);
                             }
                             break;
                     }
