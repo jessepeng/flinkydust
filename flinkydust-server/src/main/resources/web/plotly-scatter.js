@@ -1,16 +1,28 @@
 function refreshScatterplot() {
             $('#loading').css('display','block');
-
+            $('#nodata').css('display','none');
             var x = $('#xAxis').val();
             var y = $('#yAxis').val();
 
             var filters = [];
             $('#filter-container .filter').each(function(){
+                var dim = $(this).find('.dimension').val();
+                var fil = $(this).find('.filterVal').val();
+
+
+                if(dim=='date'){
+                    selDate = $(this).find('.filterDate').datepicker('getDate');
+                    mon = selDate.getMonth();
+                    month = ( mon < 10)? '0' + mon : mon;
+                    fil = selDate.getFullYear() + '-' + month + '-' + selDate.getDate() + '%2000:00:00';
+                }
+
+
                 filters.push(
                     {
-                        'dimension': $(this).find('.dimension').val(),
+                        'dimension': dim,
                         'comparator': $(this).find('.comparator').val(),
-                        'filterVal': $(this).find('.filterVal').val(),
+                        'filterVal': fil,
                     });
             });
 
@@ -67,12 +79,19 @@ function refreshScatterplot() {
             }*/
 
             $.getJSON(restlink, function(data) {
+
                 $.each(data.data, function(key, value){
                     dataPoints.x.push(value[x]);
                     dataPoints.y.push(value[y]);
                     //dataPoints.text.push(x + ': ' + value[x] + ', ' + y + ': ' + value[y] + ',  date: ' + value['date']);
                     dataPoints.text.push('Date: ' + value['date']);
                 });
+
+                if(dataPoints.x.length == 0){
+                    $('#loading').css('display','none');
+                    $('#nodata').css('display','block');
+                    return;
+                }
 
                 var layout = {
                   xaxis: {
@@ -90,6 +109,7 @@ function refreshScatterplot() {
                 Plotly.newPlot(graphDiv, [dataPoints], layout,
                     {
                         displaylogo: false,
+                        displayModeBar: true
                        /* modeBarButtonsToAdd:[
                             {
                             name: 'select',
@@ -154,7 +174,31 @@ function addFilter(){
                  '<option value="same">equal</option>' +
                  '<option value="lessThan">less</option>' +
             '</select>' +
-            '<input class="filterVal" type="text" style="width:33%;" placeholder="Insert value"></input>' +
+            '<input class="filterVal" type="text" style="width:33%;display:inline;" placeholder="Insert value"></input>' +
+            '<input class="filterDate" type="text" style="width:33%;display:none;" placeholder="Insert value"></input>' +
         "</div>");
+    $('.dimension').on('change', function() {
+            var inputText = $(this).parent().find('.filterVal');
+            var inputDate = $(this).parent().find('.filterDate');
 
+            if($(this).val() == 'date'){
+                inputDate.datepicker({
+                    dateFormat:'yy-mm-dd',
+                    minDate: '2014-01-01',
+                    maxDate: '2015-01-01',
+                    defaultDate: '2014-01-01'
+                });
+
+                inputDate.css('display','inline');
+                inputText.css('display','none');
+            }else{
+                inputDate.css('display','none');
+                inputText.css('display','inline');
+            }
+    });
 }
+
+$(document).ready(function(){
+    $.ajax("/rest/data/loadTest");
+})
+
