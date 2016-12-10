@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 /**
  * Created by Jan-Christopher on 10.12.2016.
  */
-public class ProjectionResource extends AbstractResourceResponse {
+public class DataPointResource extends AbstractResourceResponse {
 
     private DataSource<DataPoint> dataSource;
 
-    public ProjectionResource(DataSource<DataPoint> dataSource) {
+    public DataPointResource(DataSource<DataPoint> dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -55,22 +55,7 @@ public class ProjectionResource extends AbstractResourceResponse {
         if (dataSource == null) {
             return createErrorResponse("Keine DataSource geladen.");
         }
-        for (int i = 0; i < filterList.size(); i += 3) {
-            String field = filterList.get(i).getPath();
-            String op = filterList.get(i + 1).getPath();
-            String value = filterList.get(i + 2).getPath();
-            switch (op) {
-                case "atLeast":
-                    dataSource = dataSource.selection(DataPointComparator.dataPointAtLeastComparator(field, value));
-                    break;
-                case "lessThan":
-                    dataSource = dataSource.selection(DataPointComparator.dataPointLessThanComparator(field, value));
-                    break;
-                case "same":
-                    dataSource = dataSource.selection(DataPointComparator.dataPointSameComparator(field, value));
-                    break;
-            }    
-        }
+        dataSource = filterDataSource(filterList, dataSource);
         return createOkResponse(dataSource.stream(), ProjectionEndpoint::writeDataPointAsObject);
     }
 
