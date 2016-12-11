@@ -97,7 +97,7 @@ public abstract class AbstractResourceResponse {
             });
             jsonGenerator.writeEndObject();
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractResourceResponse {
             });
             jsonGenerator.writeEndArray();
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
     }
 
