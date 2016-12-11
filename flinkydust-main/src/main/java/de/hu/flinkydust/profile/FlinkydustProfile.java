@@ -15,7 +15,6 @@ import de.hu.flinkydust.data.projector.FieldnameProjector;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -68,16 +67,16 @@ public class FlinkydustProfile {
                     switch (args[3]) {
                         case "min":
                             if (args[4].equals("date")) {
-                                aggregator = new MinAggregator<>(args[4], Date.from(Instant.ofEpochMilli(Long.MAX_VALUE)), Date.class);
+                                aggregator = new MinAggregator<>(args[4], Date.class);
                             } else {
-                                aggregator = new MinAggregator<>(args[4], Double.MAX_VALUE, Double.class);
+                                aggregator = new MinAggregator<>(args[4], Double.class);
                             }
                             break;
                         case "max":
                             if (args[4].equals("date")) {
-                                aggregator = new MaxAggregator<>(args[4], new Date(0), Date.class);
+                                aggregator = new MaxAggregator<>(args[4], Date.class);
                             } else {
-                                aggregator = new MaxAggregator<>(args[4], Double.MIN_VALUE, Double.class);
+                                aggregator = new MaxAggregator<>(args[4], Double.class);
                             }
                             break;
                         case "avg":

@@ -12,8 +12,8 @@ import de.hu.flinkydust.data.DataPoint;
  */
 public class MinAggregator<R extends Comparable<R>> extends DataPointCompareOneFieldAggregator<R> {
 
-    public MinAggregator(String field, R identity, Class<R> comparableClass) {
-        super(field, identity, comparableClass);
+    public MinAggregator(String field, Class<R> comparableClass) {
+        super(field, comparableClass);
     }
 
     @Override

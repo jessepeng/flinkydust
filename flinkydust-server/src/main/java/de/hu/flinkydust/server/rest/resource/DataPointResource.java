@@ -55,7 +55,11 @@ public class DataPointResource extends AbstractResourceResponse {
         if (dataSource == null) {
             return createErrorResponse("Keine DataSource geladen.");
         }
-        dataSource = filterDataSource(filterList, dataSource);
+        try {
+            dataSource = filterDataSource(filterList, dataSource);
+        } catch (IllegalArgumentException e) {
+            return createErrorResponse(e.getMessage());
+        }
         return createOkResponse(dataSource.stream(), ProjectionEndpoint::writeDataPointAsObject);
     }
 
