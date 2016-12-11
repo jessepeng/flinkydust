@@ -11,6 +11,7 @@ function turnOnFinishListener() {
     timelineDiv.on('plotly_finished', function (data) {
         redrawing.timeline = false;
     });
+    $('.loading').hide();
 }
 
 function turnOffFinishListener() {
@@ -99,112 +100,12 @@ function refreshScatterplot() {
                 return;
             }
 
-            var plots = createPlots(null, null, null, null);
-
-            var timeLineLayout = {
-                yaxis: {
-                    range: [0, 2],
-
-                    showgrid: false,
-                    zeroline: false,
-                    showline: false,
-                    autotick: true,
-                    ticks: '',
-                    showticklabels: false,
-                    fixedrange: true
-                },
-                xaxis: {type: 'date', title: 'Data Availability'}
-            };
-            var layout = {
-                xaxis: {
-                    title: x,
-                },
-                yaxis: {
-                    title: y
-                },
-                title: x + ' vs. ' + y,
-
-            };
-            redrawing.datapoints = true;
-            redrawing.timeline = true;
-            Plotly.newPlot(timelineDiv, [], timeLineLayout, {
-                displaylogo: false,
-                displayModeBar: true,
-                modeBarButtonsToAdd: [
-                    {
-                        name: 'select',
-                        title: 'Box Select',
-                        attr: 'dragmode',
-                        val: 'select',
-                        icon: Plotly.Icons.selectbox,
-                        toggle: true,
-                        click: function() {
-                            toggleSelectMode('timeline');
-                        }
-                    }
-                ]
-            }).then(function() {
-                Plotly.newPlot(graphDiv, [], layout,
-                    {
-                        displaylogo: false,
-                        displayModeBar: true,
-                        modeBarButtonsToAdd: [
-                            {
-                                name: 'select',
-                                title: 'Box Select',
-                                attr: 'dragmode',
-                                val: 'select',
-                                icon: Plotly.Icons.selectbox,
-                                toggle: true,
-                                click: function () {
-                                    toggleSelectMode('datapoints');
-                                }
-                            }
-                        ]
-                    }
-                )
-            }).then(function () {
-                timelineDiv.on('plotly_relayout', function (data) {
-                    select(data, 'timeline');
-                });
-                graphDiv.on('plotly_relayout', function (data) {
-                    select(data, 'datapoints');
-                });
-                Plotly.addTraces(graphDiv, [plots.dataPoints]);
-                redrawing.datapoints = true;
-            }).then(function () {
-                Plotly.addTraces(timelineDiv, [plots.timelinePoints]);
-                redrawing.timeline = true;
-            }).then(function () {
-                //Add history
-                var historyDiv = document.createElement("div");
-                historyDiv.style.width = "97%";
-                historyDiv.style.height = "400px";
-                historyDiv.className = "row";
-
-                var divHistoryChart = document.createElement("div");
-                divHistoryChart.style.width = "47%";
-                divHistoryChart.style.height = "400px";
-                divHistoryChart.className = "col-md-12";
-
-                Plotly.newPlot(divHistoryChart, [], layout,
-                    {
-                        displaylogo: false,
-                        displayModeBar: true
-                    }
-                );
-
-                Plotly.addTraces(divHistoryChart, [plots.dataPoints]);
-
-                historyDiv.appendChild(divHistoryChart);
-
-                var divHistoryTimeline = document.createElement("div");
-                divHistoryTimeline.style.width = "47%";
-                divHistoryTimeline.style.height = "400px";
-                divHistoryTimeline.className = "col-md-12";
+            createPlots(null, null, null, null, false, function(data) {
+                var plots = data;
 
                 var timeLineLayout = {
-                    yaxis: {range: [0,2],
+                    yaxis: {
+                        range: [0, 2],
 
                         showgrid: false,
                         zeroline: false,
@@ -214,25 +115,128 @@ function refreshScatterplot() {
                         showticklabels: false,
                         fixedrange: true
                     },
-                    xaxis: {type:'date', title:'Data Availability'}
+                    xaxis: {type: 'date', title: 'Data Availability'}
                 };
+                var layout = {
+                    xaxis: {
+                        title: x,
+                    },
+                    yaxis: {
+                        title: y
+                    },
+                    title: x + ' vs. ' + y,
 
-                Plotly.newPlot(divHistoryTimeline, [], timeLineLayout);
+                };
+                redrawing.datapoints = true;
+                redrawing.timeline = true;
+                Plotly.newPlot(timelineDiv, [], timeLineLayout, {
+                    displaylogo: false,
+                    displayModeBar: true,
+                    modeBarButtonsToAdd: [
+                        {
+                            name: 'select',
+                            title: 'Box Select',
+                            attr: 'dragmode',
+                            val: 'select',
+                            icon: Plotly.Icons.selectbox,
+                            toggle: true,
+                            click: function() {
+                                toggleSelectMode('timeline');
+                            }
+                        }
+                    ]
+                }).then(function() {
+                    Plotly.newPlot(graphDiv, [], layout,
+                        {
+                            displaylogo: false,
+                            displayModeBar: true,
+                            modeBarButtonsToAdd: [
+                                {
+                                    name: 'select',
+                                    title: 'Box Select',
+                                    attr: 'dragmode',
+                                    val: 'select',
+                                    icon: Plotly.Icons.selectbox,
+                                    toggle: true,
+                                    click: function () {
+                                        toggleSelectMode('datapoints');
+                                    }
+                                }
+                            ]
+                        }
+                    )
+                }).then(function () {
+                    timelineDiv.on('plotly_relayout', function (data) {
+                        select(data, 'timeline');
+                    });
+                    graphDiv.on('plotly_relayout', function (data) {
+                        select(data, 'datapoints');
+                    });
+                    Plotly.addTraces(graphDiv, [plots.dataPoints]);
+                    redrawing.datapoints = true;
+                }).then(function () {
+                    Plotly.addTraces(timelineDiv, [plots.timelinePoints]);
+                    redrawing.timeline = true;
+                }).then(function () {
+                    //Add history
+                    var historyDiv = document.createElement("div");
+                    historyDiv.style.width = "97%";
+                    historyDiv.style.height = "400px";
+                    historyDiv.className = "row";
 
-                Plotly.addTraces(divHistoryTimeline, [plots.timelinePoints]);
+                    var divHistoryChart = document.createElement("div");
+                    divHistoryChart.style.width = "47%";
+                    divHistoryChart.style.height = "400px";
+                    divHistoryChart.className = "col-md-12";
 
-                historyDiv.appendChild(divHistoryTimeline);
-                document.getElementById("history").appendChild(historyDiv);
-            }).then(function() {
-                loading.hide();
-                turnOnFinishListener();
+                    Plotly.newPlot(divHistoryChart, [], layout,
+                        {
+                            displaylogo: false,
+                            displayModeBar: true
+                        }
+                    );
+
+                    Plotly.addTraces(divHistoryChart, [plots.dataPoints]);
+
+                    historyDiv.appendChild(divHistoryChart);
+
+                    var divHistoryTimeline = document.createElement("div");
+                    divHistoryTimeline.style.width = "47%";
+                    divHistoryTimeline.style.height = "400px";
+                    divHistoryTimeline.className = "col-md-12";
+
+                    var timeLineLayout = {
+                        yaxis: {range: [0,2],
+
+                            showgrid: false,
+                            zeroline: false,
+                            showline: false,
+                            autotick: true,
+                            ticks: '',
+                            showticklabels: false,
+                            fixedrange: true
+                        },
+                        xaxis: {type:'date', title:'Data Availability'}
+                    };
+
+                    Plotly.newPlot(divHistoryTimeline, [], timeLineLayout);
+
+                    Plotly.addTraces(divHistoryTimeline, [plots.timelinePoints]);
+
+                    historyDiv.appendChild(divHistoryTimeline);
+                    document.getElementById("history").appendChild(historyDiv);
+                }).then(function() {
+                    loading.hide();
+                    turnOnFinishListener();
+                });
             });
         }
     });
 
 }
 
-function createPlots(lowerX, upperX, lowerY, upperY, compareDates) {
+function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
+    var minX, minY, maxX, maxY;
     var selection = (lowerX != null && upperX != null && lowerY != null && upperY != null);
     var dataPoints = {
         x: [],
@@ -271,60 +275,96 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates) {
             marker: {symbol: 'square', size: 10, color: 'blue'},
             name: 'Selected'
         };
+
+        if (!compareDates) {
+            $.getJSON(createAggregationUrl(x, 'min'), function(data) {
+                minX = data.data[0][x];
+                $.getJSON(createAggregationUrl(x, 'max'), function(data) {
+                    maxX = data.data[0][x];
+                    $.getJSON(createAggregationUrl(y, 'min'), function(data) {
+                        minY = data.data[0][y];
+                        $.getJSON(createAggregationUrl(y, 'max'), function(data) {
+                            maxY = data.data[0][y];
+                            callback(preparePlots());
+                        })
+                    })
+                })
+            });
+
+            return;
+        }
     }
-    $.each(restData, function (key, value) {
-        var date = value['date'].slice(0, 10);
-        if (selection) {
-            var xValue = value[x];
-            var yValue = value[y];
-            if (compareDates) {
-                var dateSplit = date.split('-');
-                var dateObject = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2]);
-                var lowerXSplit = lowerX.slice(0, 10).split('-');
-                var compareDateLower = new Date(lowerXSplit[0], lowerXSplit[1] - 1, lowerXSplit[2]);
-                var upperXSplit = upperX.slice(0, 10).split('-');
-                var compareDateUpper = new Date(upperXSplit[0], upperXSplit[1] - 1, upperXSplit[2]);
-                if (dateObject >= compareDateLower && dateObject <= compareDateUpper) {
-                    dataPointsSelected.x.push((x == 'date') ? date :xValue);
-                    dataPointsSelected.y.push((y == 'date') ? date : yValue);
-                    dataPointsSelected.text.push('Date: ' + value['date']);
-                    if (timelinePointsSelected.x.indexOf(date) == -1) {
-                        timelinePointsSelected.x.push(date);
-                        timelinePointsSelected.y.push(1);
-                        timelinePointsSelected.text.push('Date:' + date);
+
+    function createAggregationUrl(field, op) {
+        return '/rest/aggregation/' + op + '/' + field + '/filter/' + x + '/atLeast/' + lowerX + '/' + x + '/lessThan/' + upperX + '/' + y + '/atLeast/' + lowerY + '/' + y + '/lessThan/' + upperY;
+    }
+
+    function preparePlots() {
+        $.each(restData, function (key, value) {
+            var date = value['date'].slice(0, 10);
+            if (selection) {
+                var xValue = value[x];
+                var yValue = value[y];
+                if (compareDates) {
+                    var dateSplit = date.split('-');
+                    var dateObject = new Date(dateSplit[0], dateSplit[1] - 1, dateSplit[2]);
+                    var lowerXSplit = lowerX.slice(0, 10).split('-');
+                    var compareDateLower = new Date(lowerXSplit[0], lowerXSplit[1] - 1, lowerXSplit[2]);
+                    var upperXSplit = upperX.slice(0, 10).split('-');
+                    var compareDateUpper = new Date(upperXSplit[0], upperXSplit[1] - 1, upperXSplit[2]);
+                    if (dateObject > compareDateLower && dateObject < compareDateUpper) {
+                        dataPointsSelected.x.push((x == 'date') ? date : xValue);
+                        dataPointsSelected.y.push((y == 'date') ? date : yValue);
+                        dataPointsSelected.text.push('Date: ' + value['date']);
+                        if (timelinePointsSelected.x.indexOf(date) == -1) {
+                            timelinePointsSelected.x.push(date);
+                            timelinePointsSelected.y.push(1);
+                            timelinePointsSelected.text.push('Date:' + date);
+                        }
+                        return;
                     }
-                    return;
-                }
-            } else {
-                if (xValue >= lowerX && xValue <= upperX && yValue >= lowerY && yValue <= upperY) {
-                    dataPointsSelected.x.push((x == 'date') ? date :xValue);
-                    dataPointsSelected.y.push((y == 'date') ? date : yValue);
-                    dataPointsSelected.text.push('Date: ' + value['date']);
-                    if (timelinePointsSelected.x.indexOf(date) == -1) {
-                        timelinePointsSelected.x.push(date);
-                        timelinePointsSelected.y.push(1);
-                        timelinePointsSelected.text.push('Date:' + date);
+                } else {
+                    if (xValue > lowerX && xValue < upperX && yValue > lowerY && yValue < upperY) {
+                        dataPointsSelected.x.push((x == 'date') ? date : xValue);
+                        dataPointsSelected.y.push((y == 'date') ? date : yValue);
+                        dataPointsSelected.text.push('Date: ' + value['date']);
+                        if (timelinePointsSelected.x.indexOf(date) == -1) {
+                            timelinePointsSelected.x.push(date);
+                            timelinePointsSelected.y.push(1);
+                            timelinePointsSelected.text.push('Date:' + date);
+                        }
+                        return;
                     }
-                    return;
                 }
             }
+            dataPoints.x.push((x == 'date') ? date : value[x]);
+            dataPoints.y.push((y == 'date') ? date : value[y]);
+            dataPoints.text.push('Date: ' + value['date']);
+            if (timelinePoints.x.indexOf(date) == -1) {
+                timelinePoints.x.push(date);
+                timelinePoints.y.push(1);
+                timelinePoints.text.push('Date:' + date);
+            }
+        });
+        if (selection) {
+            $.each(dataPointsSelected.text, function(key, value) {
+                var tooltipText = value;
+                tooltipText += ', Points Selected: ' + dataPointsSelected.x.length;
+                if (typeof maxX !== 'undefined' && typeof maxY !== 'undefined' && typeof minX !== 'undefined' && typeof minY !== 'undefined') {
+                    tooltipText += ', Min ' + x + ': ' + minX + ', Max ' + x + ': ' + maxX + ', Min ' + y + ': ' + minY + ', Max ' + y + ': ' + maxY;
+                }
+                dataPointsSelected.text[key] = tooltipText;
+            });
         }
-        dataPoints.x.push((x == 'date') ? date : value[x]);
-        dataPoints.y.push((y == 'date') ? date : value[y]);
-        dataPoints.text.push('Date: ' + value['date']);
-        if (timelinePoints.x.indexOf(date) == -1) {
-            timelinePoints.x.push(date);
-            timelinePoints.y.push(1);
-            timelinePoints.text.push('Date:' + date);
-        }
-    });
-    return {
-        dataPoints: dataPoints,
-        dataPointsSelected: dataPointsSelected,
-        timelinePoints: timelinePoints,
-        timelinePointsSelected: timelinePointsSelected
-    };
+        return {
+            dataPoints: dataPoints,
+            dataPointsSelected: dataPointsSelected,
+            timelinePoints: timelinePoints,
+            timelinePointsSelected: timelinePointsSelected
+        };
+    }
 
+    callback(preparePlots());
 }
 
 function select(data, chart) {
@@ -360,28 +400,34 @@ function select(data, chart) {
         });
     }
 
+    var createPlotsCallback = function(data) {
+        plots = data;
+        redrawing.timeline = true;
+        redrawing.datapoints = true;
+        turnOffFinishListener();
+        try {
+            Plotly.deleteTraces(graphDiv, [0, 1]).then(function () {
+                Plotly.deleteTraces(timelineDiv, [0, 1]);
+            }).then(addTraces);
+        } catch (err) {
+            Plotly.deleteTraces(graphDiv, 0).then(function () {
+                Plotly.deleteTraces(timelineDiv, 0);
+            }).then(addTraces);
+        }
+    };
+
     if (selectMode[chart] && !redrawing[chart]) {
+        $('.loading').show();
         var graphDiv = document.getElementById('chart');
         var timelineDiv = document.getElementById('timeline');
         var autosize = (typeof data["xaxis.autorange"] !== 'undefined') || (typeof data["yaxis.autorange"] !== 'undefined');
         var plots;
         if (autosize) {
-            plots = createPlots(null, null, null, null);
+            createPlots(null, null, null, null, (chart === "timeline"), createPlotsCallback);
         } else {
-            plots = createPlots(data.xaxis[0], data.xaxis[1], data.yaxis[0], data.yaxis[1], (chart === "timeline"));
+            createPlots(data.xaxis[0], data.xaxis[1], data.yaxis[0], data.yaxis[1], (chart === "timeline"), createPlotsCallback);
         }
-        redrawing.timeline = true;
-        redrawing.datapoints = true;
-        turnOffFinishListener();
-        try {
-            Plotly.deleteTraces(graphDiv, [0, 1]).then(function() {
-                Plotly.deleteTraces(timelineDiv, [0, 1]);
-            }).then(addTraces);
-        } catch (err) {
-            Plotly.deleteTraces(graphDiv, 0).then(function() {
-                Plotly.deleteTraces(timelineDiv, 0);
-            }).then(addTraces);
-        }
+
     }
 }
 
