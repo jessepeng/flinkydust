@@ -96,7 +96,22 @@
                 <version>2.1.1</version>
                 <configuration>
                     <warSourceDirectory>src/main/resources/web</warSourceDirectory>
+                    <archive>
+                        <manifest>
+                            <mainClass>de.hu.flinkydust.server.main.Server</mainClass>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>default-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -128,6 +143,33 @@
                             <outputScope>false</outputScope>
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>classes-copy</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <tasks>
+                                <move todir="${project.build.directory}/${project.artifactId}-${project.version}/de">
+                                    <fileset dir="${project.build.directory}/classes/de">
+                                        <include name="**/*.class" />
+                                    </fileset>
+                                </move>
+                                <move todir="${project.build.directory}/${project.artifactId}-${project.version}/web">
+                                    <fileset dir="${project.build.directory}/classes/web" />
+                                </move>
+                                <move todir="${project.build.directory}/${project.artifactId}-${project.version}/data">
+                                    <fileset dir="${project.build.directory}/classes/data" />
+                                </move>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

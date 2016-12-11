@@ -1,6 +1,5 @@
 echo "Usage: startup.sh <port>"
-
-java -jar flinkydust-server-2.0.war "$@"
+echo
 
 if [ -z "$1" ]
 	then
@@ -8,3 +7,9 @@ if [ -z "$1" ]
 else
 	echo "Open your browser and go to http://localhost:$1/"
 fi
+
+echo
+echo "Starting server..."
+echo
+
+java -classpath "flinkydust-server-2.0.war;../lib/*;" de.hu.flinkydust.server.main.Server "$@"
