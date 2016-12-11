@@ -48,27 +48,7 @@ function refreshScatterplot() {
             }
 
 
-            // Create Charts
-            var graphDiv = document.getElementById('chart');
-            var timelineDiv = document.getElementById('timeline');
 
-            var timelinePoints={
-                x: [],
-                y: [],
-                mode: 'markers',
-                type: 'scattergl',
-                text: [],
-                marker: {symbol:'square-open',size:20, color:'blue'}
-            };
-
-            var dataPoints = {
-              x: [],
-              y: [],
-              mode: 'markers',
-              type: 'scattergl',
-              text: [],
-              marker: { size: 3,color:'blue'}
-            };
 
            /* var selection = false;
             function selectionToggle(gr, ev){
@@ -98,6 +78,29 @@ function refreshScatterplot() {
                 }
             }*/
 
+
+            // Create Charts
+            var graphDiv = document.getElementById('chart');
+            var timelineDiv = document.getElementById('timeline');
+
+            var timelinePoints={
+                x: [],
+                y: [],
+                mode: 'markers',
+                type: 'scattergl',
+                text: [],
+                marker: {symbol:'square',size:10, color:'blue'}
+            };
+
+            var dataPoints = {
+              x: [],
+              y: [],
+              mode: 'markers',
+              type: 'scattergl',
+              text: [],
+              marker: { size: 3,color:'blue'}
+            };
+
             $.getJSON(restlink, function(data) {
 
                 $.each(data.data, function(key, value){
@@ -121,7 +124,7 @@ function refreshScatterplot() {
 
                 var timeLineLayout = {
                     yaxis: {range: [0,2],
-                            autorange: false,
+
                             showgrid: false,
                             zeroline: false,
                             showline: false,
@@ -130,7 +133,7 @@ function refreshScatterplot() {
                             showticklabels: false,
                             fixedrange: true
                            },
-                    xaxis: {type:'date', title:'Data Availability', fixedrange:true}
+                    xaxis: {type:'date', title:'Data Availability'}
                 };
 
                 Plotly.newPlot(timelineDiv, [timelinePoints], timeLineLayout);
