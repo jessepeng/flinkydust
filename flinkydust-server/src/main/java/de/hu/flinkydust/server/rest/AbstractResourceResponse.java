@@ -2,6 +2,7 @@ package de.hu.flinkydust.server.rest;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.DataSource;
@@ -91,13 +92,12 @@ public abstract class AbstractResourceResponse {
                         jsonGenerator.writeFieldName(fieldIndexEntry.getKey());
                         jsonGenerator.writeObject(optionalValue.get());
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
             });
             jsonGenerator.writeEndObject();
-        } catch (IOException e) {
-
+        } catch (IOException | RuntimeException e) {
         }
     }
 
@@ -110,13 +110,12 @@ public abstract class AbstractResourceResponse {
                     try {
                         jsonGenerator.writeObject(optionalValue.get());
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
             });
             jsonGenerator.writeEndArray();
-        } catch (IOException e) {
-
+        } catch (IOException | RuntimeException e) {
         }
     }
 
