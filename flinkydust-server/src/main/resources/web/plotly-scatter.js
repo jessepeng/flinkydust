@@ -50,7 +50,7 @@ function refreshScatterplot() {
 
 
 
-           /* var selection = false;
+            /* var selection = false;
             function selectionToggle(gr, ev){
                 console.debug(gr,ev);
 
@@ -196,6 +196,50 @@ function refreshScatterplot() {
                 });*/
 
                 $('.loading').css('display','none');
+
+                //Add history
+                var historyDiv = document.createElement("div");
+                historyDiv.style.width = "97%";
+                historyDiv.style.height = "400px";
+                historyDiv.className = "row";
+
+                var divHistoryChart = document.createElement("div");
+                divHistoryChart.style.width = "47%";
+                divHistoryChart.style.height = "400px";
+                divHistoryChart.className = "col-md-12";
+
+                Plotly.newPlot(divHistoryChart, [dataPoints], layout,
+                    {
+                        displaylogo: false,
+                        displayModeBar: true
+                    }
+                );
+
+                historyDiv.appendChild(divHistoryChart);
+
+                var divHistoryTimeline = document.createElement("div");
+                divHistoryTimeline.style.width = "47%";
+                divHistoryTimeline.style.height = "400px";
+                divHistoryTimeline.className = "col-md-12";
+
+                var timeLineLayout = {
+                    yaxis: {range: [0,2],
+
+                        showgrid: false,
+                        zeroline: false,
+                        showline: false,
+                        autotick: true,
+                        ticks: '',
+                        showticklabels: false,
+                        fixedrange: true
+                    },
+                    xaxis: {type:'date', title:'Data Availability'}
+                };
+
+                Plotly.newPlot(divHistoryTimeline, [timelinePoints], timeLineLayout);
+
+                historyDiv.appendChild(divHistoryTimeline);
+                document.getElementById("history").appendChild(historyDiv);
             });
 
 }
