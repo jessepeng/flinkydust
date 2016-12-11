@@ -52,14 +52,14 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
      */
     protected abstract boolean evaluate(R value, R compareValue);
 
-    public static AtLeastComparator<?> dataPointAtLeastComparator(String field, String compareValue) {
+    public static AtLeastComparator<?> dataPointAtLeastComparator(String field, String compareValue) throws IllegalArgumentException {
         if (field.equals("date")) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date date;
             try {
                 date = dateFormat.parse(compareValue);
             } catch (ParseException e) {
-                return null;
+                throw new IllegalArgumentException("Date could not be parsed.");
             }
             return new AtLeastComparator<>(field, date, Date.class);
         } else {
@@ -67,14 +67,14 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
         }
     }
 
-    public static LessThanComparator<?> dataPointLessThanComparator(String field, String compareValue) {
+    public static LessThanComparator<?> dataPointLessThanComparator(String field, String compareValue) throws IllegalArgumentException {
         if (field.equals("date")) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date date;
             try {
                 date = dateFormat.parse(compareValue);
             } catch (ParseException e) {
-                return null;
+                throw new IllegalArgumentException("Date could not be parsed.");
             }
             return new LessThanComparator<>(field, date, Date.class);
         } else {
@@ -82,14 +82,14 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
         }
     }
 
-    public static SameComparator<?> dataPointSameComparator(String field, String compareValue) {
+    public static SameComparator<?> dataPointSameComparator(String field, String compareValue) throws IllegalArgumentException {
         if (field.equals("date")) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date date;
             try {
                 date = dateFormat.parse(compareValue);
             } catch (ParseException e) {
-                return null;
+                throw new IllegalArgumentException("Date could not be parsed.");
             }
             return new SameComparator<>(field, date, Date.class);
         } else {

@@ -138,7 +138,7 @@ public abstract class AbstractResourceResponse {
         }).type(MediaType.APPLICATION_JSON).build();
     }
 
-    protected DataSource<DataPoint> filterDataSource(List<PathSegment> filterList, DataSource<DataPoint> dataSource) {
+    protected DataSource<DataPoint> filterDataSource(List<PathSegment> filterList, DataSource<DataPoint> dataSource) throws IllegalArgumentException {
         for (int i = 0; i < filterList.size(); i += 3) {
             String field = filterList.get(i).getPath();
             String op = filterList.get(i + 1).getPath();

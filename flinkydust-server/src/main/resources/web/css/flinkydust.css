@@ -1,0 +1,59 @@
+.timelineContainer {
+    width: 97%;
+    height: 200px;
+    border:1px solid black;
+
+}
+
+.timelineContainer #timeline {
+    height:98%;
+    width:98%;
+}
+
+.col-margin-top {
+    margin-top: 10px;
+}
+
+.col-margin-large-top {
+    margin-top: 20px;
+}
+
+.col-margin-bottom {
+    margin-bottom: 50px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.filter-button {
+    color:blue;
+    font-size:1.3em;
+    cursor:pointer;
+}
+
+.errors {
+    margin-top:20px;
+    color:red;
+    padding:5px;
+}
+
+#chart {
+    width: 97%;
+    height: 600px;
+    border:1px solid black;
+}
+
+.loading {
+    display:block;
+    position:absolute;
+    left:44%;
+    top:48%;
+}
+
+.nodata {
+    display:none;
+    position:absolute;
+    left:44%;
+    top:48%;
+}
