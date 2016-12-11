@@ -219,8 +219,8 @@ var filterCnt = 0;
 function addFilter() {
     filterCnt += 1;
     $('#filter-container').append(
-        '<div class="col-md-12 filter" style="margin-top:5px;padding:0;">' +
-        '<select class="dimension" name="filter' + filterCnt + '" style="width:32%;margin-right:1%;" id="filter' + filterCnt + '">' +
+        '<div class="col-md-12 filter" id="filter-' + filterCnt + '">' +
+        '<select class="dimension" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
         '<option value="" disabled selected>Dimension</option>' +
         '<option value="date">Date</option>' +
         '<option value="small">Small</option>' +
@@ -228,15 +228,16 @@ function addFilter() {
         '<option value="relHumid">Rel. Humidity</option>' +
         '<option value="temp">Temperature</option>' +
         '</select>' +
-        '<select class="comparator" name="comparator' + filterCnt + '" style="width:32%;margin-right:1%;" id="comparator' + filterCnt + '">' +
+        '<select class="comparator" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
         '<option value="" disabled selected>Comparator</option>' +
         '<option value="atLeast">greater</option>' +
         '<option value="same">equal</option>' +
         '<option value="lessThan">less</option>' +
         '</select>' +
-        '<input class="filterVal" type="text" style="width:33%;display:inline;" placeholder="Insert value"></input>' +
-        '<input class="filterDate" type="text" style="width:33%;display:none;" placeholder="Insert value"></input>' +
-        "</div>");
+        '<input class="filterVal" type="text" placeholder="Insert value">' +
+        '<input class="filterDate" type="text" placeholder="Insert value">' +
+        '<span class="filter-button" onclick="removeFilter(' + filterCnt + ')">-</span>' +
+        '</div>');
     $('.dimension').on('change', function () {
         var inputText = $(this).parent().find('.filterVal');
         var inputDate = $(this).parent().find('.filterDate');
@@ -258,7 +259,10 @@ function addFilter() {
     });
 }
 
+function removeFilter(id) {
+    $("#filter-" + id).remove();
+}
+
 $(document).ready(function () {
     $.ajax("/rest/data/loadTest");
-})
-
+});
