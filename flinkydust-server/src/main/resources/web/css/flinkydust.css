@@ -10,6 +10,15 @@
     width: 98%;
 }
 
+.historyContainer {
+    width: 97%;
+}
+
+.historyContainer #history {
+    height:98%;
+    width:98%;
+}
+
 .col-margin-top {
     margin-top: 10px;
 }
