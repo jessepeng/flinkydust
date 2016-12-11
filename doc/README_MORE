@@ -1,8 +1,13 @@
 Eigene Leistungen und Bibliothekenverwendung:
 - Schreiben von Interfaces
 - Verwendung von Java 8 Streams. 
-- Von Flink wird ledglich der "Tuple"-Klassenbaum genutzt. Um diesen herum wird eine DataPoint klasse gebildet.
 - eigene ReadFile-Implementation mittels Java Buffered Reader
 - eigene Implementation der Aggregatoren, Komparatoren
 - eigene Implementation der Projektion, Selektion und Aggregation
 - eigene Implementation der Datengenerierung und des Profiling
+
+
+M3:
+- Verwendung der Lib Plotly.js. 
+- Eigene Implementierung von Selektion (da in der WebGL-Variante nicht vorhanden)
+- Eigene History Implementierung

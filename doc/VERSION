@@ -8,3 +8,11 @@ v1.0:
 
 Known Issues:
 -
+
+
+
+v2.0:
+- Visualisierungen (Scatterplot + Timeline)
+
+Known Issues:
+- Die Achsenbeschriftung in den Graphen ist doppelt (aufgrund Selektionsimplementation)
