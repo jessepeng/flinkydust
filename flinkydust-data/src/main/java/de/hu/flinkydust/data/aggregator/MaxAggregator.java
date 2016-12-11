@@ -12,8 +12,8 @@ import de.hu.flinkydust.data.DataPoint;
  */
 public class MaxAggregator<R extends Comparable<R>> extends DataPointCompareOneFieldAggregator<R> {
 
-    public MaxAggregator(String field, R identity, Class<R> comparableClass) {
-        super(field, identity, comparableClass);
+    public MaxAggregator(String field, Class<R> comparableClass) {
+        super(field, comparableClass);
     }
 
     @Override

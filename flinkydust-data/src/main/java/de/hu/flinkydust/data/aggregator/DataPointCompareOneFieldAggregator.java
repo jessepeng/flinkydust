@@ -10,25 +10,28 @@ public abstract class DataPointCompareOneFieldAggregator<R extends Comparable<R>
 
     private String field;
     private Class<R> comparableClass;
-    private R missingValue;
-    private int index;
 
-    public DataPointCompareOneFieldAggregator(String field, R missingValue, Class<R> comparableClass) {
+    public DataPointCompareOneFieldAggregator(String field, Class<R> comparableClass) {
         super(new DataPoint());
         this.comparableClass = comparableClass;
         this.field = field;
-        this.missingValue = missingValue;
     }
 
     @Override
     public DataPoint reduce(DataPoint value1, DataPoint value2) {
-        this.index = value1.getFieldIndex(field);
+        int index = value1.getFieldIndex(field);
         Object field1;
         Object field2;
         R number1, number2;
-        if ((field1 = value1.getOptionalValue(index).orElse(missingValue)).getClass().isAssignableFrom(comparableClass)) {
+        if (!value1.getOptionalValue(index).isPresent()) {
+            return value2;
+        }
+        if (!value2.getOptionalValue(index).isPresent()) {
+            return value1;
+        }
+        if ((field1 = value1.getOptionalValue(index).get()).getClass().isAssignableFrom(comparableClass)) {
             number1 = comparableClass.cast(field1);
-            if ((field2 = value2.getOptionalValue(index).orElse(missingValue)).getClass().isAssignableFrom(comparableClass)) {
+            if ((field2 = value2.getOptionalValue(index).get()).getClass().isAssignableFrom(comparableClass)) {
                 number2 = comparableClass.cast(field2);
             } else {
                 throw new ClassCastException("Das Feld " + field + " von Tupel " + value2.toString() + " kann nicht zu Comparable gecasted werden.");
