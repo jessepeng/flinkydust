@@ -23,7 +23,7 @@ public class StreamDataSourceTest {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        DataSource<DataPoint> minLarge = dataSource.aggregation(new MinAggregator<>("large", 0.0, Double.class));
+        DataSource<DataPoint> minLarge = dataSource.aggregation(new MinAggregator<>("large", Double.class));
 
         System.out.println("MinAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
@@ -41,7 +41,7 @@ public class StreamDataSourceTest {
         long timeBefore = System.nanoTime();
         DataSource<DataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
         long timeAfter = System.nanoTime();
-        DataSource<DataPoint> maxSmall = dataSource.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        DataSource<DataPoint> maxSmall = dataSource.aggregation(new MaxAggregator<>("small", Double.class));
 
         System.out.println("MaxAggregation Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
@@ -130,7 +130,7 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> multipleOperatorsDataSource = dataSource
                 .selection(new AtLeastComparator<>("small", 100.0, Double.class))
                 .selection(new LessThanComparator<>("small", 500.0, Double.class))
-                .aggregation(new MaxAggregator<>("large", 0.0, Double.class));
+                .aggregation(new MaxAggregator<>("large", Double.class));
 
         System.out.println("Multiple Operators Read File: Elapsed seconds: " + ((timeAfter - timeBefore) / 1000000000.0));
 
@@ -155,7 +155,7 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> projection1 = dataSource1.projection(new FieldnameProjector(projectionTarget));
 
         dataSource1 = StreamDataSource.generateRandomData(1000);
-        DataSource<DataPoint> maxSmall1 = dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        DataSource<DataPoint> maxSmall1 = dataSource1.aggregation(new MaxAggregator<>("small", Double.class));
 
         long timeAfter10k = System.nanoTime();
 
@@ -169,7 +169,7 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> projection2 = dataSource2.projection(new FieldnameProjector(projectionTarget));
 
         dataSource2 = StreamDataSource.generateRandomData(10000);
-        DataSource<DataPoint> maxSmall2 = dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        DataSource<DataPoint> maxSmall2 = dataSource2.aggregation(new MaxAggregator<>("small", Double.class));
         long timeAfter100k = System.nanoTime();
 
         System.out.println("The time in s to generate " + 100000 + " random DataPoint objects and select, project and aggregate: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
@@ -183,7 +183,7 @@ public class StreamDataSourceTest {
         DataSource<DataPoint> projection3 = dataSource3.projection(new FieldnameProjector(projectionTarget));
 
         dataSource3 = StreamDataSource.generateRandomData(100000);
-        DataSource<DataPoint> maxSmall3 = dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class));
+        DataSource<DataPoint> maxSmall3 = dataSource3.aggregation(new MaxAggregator<>("small", Double.class));
         long timeAfter1000k = System.nanoTime();
 
         System.out.println("The time in s to generate " + 1000000 + " random DataPoint objects and select, project and aggregate: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
@@ -255,7 +255,7 @@ public class StreamDataSourceTest {
     public void testProfileRandomNumbersAggregation() throws Exception {
         DataSource<DataPoint> dataSource1 = StreamDataSource.generateRandomData(10000);
         long timeBefore10k = System.nanoTime();
-        dataSource1.aggregation(new MaxAggregator<>("small", 0.0, Double.class)).collect();
+        dataSource1.aggregation(new MaxAggregator<>("small", Double.class)).collect();
         long timeAfter10k = System.nanoTime();
 
         System.out.println("The time in s to aggregate " + 10000 + " random DataPoint objects: " + String.valueOf((timeAfter10k - timeBefore10k) / 1000000000.0));
@@ -263,7 +263,7 @@ public class StreamDataSourceTest {
 
         DataSource<DataPoint> dataSource2 = StreamDataSource.generateRandomData(100000);
         long timeBefore100k = System.nanoTime();
-        dataSource2.aggregation(new MaxAggregator<>("small", 0.0, Double.class)).collect();
+        dataSource2.aggregation(new MaxAggregator<>("small", Double.class)).collect();
         long timeAfter100k = System.nanoTime();
 
         System.out.println("The time in s to aggregate " + 100000 + " random DataPoint objects: " + String.valueOf((timeAfter100k - timeBefore100k) / 1000000000.0));
@@ -271,7 +271,7 @@ public class StreamDataSourceTest {
 
         DataSource<DataPoint> dataSource3 = StreamDataSource.generateRandomData(1000000);
         long timeBefore1000k = System.nanoTime();
-        dataSource3.aggregation(new MaxAggregator<>("small", 0.0, Double.class)).collect();
+        dataSource3.aggregation(new MaxAggregator<>("small", Double.class)).collect();
         long timeAfter1000k = System.nanoTime();
 
         System.out.println("The time in s to aggregate " + 1000000 + " random DataPoint objects: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
