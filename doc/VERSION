@@ -1,3 +1,5 @@
+—————————————Milestone 2
+
 v1.0: 
 - Bereistellung eines Interfaces für die DataSource
 - Implementierung der DataSource (selection und aggregation)
@@ -9,7 +11,7 @@ v1.0:
 Known Issues:
 -
 
-
+—————————————Milestone 3
 
 v2.0:
 - Visualisierungen (Scatterplot + Timeline)
