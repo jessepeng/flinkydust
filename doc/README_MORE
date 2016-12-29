@@ -1,0 +1,17 @@
+————————Milestone 2
+
+Eigene Leistungen und Bibliothekenverwendung:
+- Schreiben von Interfaces
+- Verwendung von Java 8 Streams. 
+- eigene ReadFile-Implementation mittels Java Buffered Reader
+- eigene Implementation der Aggregatoren, Komparatoren
+- eigene Implementation der Projektion, Selektion und Aggregation
+- eigene Implementation der Datengenerierung und des Profiling
+
+————————Milestone 3
+
+- Verwendung der Lib Plotly.js (https://plot.ly). 
+- Eigene Implementierung von Selektion (da in der WebGL-Variante nicht vorhanden)
+- Eigene Implementierung der Filter
+- Eigene History Implementierung
+- Eigene Anpassungen des in Plotly.js enthaltenen automatischen Zooms

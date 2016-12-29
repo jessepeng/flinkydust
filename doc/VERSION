@@ -1,0 +1,20 @@
+—————————————Milestone 2
+
+v1.0: 
+- Bereistellung eines Interfaces für die DataSource
+- Implementierung der DataSource (selection und aggregation)
+- Implementierung von Komparatoren (atLeast, lessThan, same) 
+- Implementierung von Aggregatoren (min und max)
+- Definieren und Implementieren von Test-Cases
+- Profiling
+
+Known Issues:
+-
+
+—————————————Milestone 3
+
+v2.0:
+- Visualisierungen (Scatterplot + Timeline)
+
+Known Issues:
+- Die Achsenbeschriftung in den Graphen ist doppelt (aufgrund Selektionsimplementation)
