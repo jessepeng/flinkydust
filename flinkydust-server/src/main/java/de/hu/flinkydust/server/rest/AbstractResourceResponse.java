@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.DataSource;
+import de.hu.flinkydust.data.StreamDataSource;
 import de.hu.flinkydust.data.comparator.DataPointComparator;
 
 import javax.ws.rs.core.MediaType;
@@ -13,8 +14,10 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -138,23 +141,56 @@ public abstract class AbstractResourceResponse {
     }
 
     protected DataSource<DataPoint> filterDataSource(List<PathSegment> filterList, DataSource<DataPoint> dataSource) throws IllegalArgumentException {
+        List<DataPoint> dataList = dataSource.collect();
+        DataSource<DataPoint> retSource = new StreamDataSource<DataPoint>(dataList);
         for (int i = 0; i < filterList.size(); i += 3) {
             String field = filterList.get(i).getPath();
             String op = filterList.get(i + 1).getPath();
             String value = filterList.get(i + 2).getPath();
             switch (op) {
                 case "atLeast":
-                    dataSource = dataSource.selection(DataPointComparator.dataPointAtLeastComparator(field, value));
+                    retSource = retSource.selection(DataPointComparator.dataPointAtLeastComparator(field, value));
                     break;
                 case "lessThan":
-                    dataSource = dataSource.selection(DataPointComparator.dataPointLessThanComparator(field, value));
+                    retSource = retSource.selection(DataPointComparator.dataPointLessThanComparator(field, value));
                     break;
                 case "same":
-                    dataSource = dataSource.selection(DataPointComparator.dataPointSameComparator(field, value));
+                    retSource = retSource.selection(DataPointComparator.dataPointSameComparator(field, value));
                     break;
             }
+
+            // AND - criteria is inherently contained
+            // OR - criteria has to be added
+            if(i+7 <= filterList.size()){
+                while("or".equals(filterList.get(i+3).getPath())){
+                    String field1 = filterList.get(i+4).getPath();
+                    String op1 = filterList.get(i+5).getPath();
+                    String value1 = filterList.get(i+6).getPath();
+
+                    DataSource<DataPoint> tempSource = new StreamDataSource<DataPoint>(dataList);
+                    switch (op1) {
+                        case "atLeast":
+                            tempSource = tempSource.selection(DataPointComparator.dataPointAtLeastComparator(field1, value1));
+                            break;
+                        case "lessThan":
+                            tempSource = tempSource.selection(DataPointComparator.dataPointLessThanComparator(field1, value1));
+                            break;
+                        case "same":
+                            tempSource = tempSource.selection(DataPointComparator.dataPointSameComparator(field1, value1));
+                            break;
+                    }
+                    retSource = new StreamDataSource<DataPoint>(Stream.concat(tempSource.stream(),retSource.stream()));
+
+                    i += 4;
+                    if(i+3 >= filterList.size()){
+                        break;
+                    }
+                }
+            }
+
+
         }
-        return dataSource;
+        return retSource;
     }
 
     /**

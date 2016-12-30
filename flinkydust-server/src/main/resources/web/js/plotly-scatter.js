@@ -37,9 +37,9 @@ function refreshScatterplot() {
     var filters = [];
     var filterError = false;
     $('#filter-container .filter').each(function () {
-        var dim = $(this).find('.dimension').val();
-        var fil = $(this).find('.filterVal').val();
-        var com = $(this).find('.comparator').val();
+        var dim = $(this).children('.dimension').val();
+        var fil = $(this).children('.filterVal').val();
+        var com = $(this).children('.comparator').val();
         if (dim == 'date') {
             var selDate = $(this).find('.filterDate').datepicker('getDate');
             if (selDate == null) {
@@ -51,12 +51,33 @@ function refreshScatterplot() {
                  + " " + ("0" + selDate.getHours()).slice(-2) + ":" + ("0" + selDate.getMinutes()).slice(-2) + ":" + ("0" + selDate.getSeconds()).slice(-2);
         }
 
+        var or = '';
+        $(this).children('.subfilter').each(function(){
+            var dim1 = $(this).children('.dimension').val();
+            var fil1 = $(this).children('.filterVal').val();
+            var com1 = $(this).children('.comparator').val();
+            if (dim1 == 'date') {
+                var selDate = $(this).find('.filterDate').datepicker('getDate');
+                if (selDate == null) {
+                    $('.errors').text('Filter not completely set!');
+                    filterError = true;
+                    return;
+                }
+                fil1 = selDate.getFullYear() + "-" +  ("0" + (selDate.getMonth() + 1)).slice(-2) +"-" + ("0" + selDate.getDate()).slice(-2)
+                     + " " + ("0" + selDate.getHours()).slice(-2) + ":" + ("0" + selDate.getMinutes()).slice(-2) + ":" + ("0" + selDate.getSeconds()).slice(-2);
+            }
+
+            if (dim1 != '' && fil1 != '' && com1 != '') {
+                or += "or/" + dim1 + '/' + com1 + '/' + fil1 + '/';
+            }
+        });
         if (dim != '' && fil != '' && com != '') {
             filters.push(
                 {
                     'dimension': dim,
                     'comparator': com,
                     'filterVal': fil,
+                    'subFilters' : or
                 });
         } else {
             $('.errors').text('Filter not completely set!');
@@ -79,7 +100,7 @@ function refreshScatterplot() {
     if (filters.length > 0) {
         restlink += 'filter/';
         $.each(filters, function (key, val) {
-            restlink += val.dimension + '/' + val.comparator + '/' + val.filterVal + '/';
+            restlink += val.dimension + '/' + val.comparator + '/' + val.filterVal + '/' + val.subFilters;
         });
     }
 
@@ -442,47 +463,98 @@ function addFilter() {
     filterCnt += 1;
     $('#filter-container').append(
         '<div class="col-md-12 filter" id="filter-' + filterCnt + '">' +
-        '<select class="dimension" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
-        '<option value="" disabled selected>Dimension</option>' +
-        '<option value="date">Date</option>' +
-        '<option value="small">Small</option>' +
-        '<option value="large">Large</option>' +
-        '<option value="relHumid">Rel. Humidity</option>' +
-        '<option value="temp">Temperature</option>' +
-        '</select>' +
-        '<select class="comparator" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
-        '<option value="" disabled selected>Comparator</option>' +
-        '<option value="atLeast">greater</option>' +
-        '<option value="same">equal</option>' +
-        '<option value="lessThan">less</option>' +
-        '</select>' +
-        '<input class="filterVal" type="text" placeholder="Insert value">' +
-        '<input class="filterDate" type="text" placeholder="Insert value">' +
-        '<span class="filter-button" onclick="removeFilter(' + filterCnt + ')">-</span>' +
+            '<select class="dimension" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
+                '<option value="" disabled selected>Dimension</option>' +
+                '<option value="date">Date</option>' +
+                '<option value="small">Small</option>' +
+                '<option value="large">Large</option>' +
+                '<option value="relHumid">Rel. Humidity</option>' +
+                '<option value="temp">Temperature</option>' +
+            '</select>' +
+            '<select class="comparator" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
+                '<option value="" disabled selected>Comparator</option>' +
+                '<option value="atLeast">greater</option>' +
+                '<option value="same">equal</option>' +
+                '<option value="lessThan">less</option>' +
+            '</select>' +
+            '<input class="filterVal" type="text" placeholder="Insert value">' +
+            '<input class="filterDate" type="text" placeholder="Insert value">' +
+            '<span style="width:49%;margin-right:1%;">' +
+                '<span class="filter-delete" onclick="removeFilter(' + filterCnt + ')">x</span>' +
+                '<span class="filter-button" onclick="addOrToFilter(' + filterCnt + ')">Add "or"</span>' +
+            '</span>' +
         '</div>');
-    $('.dimension').on('change', function () {
-        var inputText = $(this).parent().find('.filterVal');
-        var inputDate = $(this).parent().find('.filterDate');
 
-        if ($(this).val() == 'date') {
-            inputDate.datepicker({
-                dateFormat: 'yy-mm-dd',
-                minDate: '2014-01-01',
-                maxDate: '2015-01-01',
-                defaultDate: '2014-01-01'
+        $('.dimension').on('change', function () {
+                var inputText = $(this).parent().find('.filterVal');
+                var inputDate = $(this).parent().find('.filterDate');
+
+                if ($(this).val() == 'date') {
+                    inputDate.datepicker({
+                        dateFormat: 'yy-mm-dd',
+                        minDate: '2014-01-01',
+                        maxDate: '2015-01-01',
+                        defaultDate: '2014-01-01'
+                    });
+
+                    inputDate.css('display', 'inline');
+                    inputText.css('display', 'none');
+                } else {
+                    inputDate.css('display', 'none');
+                    inputText.css('display', 'inline');
+                }
             });
-
-            inputDate.css('display', 'inline');
-            inputText.css('display', 'none');
-        } else {
-            inputDate.css('display', 'none');
-            inputText.css('display', 'inline');
-        }
-    });
 }
 
 function removeFilter(id) {
     $("#filter-" + id).remove();
+}
+
+function addOrToFilter(id) {
+    filterCnt += 1;
+    $("#filter-" + id).append(
+    '<div id="filter-' + filterCnt + '" class="subfilter">' +
+        '<select class="dimension" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
+            '<option value="" disabled selected>Dimension</option>' +
+            '<option value="date">Date</option>' +
+            '<option value="small">Small</option>' +
+            '<option value="large">Large</option>' +
+            '<option value="relHumid">Rel. Humidity</option>' +
+            '<option value="temp">Temperature</option>' +
+        '</select>' +
+        '<select class="comparator" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
+            '<option value="" disabled selected>Comparator</option>' +
+            '<option value="atLeast">greater</option>' +
+            '<option value="same">equal</option>' +
+            '<option value="lessThan">less</option>' +
+        '</select>' +
+        '<input class="filterVal" type="text" placeholder="Insert value">' +
+        '<input class="filterDate" type="text" placeholder="Insert value">' +
+        '<span style="width:49%;margin-right:1%;text-align:right;">' +
+            '<span class="filter-delete" onclick="removeFilter(' + filterCnt + ')">x</span>' +
+        '</span>' +
+    '</div>'
+     );
+
+     $('.dimension').on('change', function () {
+             var inputText = $(this).parent().find('.filterVal');
+             var inputDate = $(this).parent().find('.filterDate');
+
+             if ($(this).val() == 'date') {
+                 inputDate.datepicker({
+                     dateFormat: 'yy-mm-dd',
+                     minDate: '2014-01-01',
+                     maxDate: '2015-01-01',
+                     defaultDate: '2014-01-01'
+                 });
+
+                 inputDate.css('display', 'inline');
+                 inputText.css('display', 'none');
+             } else {
+                 inputDate.css('display', 'none');
+                 inputText.css('display', 'inline');
+             }
+         });
 }
 
 $(document).ready(function () {

@@ -38,7 +38,7 @@ public class AggregationEndpoint extends AbstractResourceResponse {
     }
 
     @GET
-    @Path("/{method:(max|min|avg)}/{field}/filter/{filter:(/?[^/]+/(atLeast|lessThan|same)/[^/]+)+}")
+    @Path("/{method:(max|min|avg)}/{field}/filter/{filter:(/?[^/]+/(atLeast|lessThan|same)/[^/]+(/or/[^/]+/(atLeast|lessThan|same)/[^/]+)*)+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response filterAggregation(@PathParam("method") String method, @PathParam("field") String field, @PathParam("filter") List<PathSegment> filterList) {
         DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);

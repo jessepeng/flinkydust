@@ -49,7 +49,7 @@ public class DataPointResource extends AbstractResourceResponse {
     }
 
     @GET
-    @Path("/filter/{filter:(/?[^/]+/(atLeast|lessThan|same)/[^/]+)+}")
+    @Path("/filter/{filter:(/?[^/]+/(atLeast|lessThan|same)/[^/]+(/or/[^/]+/(atLeast|lessThan|same)/[^/]+)*)+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response filter(@PathParam("filter") List<PathSegment> filterList) {
         if (dataSource == null) {

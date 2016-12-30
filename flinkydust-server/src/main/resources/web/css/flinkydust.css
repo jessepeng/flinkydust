@@ -35,11 +35,6 @@ h1 {
     text-align: center;
 }
 
-.filter-button {
-    color: blue;
-    font-size: 1.3em;
-    cursor: pointer;
-}
 
 .errors {
     margin-top: 20px;
@@ -75,16 +70,17 @@ h1 {
 
 .filter {
     margin-top: 5px;
-    padding: 0;
+    padding: 5px;
+    background-color:#ededed;
 }
 
 .filter select {
-    width: 31%;
+    width: 49%;
     margin-right: 1%;
 }
 
 .filter input {
-    width: 32%;
+    width: 49%;
     margin-right: 1%;
 }
 
@@ -94,4 +90,26 @@ h1 {
 
 .filter input.filterDate {
     display: none;
+}
+
+.filter-button {
+    color: blue;
+    cursor: pointer;
+    font-weight:bold;
+    float:right;
+    margin-right:10px;
+}
+
+.filter-delete {
+    color: red;
+    cursor: pointer;
+    font-weight:bold;
+    float:right;
+    margin-right:10px;
+}
+
+.subfilter{
+    width:90%;
+    margin-left:10%;
+    margin-top:10px;
 }
