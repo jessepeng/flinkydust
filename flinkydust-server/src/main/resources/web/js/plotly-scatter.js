@@ -557,6 +557,124 @@ function addOrToFilter(id) {
          });
 }
 
+
+
+function refreshClusters(){
+    $('#cluster-container').empty();
+    var days = $('#days').val();
+    var hours = $('#hours').val();
+    var minutes = $('#minutes').val();
+
+    var clusters = $('#clusternum').val();
+
+    // Create REST URL
+    var restlink = '/rest/clustering/' + days + '/' + hours + '/' +minutes + '/' + clusters;
+
+    // Create Charts
+    var clusterNum = parseInt(clusters);
+    var widthPercent = (clusterNum < 3)? 100 / clusterNum : 33;
+    var heightPercent = 100 / Math.max(1, Math.floor((clusterNum / 3)));
+
+    for(var i = 1; i <= clusterNum; i++){
+        addHistogram(i, widthPercent, heightPercent);
+    }
+
+//    $.getJSON(restlink, function (data) {
+//        if (data.status !== "ok") {
+//            $(".errors").text(data.message);
+//            loading.hide();
+//        } else {
+//            restData = data.data;
+//
+//            if (restData.length == 0) {
+//                loading.hide();
+//                $('.nodata').show();
+//                return;
+//            }
+//        }
+//
+//        for(var i = 0; i< clusterNum; i++){
+//             var dataPoints = {
+//                x: restData[i].x,
+//                y: restData[i].y,
+//                type: 'histogram'
+//               // text: [],
+//               // marker: {size: 3, color: selection ? 'grey' : 'blue'},
+//             };
+//            var id = 'cluster' + i+1;
+//            Plotly.newPlot(id, dataPoints);
+//        }
+//    });
+
+            var yVals = [];
+            for(var i = 0; i<31;i++){
+                yVals[i] = Math.floor(Math.random() * (25));
+            }
+
+            var xVals = ['0.25','0.28','0.3','0.35','0.4','0.45','0.5','0.58','0.65','0.7','0.8','1','1.3','1.6','2','2.5','3','3.5','4','5','6.5','7.5','8','10','12.5','15','17.5','20','25','30','32'];
+
+            for(var i = 0; i < clusterNum; i++){
+                 var dataPoints = [{
+                      x: xVals,
+                      y: yVals,
+                      type: 'bar',
+                      marker: {
+                        color: 'rgb(158,202,225)',
+                        opacity: 0.6,
+                        line: {
+                          color: 'rbg(8,48,107)',
+                          width: 1.5
+                        }
+                      }
+                 }];
+
+//                 var annotationContent = [];
+                 var layout = {
+                       title: 'Cluster ' + (i+1),
+                       xaxis: {
+                         title: 'Grain Size',
+                         type: 'category',
+                         fixedrange: true,
+                         tickangle: -90
+                       },
+                       yaxis: {
+                            title: 'Vol (%)',
+                            fixedrange: true
+                       },
+                       margin: {
+                            t: 60
+                       }
+
+//                       annotations: annotationContent
+                 };
+
+//                 for( var j = 0 ; j < xVals.length ; j++ ){
+//                       var result = {
+//                         x: xVals[j],
+//                         y: yVals[j],
+//                         text: yVals[j],
+//                         xanchor: 'center',
+//                         yanchor: 'bottom',
+//                         showarrow: false
+//                       };
+//                       annotationContent.push(result);
+//                 }
+
+                var id = 'cluster' + (i+1);
+                Plotly.newPlot(id, dataPoints, layout, {displayModeBar: false});
+            }
+
+
+}
+
+
+function addHistogram(id, width, height) {
+    $('#cluster-container').append(
+        '<div class="cluster-div" id="cluster' + id + '" style="width:' + width + '%; height: ' + height + '%; float:left;" >' +
+        '</div>');
+}
+
+
 $(document).ready(function () {
     $.ajax("/rest/data/loadTest");
 });

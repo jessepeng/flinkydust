@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="css/flinkydust.css">
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
@@ -25,7 +26,6 @@
 </head>
 <body>
 <div class="col-md-12 col-margin-bottom">
-
     <h1>Dust Data 2014</h1>
 
     <div class="container-fluid">
@@ -38,68 +38,137 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2 col-margin-top">
-                <h2>Options</h2>
-                <div class="col-md-12">
-                    <label for="xAxis">x-Axis</label>
-                    <select name="xAxis" id="xAxis">
-                        <option value="date">Date</option>
-                        <option selected="selected" value="small">Small</option>
-                        <option value="large">Large</option>
-                        <option value="relHumid">Rel. Humidity</option>
-                        <option value="temp">Temperature</option>
-                    </select>
-                </div>
-                <div class="col-md-12">
-                    <label for="yAxis">y-Axis</label>
-                    <select name="yAxis" id="yAxis">
-                        <option value="date">Date</option>
-                        <option value="small">Small</option>
-                        <option selected="selected" value="large">Large</option>
-                        <option value="relHumid">Rel. Humidity</option>
-                        <option value="temp">Temperature</option>
-                    </select>
-                </div>
-                <div class="col-md-12 col-margin-top">
-                    <b>Filter: <span class="filter-button" onclick="addFilter()">Add "and" Filter</span></b>
-                    <div id="filter-container">
+        <div class="row" style="margin-top:20px;">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#scatter" aria-controls="scatter" role="tab"
+                                                          data-toggle="tab">Scatterplot</a></li>
+                <li role="presentation"><a href="#cluster" aria-controls="cluster" role="tab" data-toggle="tab">Clustering</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="scatter">
+
+                <div class="row">
+                    <div class="col-md-2 col-margin-top">
+                        <h2>Options</h2>
+                        <div class="col-md-12">
+                            <label for="xAxis">x-Axis</label>
+                            <select name="xAxis" id="xAxis">
+                                <option value="date">Date</option>
+                                <option selected="selected" value="small">Small</option>
+                                <option value="large">Large</option>
+                                <option value="relHumid">Rel. Humidity</option>
+                                <option value="temp">Temperature</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="yAxis">y-Axis</label>
+                            <select name="yAxis" id="yAxis">
+                                <option value="date">Date</option>
+                                <option value="small">Small</option>
+                                <option selected="selected" value="large">Large</option>
+                                <option value="relHumid">Rel. Humidity</option>
+                                <option value="temp">Temperature</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 col-margin-top">
+                            <b>Filter: <span class="filter-button" onclick="addFilter()">Add "and" Filter</span></b>
+                            <div id="filter-container">
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-margin-large-top">
+                            <button name="refresh" onclick="refreshScatterplot()" type="button" class="btn btn-default">
+                                Refresh
+                            </button>
+                        </div>
+
+                        <div class="col-md-12 errors">
+
+                        </div>
 
                     </div>
+                    <div class="col-md-10">
+                        <h2>Scatterplot</h2>
+                        <div class="chart-container">
+                            <div id="chart">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="col-md-12 col-margin-large-top">
-                    <button name="refresh" onclick="refreshScatterplot()" type="button" class="btn btn-default">
-                        Refresh
-                    </button>
+                <div id="scatterHistory" class="row">
+                    <div class="col-md-12 col-margin-large-top">
+                        <h2>History</h2>
+                        <div class="historyContainer">
+                            <div>
+                                <div id="history">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="col-md-12 errors">
-
-                </div>
-
             </div>
-            <div class="col-md-10">
-                <h2>Scatterplot</h2>
-                <div class="chart-container">
-                    <div id="chart">
+            <div role="tabpanel" class="tab-pane" id="cluster">
+                <div class="row">
+
+                    <div class="col-md-1 col-margin-top">
+                        <h2>Options</h2>
+
+                        <div class="col-md-12 padleft0">
+                            <span><b>Time Aggreg.:</b></span><br>
+
+                            <div class="col-md-7 padleft0" style="margin-top:6px;">
+                            <label for="days">Days</label>
+                            </div>
+                            <div class="col-md-5 nopad" style="margin-top:6px;">
+                            <input id="days" class="clusterinput" type="text" value="0"><br>
+                            </div>
+
+                            <div class="col-md-7 padleft0">
+                            <label for="hours">Hours</label>
+                            </div>
+                            <div class="col-md-5 nopad">
+                            <input id="hours" class="clusterinput" type="text" value="6"><br>
+                            </div>
+
+                            <div class="col-md-7 padleft0">
+                            <label for="minutes">Minutes</label>
+                            </div>
+                            <div class="col-md-5 nopad">
+                            <input id="minutes" class="clusterinput" type="text" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-12 padleft0">
+                            <br>
+                            <label for="clusternum">Clusters:</label>
+                            <input id="clusternum" class="clusterinput" type="text" value="2">
+                        </div>
+
+                        <div class="col-md-12 padleft0 col-margin-large-top">
+                            <button name="refreshCluster" onclick="refreshClusters()" type="button" class="btn btn-default">
+                                Refresh
+                            </button>
+                        </div>
+
+                        <div class="col-md-12 errors">
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-11">
+                        <div id="cluster-container">
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 col-margin-large-top">
-            <h2>History</h2>
-            <div class="historyContainer">
-                <div>
-                    <div id="history">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
 </div>
 </body>
 </html>

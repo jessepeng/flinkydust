@@ -35,6 +35,10 @@ h1 {
     text-align: center;
 }
 
+h3 {
+    font-size:20px;
+}
+
 
 .errors {
     margin-top: 20px;
@@ -111,5 +115,22 @@ h1 {
 .subfilter{
     width:90%;
     margin-left:10%;
+    margin-top:10px;
+}
+
+.padleft0{
+    padding-left: 0px;
+}
+
+.nopad{
+    padding-left: 0px;
+       padding-right:0px;
+}
+
+.clusterinput{
+    width: 100%;
+}
+
+#cluster{
     margin-top:10px;
 }
