@@ -572,11 +572,22 @@ function refreshClusters(){
 
     // Create Charts
     var clusterNum = parseInt(clusters);
+
     var widthPercent = (clusterNum < 3)? 100 / clusterNum : 33;
     var heightPercent = 100 / Math.max(1, Math.floor((clusterNum / 3)));
 
+    var docWidth = $(document).width() - 100;
+    var docHeight = $(window).height();
+    var perSide = Math.ceil(Math.sqrt(clusterNum));
+
+//    var widthPx = (clusterNum < 3)? docWidth / clusterNum : docWidth / 3;
+//    var heightPx = docHeight/2;
+
+    var widthPx = docWidth / perSide;
+    var heightPx = docHeight/ perSide;
+
     for(var i = 1; i <= clusterNum; i++){
-        addHistogram(i, widthPercent, heightPercent);
+        addHistogram(i, widthPx, heightPx);
     }
 
 //    $.getJSON(restlink, function (data) {
@@ -605,6 +616,7 @@ function refreshClusters(){
 //            Plotly.newPlot(id, dataPoints);
 //        }
 //    });
+
 
             var yVals = [];
             for(var i = 0; i<31;i++){
@@ -641,6 +653,10 @@ function refreshClusters(){
                             title: 'Vol (%)',
                             fixedrange: true
                        },
+                         autosize: false,
+                         width: widthPx,
+                         height: heightPx,
+
                        margin: {
                             t: 60
                        }
@@ -670,10 +686,13 @@ function refreshClusters(){
 
 function addHistogram(id, width, height) {
     $('#cluster-container').append(
-        '<div class="cluster-div" id="cluster' + id + '" style="width:' + width + '%; height: ' + height + '%; float:left;" >' +
+        '<div class="cluster-div" id="cluster' + id + '" style="width:' + width + 'px; height: ' + height + 'px; float:left;" >' +
         '</div>');
 }
 
+window.onresize = function() {
+    Plotly.Plots.resize(gd);
+};
 
 $(document).ready(function () {
     $.ajax("/rest/data/loadTest");

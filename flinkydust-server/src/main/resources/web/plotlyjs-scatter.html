@@ -114,51 +114,26 @@
             <div role="tabpanel" class="tab-pane" id="cluster">
                 <div class="row">
 
-                    <div class="col-md-1 col-margin-top">
-                        <h2>Options</h2>
-
-                        <div class="col-md-12 padleft0">
-                            <span><b>Time Aggreg.:</b></span><br>
-
-                            <div class="col-md-7 padleft0" style="margin-top:6px;">
-                            <label for="days">Days</label>
-                            </div>
-                            <div class="col-md-5 nopad" style="margin-top:6px;">
-                            <input id="days" class="clusterinput" type="text" value="0"><br>
-                            </div>
-
-                            <div class="col-md-7 padleft0">
-                            <label for="hours">Hours</label>
-                            </div>
-                            <div class="col-md-5 nopad">
-                            <input id="hours" class="clusterinput" type="text" value="6"><br>
-                            </div>
-
-                            <div class="col-md-7 padleft0">
-                            <label for="minutes">Minutes</label>
-                            </div>
-                            <div class="col-md-5 nopad">
-                            <input id="minutes" class="clusterinput" type="text" value="0">
-                            </div>
-                        </div>
-                        <div class="col-md-12 padleft0">
-                            <br>
+                    <div class="col-md-12 col-margin-top">
+                        <div class="col-md-12" style="margin-top:6px;">
+                            <span><b>Time Aggregation:</b></span>&nbsp;&nbsp;&nbsp;
+                            <label for="days">Days</label>&nbsp;
+                            <input id="days" class="clusterinput" type="text" value="0">&nbsp;&nbsp;&nbsp;
+                            <label for="hours">Hours</label>&nbsp;
+                            <input id="hours" class="clusterinput" type="text" value="6">&nbsp;&nbsp;&nbsp;
+                            <label for="minutes">Minutes</label>&nbsp;
+                            <input id="minutes" class="clusterinput" type="text" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <label for="clusternum">Clusters:</label>
-                            <input id="clusternum" class="clusterinput" type="text" value="2">
-                        </div>
-
-                        <div class="col-md-12 padleft0 col-margin-large-top">
+                            <input id="clusternum" class="clusterinput" type="text" value="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <button name="refreshCluster" onclick="refreshClusters()" type="button" class="btn btn-default">
                                 Refresh
                             </button>
                         </div>
-
-                        <div class="col-md-12 errors">
-
-                        </div>
-
                     </div>
-                    <div class="col-md-11">
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <div id="cluster-container">
 
                         </div>
