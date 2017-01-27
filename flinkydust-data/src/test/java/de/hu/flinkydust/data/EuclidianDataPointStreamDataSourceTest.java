@@ -22,4 +22,11 @@ public class EuclidianDataPointStreamDataSourceTest {
         assertThat(clusterList.size(), Is.is(1));
     }
 
+    @Test
+    public void testRandomClustering() throws Exception {
+        EuclidianDataPointDataSource<DataPoint> dataSource = EuclidianDataPointStreamDataSource.generateRandomData(100);
+        List<Cluster<DataPoint>> clusterList = dataSource.hierarchicalCentroidClustering(1);
+        assertThat(clusterList.size(), Is.is(1));
+    }
+
 }

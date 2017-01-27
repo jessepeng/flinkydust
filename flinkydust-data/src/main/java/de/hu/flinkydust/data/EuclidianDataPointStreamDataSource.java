@@ -5,6 +5,7 @@ import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -25,6 +26,16 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
 
     public static EuclidianDataPointDataSource<DataPoint> readFile(String path) throws IOException {
         return new EuclidianDataPointStreamDataSource<>(parseFile(path));
+    }
+
+    public static EuclidianDataPointDataSource<DataPoint> generateRandomData(Integer size) {
+        List<DataPoint> dataPoints = new LinkedList<>();
+
+        for (int i = 0; i < size; i++) {
+            dataPoints.add(generateRandomTuple());
+        }
+
+        return new EuclidianDataPointStreamDataSource<>(dataPoints.stream());
     }
 
     @Override
