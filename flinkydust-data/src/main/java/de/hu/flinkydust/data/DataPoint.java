@@ -1,5 +1,6 @@
 package de.hu.flinkydust.data;
 
+import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 import de.hu.flinkydust.data.tuple.Tuple5;
 
 import java.util.Date;
@@ -12,7 +13,7 @@ import java.util.Optional;
  *
  * Created by Jan-Christopher on 19.11.2016.
  */
-public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>> {
+public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional<Double>, Optional<Double>, Optional<Double>> implements EuclidianDistanceDataPoint {
 
     private static Map<String, Integer> fieldIndexMap = new HashMap<>();
 
@@ -78,5 +79,31 @@ public class DataPoint extends Tuple5<Optional<Date>, Optional<Double>, Optional
                 || getOptionalValue(2).isPresent()
                 || getOptionalValue(3).isPresent()
                 || getOptionalValue(4).isPresent();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public double[] getAllDimensions() {
+        double[] dimensions = new double[2];
+        for (int i = 1; i < 3; i++) {
+            dimensions[i - 1] = ((Optional<Double>)getField(i)).orElse(0.0);
+        }
+        return dimensions;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public double getDimension(int index) {
+        return ((Optional<Double>)getField(index + 1)).orElse(0.0);
+    }
+
+    @Override
+    public void setDimension(int index, double value) {
+        setField(Optional.ofNullable(value), index + 1);
+    }
+
+    @Override
+    public int getDimensionCount() {
+        return 2;
     }
 }

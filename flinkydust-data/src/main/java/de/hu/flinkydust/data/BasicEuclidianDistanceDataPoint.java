@@ -1,6 +1,6 @@
 package de.hu.flinkydust.data;
 
-import de.hu.flinkydust.data.point.EuclidianDistanceMeasurableDataPoint;
+import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 
 import java.util.Arrays;
 
@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * Created by Jan-Christopher on 27.01.2017.
  */
-public class BasicEuclidianDistanceDataPoint implements EuclidianDistanceMeasurableDataPoint {
+public class BasicEuclidianDistanceDataPoint implements EuclidianDistanceDataPoint {
 
     private double[] dimensions;
 

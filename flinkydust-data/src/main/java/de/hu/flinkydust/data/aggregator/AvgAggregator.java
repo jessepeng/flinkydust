@@ -2,6 +2,7 @@ package de.hu.flinkydust.data.aggregator;
 
 import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.DataSource;
+
 import java.util.Optional;
 
 /**
@@ -61,7 +62,5 @@ public class AvgAggregator implements AggregatorFunction<DataPoint> {
             this.f0 = f0;
             this.f1 = f1;
         }
-
-
     }
 }

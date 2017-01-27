@@ -7,7 +7,7 @@ package de.hu.flinkydust.data.point;
  *
  * Created by Jan-Christopher on 27.01.2017.
  */
-public interface DistanceMeasurableDataPoint<T extends DistanceMeasurableDataPoint<T>> {
+public interface DistanceDataPoint<T extends DistanceDataPoint<T>> {
 
     /**
      * Gibt die Distanz zu einem anderen Punkt zurück

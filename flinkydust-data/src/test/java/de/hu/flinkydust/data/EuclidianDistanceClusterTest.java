@@ -1,7 +1,7 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.cluster.Cluster;
-import de.hu.flinkydust.data.point.EuclidianDistanceMeasurableDataPoint;
+import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
@@ -18,16 +18,16 @@ public class EuclidianDistanceClusterTest {
 
     @Test
     public void testCentroid() {
-        EuclidianDistanceMeasurableDataPoint dataPoint1 = new BasicEuclidianDistanceDataPoint(-1.0, 10.0, 3.0);
-        EuclidianDistanceMeasurableDataPoint dataPoint2 = new BasicEuclidianDistanceDataPoint(0.0, 5.0, 2.0);
-        EuclidianDistanceMeasurableDataPoint dataPoint3 = new BasicEuclidianDistanceDataPoint(1.0, 20.0, 10.0);
+        EuclidianDistanceDataPoint dataPoint1 = new BasicEuclidianDistanceDataPoint(-1.0, 10.0, 3.0);
+        EuclidianDistanceDataPoint dataPoint2 = new BasicEuclidianDistanceDataPoint(0.0, 5.0, 2.0);
+        EuclidianDistanceDataPoint dataPoint3 = new BasicEuclidianDistanceDataPoint(1.0, 20.0, 10.0);
 
-        List<EuclidianDistanceMeasurableDataPoint> dataPointList = new ArrayList<>();
+        List<EuclidianDistanceDataPoint> dataPointList = new ArrayList<>();
         dataPointList.addAll(Arrays.asList(dataPoint1, dataPoint2, dataPoint3));
 
-        Cluster<EuclidianDistanceMeasurableDataPoint> cluster = new EuclidianDistanceCluster(dataPointList);
+        Cluster<EuclidianDistanceDataPoint> cluster = new EuclidianDistanceCluster<>(dataPointList);
 
-        EuclidianDistanceMeasurableDataPoint centroid = cluster.getCentroid();
+        EuclidianDistanceDataPoint centroid = cluster.getCentroid();
         assertThat(centroid.getDimension(0), Is.is(0.0));
         assertThat(centroid.getDimension(1), Is.is(11.0 + 2.0 / 3.0));
         assertThat(centroid.getDimension(2), Is.is(5.0));
@@ -35,19 +35,20 @@ public class EuclidianDistanceClusterTest {
 
     @Test
     public void testAddCentroid() {
-        EuclidianDistanceMeasurableDataPoint dataPoint1 = new BasicEuclidianDistanceDataPoint(-1.0, 10.0, 3.0);
-        EuclidianDistanceMeasurableDataPoint dataPoint2 = new BasicEuclidianDistanceDataPoint(0.0, 5.0, 2.0);
-        EuclidianDistanceMeasurableDataPoint dataPoint3 = new BasicEuclidianDistanceDataPoint(1.0, 20.0, 10.0);
+        EuclidianDistanceDataPoint dataPoint1 = new BasicEuclidianDistanceDataPoint(-1.0, 10.0, 3.0);
+        EuclidianDistanceDataPoint dataPoint2 = new BasicEuclidianDistanceDataPoint(0.0, 5.0, 2.0);
+        EuclidianDistanceDataPoint dataPoint3 = new BasicEuclidianDistanceDataPoint(1.0, 20.0, 10.0);
 
-        Cluster<EuclidianDistanceMeasurableDataPoint> cluster = new EuclidianDistanceCluster(dataPoint1);
-        EuclidianDistanceMeasurableDataPoint centroid = cluster.getCentroid();
+        Cluster<EuclidianDistanceDataPoint> cluster = new EuclidianDistanceCluster<>(dataPoint1);
+
+        EuclidianDistanceDataPoint centroid = cluster.getCentroid();
         assertThat(centroid.getDimension(0), Is.is(-1.0));
         assertThat(centroid.getDimension(1), Is.is(10.0));
         assertThat(centroid.getDimension(2), Is.is(3.0));
 
-        Cluster<EuclidianDistanceMeasurableDataPoint> cluster2 = new EuclidianDistanceCluster(Arrays.asList(dataPoint2, dataPoint3));
+        Cluster<EuclidianDistanceDataPoint> cluster2 = new EuclidianDistanceCluster<>(Arrays.asList(dataPoint2, dataPoint3));
 
-        Cluster<EuclidianDistanceMeasurableDataPoint> resultingCluster = cluster.merge(cluster2);
+        Cluster<EuclidianDistanceDataPoint> resultingCluster = cluster.merge(cluster2);
 
         centroid = resultingCluster.getCentroid();
         assertThat(centroid.getDimension(0), Is.is(0.0));

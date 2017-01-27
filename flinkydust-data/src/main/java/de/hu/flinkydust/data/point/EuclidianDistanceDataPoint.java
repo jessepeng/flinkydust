@@ -6,7 +6,7 @@ package de.hu.flinkydust.data.point;
  *
  * Created by Jan-Christopher on 27.01.2017.
  */
-public interface EuclidianDistanceMeasurableDataPoint extends DistanceMeasurableDataPoint<EuclidianDistanceMeasurableDataPoint> {
+public interface EuclidianDistanceDataPoint extends DistanceDataPoint<EuclidianDistanceDataPoint> {
 
     /**
      * Gibt die Werte aller Dimensionen dieses Datenpunktes zurück.
@@ -40,7 +40,13 @@ public interface EuclidianDistanceMeasurableDataPoint extends DistanceMeasurable
      */
     int getDimensionCount();
 
-    default double getDistanceTo(EuclidianDistanceMeasurableDataPoint dataPoint) {
+    default void initializeWithZero() {
+        for (int i = 0; i < getDimensionCount(); i++) {
+            setDimension(i, 0.0);
+        }
+    }
+
+    default double getDistanceTo(EuclidianDistanceDataPoint dataPoint) {
         double[] thisDimensions = getAllDimensions();
         double[] otherDimensions = dataPoint.getAllDimensions();
         if (thisDimensions.length != otherDimensions.length) {

@@ -1,7 +1,7 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.cluster.Cluster;
-import de.hu.flinkydust.data.point.EuclidianDistanceMeasurableDataPoint;
+import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,33 +10,34 @@ import java.util.List;
 /**
  * Created by Jan-Christopher on 27.01.2017.
  */
-public class StructuredEuclidianDistanceCluster extends EuclidianDistanceCluster {
+public class StructuredEuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> extends EuclidianDistanceCluster<T> {
 
-    Cluster<EuclidianDistanceMeasurableDataPoint> cluster1 = null;
-    Cluster<EuclidianDistanceMeasurableDataPoint> cluster2 = null;
+    private Cluster<T> cluster1 = null;
+    private Cluster<T> cluster2 = null;
 
-    public StructuredEuclidianDistanceCluster(EuclidianDistanceMeasurableDataPoint dataPoint) {
+    public StructuredEuclidianDistanceCluster(T dataPoint) {
         super(dataPoint);
     }
 
-    public StructuredEuclidianDistanceCluster(Cluster<EuclidianDistanceMeasurableDataPoint> cluster1, Cluster<EuclidianDistanceMeasurableDataPoint> cluster2) {
+    public StructuredEuclidianDistanceCluster(Cluster<T> cluster1, Cluster<T> cluster2) {
         this.cluster1 = cluster1;
         this.cluster2 = cluster2;
+        this.centroid = cloner.deepClone(cluster1.getCentroid());
         recalculateCentroid();
     }
 
     @Override
-    public List<EuclidianDistanceMeasurableDataPoint> getPoints() {
+    public List<T> getPoints() {
         if (cluster1 == null || cluster2 == null) {
             return super.getPoints();
         }
-        List<EuclidianDistanceMeasurableDataPoint> pointList = new ArrayList<>(cluster1.getPoints());
+        List<T> pointList = new ArrayList<>(cluster1.getPoints());
         pointList.addAll(cluster2.getPoints());
         return pointList;
     }
 
     @Override
-    public Cluster<EuclidianDistanceMeasurableDataPoint> merge(Cluster<EuclidianDistanceMeasurableDataPoint> otherCluster) {
-        return new StructuredEuclidianDistanceCluster(this, otherCluster);
+    public Cluster<T> merge(Cluster<T> otherCluster) {
+        return new StructuredEuclidianDistanceCluster<>(this, otherCluster);
     }
 }

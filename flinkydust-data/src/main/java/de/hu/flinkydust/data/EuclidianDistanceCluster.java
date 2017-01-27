@@ -1,7 +1,8 @@
 package de.hu.flinkydust.data;
 
+import com.rits.cloning.Cloner;
 import de.hu.flinkydust.data.cluster.Cluster;
-import de.hu.flinkydust.data.point.EuclidianDistanceMeasurableDataPoint;
+import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +12,27 @@ import java.util.List;
  *
  * Created by Jan-Christopher on 27.01.2017.
  */
-public class EuclidianDistanceCluster implements Cluster<EuclidianDistanceMeasurableDataPoint> {
+public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> implements Cluster<T> {
 
-    private EuclidianDistanceMeasurableDataPoint centroid;
+    protected T centroid;
 
-    private List<EuclidianDistanceMeasurableDataPoint> dataPoints;
+    private List<T> dataPoints;
 
-    public EuclidianDistanceCluster(EuclidianDistanceMeasurableDataPoint dataPoint) {
-        dataPoints = new ArrayList<>();
-        dataPoints.add(dataPoint);
+    protected static Cloner cloner = new Cloner();
+
+    public EuclidianDistanceCluster(T dataPoint) {
+        this.dataPoints = new ArrayList<>();
+        this.dataPoints.add(dataPoint);
+        this.centroid = cloner.deepClone(dataPoint);
         recalculateCentroid();
     }
 
-    public EuclidianDistanceCluster(List<EuclidianDistanceMeasurableDataPoint> dataPoints) {
+    public EuclidianDistanceCluster(List<T> dataPoints) {
+        if (dataPoints.isEmpty()) {
+            throw new IllegalArgumentException("Liste der Datenpunkte darf nicht leer sein.");
+        }
         this.dataPoints = dataPoints;
+        this.centroid = cloner.deepClone(dataPoints.get(0));
         recalculateCentroid();
     }
 
@@ -33,18 +41,18 @@ public class EuclidianDistanceCluster implements Cluster<EuclidianDistanceMeasur
     }
 
     @Override
-    public EuclidianDistanceMeasurableDataPoint getCentroid() {
+    public T getCentroid() {
         return centroid;
     }
 
     @Override
-    public List<EuclidianDistanceMeasurableDataPoint> getPoints() {
+    public List<T> getPoints() {
         return dataPoints;
     }
 
     @Override
-    public Cluster<EuclidianDistanceMeasurableDataPoint> merge(Cluster<EuclidianDistanceMeasurableDataPoint> otherCluster) {
-        EuclidianDistanceCluster newCluster = new EuclidianDistanceCluster(getPoints());
+    public Cluster<T> merge(Cluster<T> otherCluster) {
+        EuclidianDistanceCluster<T> newCluster = new EuclidianDistanceCluster<>(getPoints());
         newCluster.getPoints().addAll(otherCluster.getPoints());
         newCluster.recalculateCentroid();
         return newCluster;
@@ -54,27 +62,22 @@ public class EuclidianDistanceCluster implements Cluster<EuclidianDistanceMeasur
      * Berechnet den Centroid dieses Clusters neu.
      */
     protected void recalculateCentroid() {
-        int dimensionCount;
-        if (getPoints().isEmpty()) {
+        List<T> pointList = getPoints();
+        if (pointList.isEmpty()) {
             return;
         }
-        if (centroid != null) {
-            dimensionCount = centroid.getDimensionCount();
-        } else {
-            dimensionCount = getPoints().get(0).getDimensionCount();
-        }
-        int noOfDataPoints = getPoints().size();
 
-        BasicEuclidianDistanceDataPoint newCentroid = new BasicEuclidianDistanceDataPoint(dimensionCount);
+        int dimensionCount = centroid.getDimensionCount();
+        int noOfDataPoints = pointList.size();
 
+        centroid.initializeWithZero();
         getPoints().forEach(dataPoint -> {
             for (int i = 0; i < dimensionCount; i++) {
-                newCentroid.setDimension(i, newCentroid.getDimension(i) + dataPoint.getDimension(i));
+                centroid.setDimension(i, centroid.getDimension(i) + dataPoint.getDimension(i));
             }
         });
         for (int i = 0; i < dimensionCount; i++) {
-            newCentroid.setDimension(i, newCentroid.getDimension(i) / noOfDataPoints);
+            centroid.setDimension(i, centroid.getDimension(i) / noOfDataPoints);
         }
-        this.centroid = newCentroid;
     }
 }
