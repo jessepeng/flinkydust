@@ -111,4 +111,6 @@ public interface DataSource<T>
      *          Die Datenquelle als Stream.
      */
     Stream<T> stream();
+
+
 }
