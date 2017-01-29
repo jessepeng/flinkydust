@@ -1,13 +1,14 @@
 package de.hu.flinkydust.data.aggregator;
 
 import de.hu.flinkydust.data.DataSource;
+import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 
 /**
  * Abstrakte Basis-Klasse, die Aggregationen mit einem einfachen Reduce-Schritt durchführt.
  * @param <T>
  *          Der Typ de
  */
-public abstract class ReduceAggregatorFunction<T> implements AggregatorFunction<T> {
+public abstract class ReduceAggregatorFunction<T extends EuclidianDistanceDataPoint> implements AggregatorFunction<T> {
 
     private T identity;
 

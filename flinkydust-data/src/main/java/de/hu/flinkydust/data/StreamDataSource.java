@@ -152,7 +152,7 @@ public class StreamDataSource<T> implements DataSource<T> {
         return new StreamDataSource<>(dataPoints.stream());
     }
 
-    private static DataPoint generateRandomTuple() {
+    protected static DataPoint generateRandomTuple() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
         DataPoint dataPoint = new DataPoint();
@@ -188,13 +188,13 @@ public class StreamDataSource<T> implements DataSource<T> {
 
         double randomError = ThreadLocalRandom.current().nextDouble(0.0, 1.0);
         if (randomError > 0.00 && randomError < 0.01) {
-            smallParticles = Double.NaN;
+            smallParticles = null;
         } else if (randomError > 0.01 && randomError < 0.02) {
-            largeParticles = Double.NaN;
+            largeParticles = null;
         } else if (randomError > 0.02 && randomError < 0.03) {
-            temperature = Double.NaN;
+            temperature = null;
         } else if (randomError > 0.03 && randomError < 0.04) {
-            humidity = Double.NaN;
+            humidity = null;
         }
 
         return new DataPoint(date, smallParticles, largeParticles, humidity, temperature);
