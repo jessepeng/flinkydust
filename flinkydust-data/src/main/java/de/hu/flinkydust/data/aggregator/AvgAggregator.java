@@ -2,6 +2,7 @@ package de.hu.flinkydust.data.aggregator;
 
 import de.hu.flinkydust.data.DataPoint;
 import de.hu.flinkydust.data.DataSource;
+import de.hu.flinkydust.data.Tuple;
 
 import java.util.Optional;
 
@@ -55,12 +56,4 @@ public class AvgAggregator implements AggregatorFunction<DataPoint> {
         });
     }
 
-    public class Tuple<T, Y> {
-        public final T f0;
-        public final Y f1;
-        public Tuple(T f0, Y f1) {
-            this.f0 = f0;
-            this.f1 = f1;
-        }
-    }
 }

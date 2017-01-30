@@ -15,16 +15,14 @@ import java.util.List;
 public interface EuclidianDataPointDataSource<T extends EuclidianDistanceDataPoint> extends DataSource<T> {
 
     /**
-     * Erzeugt die angegebene Menge an Cluster mithilfe des Centroid-
+     * Erzeugt die Clusterstruktur mithilfe des Centroid-
      * Verfahrens. Dieses Verfahren ist ein hierarchisches Verfahren, bei
      * dem zunächst alle Datenpunkte einen eigenen Cluster bilden. In jedem
      * Vereinigungsschritt werden nun die zwei Cluster zusammengeführt,
      * deren Centroiden am nähesten zueinander sind, bis die gewünschte
      * Anzahl an Cluster erhalten ist.
-     * @param noOfClusters
-     *          Gewünschte Anzahl an Clustern
      * @return
-     *          Die Liste mit den Clustern
+     *          Der Endcluster
      */
-    List<Cluster<T>> hierarchicalCentroidClustering(int noOfClusters);
+    Cluster<T> hierarchicalCentroidClustering();
 }
