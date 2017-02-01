@@ -46,15 +46,17 @@ public class Tuple5<T0, T1, T2, T3, T4> extends Tuple {
 	private static final long serialVersionUID = 1L;
 
 	/** Field 0 of the tuple. */
-	public T0 f0;
-	/** Field 1 of the tuple. */
-	public T1 f1;
-	/** Field 2 of the tuple. */
-	public T2 f2;
-	/** Field 3 of the tuple. */
-	public T3 f3;
-	/** Field 4 of the tuple. */
-	public T4 f4;
+    public T0 f0;
+    /** Field 1 of the tuple. */
+    public T1 f1;
+    /** Field 2 of the tuple. */
+    public T2 f2;
+    /** Field 3 of the tuple. */
+    public T3 f3;
+    /** Field 4 of the tuple. */
+    public T4 f4;
+    /** Field 5 of the tuple. */
+
 
 	/**
 	 * Creates a new tuple where all fields are null.
@@ -76,7 +78,7 @@ public class Tuple5<T0, T1, T2, T3, T4> extends Tuple {
 		this.f2 = value2;
 		this.f3 = value3;
 		this.f4 = value4;
-	}
+    }
 
 	@Override
 	public int getArity() { return 5; }
@@ -171,7 +173,8 @@ public class Tuple5<T0, T1, T2, T3, T4> extends Tuple {
 		if (f2 != null ? !f2.equals(tuple.f2) : tuple.f2 != null) { return false; }
 		if (f3 != null ? !f3.equals(tuple.f3) : tuple.f3 != null) { return false; }
 		if (f4 != null ? !f4.equals(tuple.f4) : tuple.f4 != null) { return false; }
-		return true;
+
+            return true;
 	}
 
 	@Override
@@ -190,15 +193,16 @@ public class Tuple5<T0, T1, T2, T3, T4> extends Tuple {
 	*/
 	@Override
 	@SuppressWarnings("unchecked")
-	public Tuple5<T0,T1,T2,T3,T4> copy(){
-		return new Tuple5<T0,T1,T2,T3,T4>(this.f0,
-			this.f1,
-			this.f2,
-			this.f3,
-			this.f4);
+	public Tuple5<T0, T1, T2, T3, T4> copy(){
+		return new Tuple5<T0, T1, T2, T3, T4>(
+                this.f0,
+                this.f1,
+                this.f2,
+                this.f3,
+                this.f4);
 	}
 
-	public static <T0,T1,T2,T3,T4> Tuple5<T0,T1,T2,T3,T4> of(T0 value0, T1 value1, T2 value2, T3 value3, T4 value4) {
-		return new Tuple5<T0,T1,T2,T3,T4>(value0, value1, value2, value3, value4);
+	public static <T0, T1, T2, T3, T4> Tuple5<T0, T1, T2, T3, T4> of(T0 value0, T1 value1, T2 value2, T3 value3, T4 value4) {
+		    return new Tuple5<T0, T1, T2, T3, T4>(value0, value1, value2, value3, value4);
 	}
 }

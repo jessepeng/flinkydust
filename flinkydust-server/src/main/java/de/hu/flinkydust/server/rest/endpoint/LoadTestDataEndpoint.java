@@ -29,7 +29,7 @@ public class LoadTestDataEndpoint extends AbstractResourceResponse {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadTestData() {
         try {
-            DataStore.getInstance().putDataSource(DataPoint.class, StreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-2014.dat")));
+            DataStore.getInstance().putDataSource(DataPoint.class, StreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-32-grain-size-classes-2014.dat")));
         } catch (IOException e) {
             return createErrorResponse(e.getMessage());
         }
