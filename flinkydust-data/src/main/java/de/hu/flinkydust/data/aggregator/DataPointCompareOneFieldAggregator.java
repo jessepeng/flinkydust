@@ -1,25 +1,30 @@
 package de.hu.flinkydust.data.aggregator;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
 /**
  * Abstrakte Aggregator Klasse, um ein Feld eines Tupels in einer Aggregation zu verwenden.
  * Created by Jan-Christopher on 09.11.2016.
  */
-public abstract class DataPointCompareOneFieldAggregator<R extends Comparable<R>> extends ReduceAggregatorFunction<DataPoint> {
+public abstract class DataPointCompareOneFieldAggregator<R extends Comparable<R>> extends ReduceAggregatorFunction<DustDataPoint> {
 
     private String field;
     private Class<R> comparableClass;
 
-    public DataPointCompareOneFieldAggregator(String field, Class<R> comparableClass) {
-        super(new DataPoint());
+    protected DataPointCompareOneFieldAggregator(String field, Class<R> comparableClass) {
+        super(new DustDataPoint());
         this.comparableClass = comparableClass;
         this.field = field;
     }
 
     @Override
-    public DataPoint reduce(DataPoint value1, DataPoint value2) {
-        int index = value1.getFieldIndex(field);
+    public DustDataPoint reduce(DustDataPoint value1, DustDataPoint value2) {
+        int index;
+        try {
+            index = value1.getFieldIndex(field);
+        } catch (IllegalArgumentException e) {
+            index = value2.getFieldIndex(field);
+        }
         Object field1;
         Object field2;
         R number1, number2;
@@ -55,6 +60,6 @@ public abstract class DataPointCompareOneFieldAggregator<R extends Comparable<R>
      * @return
      *          Das Tupel, das den Vergleich "gewonnen" hat
      */
-    protected abstract DataPoint evaluate(DataPoint tuple1, DataPoint tuple2, R value1, R value2);
+    protected abstract DustDataPoint evaluate(DustDataPoint tuple1, DustDataPoint tuple2, R value1, R value2);
 
 }

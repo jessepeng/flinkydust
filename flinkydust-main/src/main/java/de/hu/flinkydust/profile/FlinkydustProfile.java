@@ -1,6 +1,6 @@
 package de.hu.flinkydust.profile;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
 import de.hu.flinkydust.data.StreamDataSource;
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
@@ -58,12 +58,12 @@ public class FlinkydustProfile {
         long runTimeWhole = 0;
         for (int iteration = 1; iteration <= iterations; iteration++) {
             System.out.println("Generating " + noOfDatasets + " data points of random data...");
-            DataSource<DataPoint> dataSource = StreamDataSource.generateRandomData(noOfDatasets);
+            DataSource<DustDataPoint> dataSource = StreamDataSource.generateRandomData(noOfDatasets);
             System.out.println("Finished generating random data. Running command " + command);
             long runTime = 0;
             switch (command) {
                 case "aggregation":
-                    AggregatorFunction<DataPoint> aggregator = null;
+                    AggregatorFunction<DustDataPoint> aggregator = null;
                     switch (args[3]) {
                         case "min":
                             if (args[4].equals("date")) {
@@ -95,7 +95,7 @@ public class FlinkydustProfile {
                     runTime = dataSource.projection(new FieldnameProjector(fields)).profile();
                     break;
                 case "selection":
-                    Predicate<DataPoint> predicate = null;
+                    Predicate<DustDataPoint> predicate = null;
                     switch (args[3]) {
                         case "atLeast":
                             if (args[4].equals("date")) {

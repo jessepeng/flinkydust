@@ -27,7 +27,7 @@ public class StructuredMeanDistanceCluster<T extends EuclidianDistanceDataPoint>
         this.cluster1 = cluster1;
         this.cluster2 = cluster2;
         centroid = cloner.deepClone(cluster1.getCentroid());
-        int dimensionCount = centroid.getDimensionCount();
+        int dimensionCount = centroid.getArity();
 
         for (int i = 0; i < dimensionCount; i++) {
             centroid.setDimension(i, (cluster1.getCentroid().getDimension(i) + cluster2.getCentroid().getDimension(i)) / 2.0);

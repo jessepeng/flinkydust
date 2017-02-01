@@ -1,6 +1,6 @@
 package de.hu.flinkydust.server.rest.endpoint;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.StreamDataSource;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 import de.hu.flinkydust.server.rest.datastore.DataStore;
@@ -29,7 +29,7 @@ public class LoadTestDataEndpoint extends AbstractResourceResponse {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadTestData() {
         try {
-            DataStore.getInstance().putDataSource(DataPoint.class, StreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-32-grain-size-classes-2014.dat")));
+            DataStore.getInstance().putDataSource(DustDataPoint.class, StreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-32-grain-size-classes-2014.dat")));
         } catch (IOException e) {
             return createErrorResponse(e.getMessage());
         }
@@ -52,7 +52,7 @@ public class LoadTestDataEndpoint extends AbstractResourceResponse {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadFile(@FormDataParam("file") InputStream fileInputStream, @FormDataParam("file")FormDataContentDisposition fileMetaData) {
         try {
-            DataStore.getInstance().putDataSource(DataPoint.class, StreamDataSource.parseFile(fileInputStream));
+            DataStore.getInstance().putDataSource(DustDataPoint.class, StreamDataSource.parseFile(fileInputStream));
         } catch (IOException e) {
             return createErrorResponse(e.getMessage());
         }

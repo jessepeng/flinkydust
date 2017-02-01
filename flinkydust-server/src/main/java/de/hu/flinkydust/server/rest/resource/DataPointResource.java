@@ -1,8 +1,7 @@
 package de.hu.flinkydust.server.rest.resource;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
-import de.hu.flinkydust.data.comparator.DataPointComparator;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 import de.hu.flinkydust.server.rest.endpoint.ProjectionEndpoint;
 
@@ -14,16 +13,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Jan-Christopher on 10.12.2016.
  */
 public class DataPointResource extends AbstractResourceResponse {
 
-    private DataSource<DataPoint> dataSource;
+    private DataSource<DustDataPoint> dataSource;
 
-    public DataPointResource(DataSource<DataPoint> dataSource) {
+    public DataPointResource(DataSource<DustDataPoint> dataSource) {
         this.dataSource = dataSource;
     }
 

@@ -66,7 +66,7 @@ public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> impl
             return;
         }
 
-        int dimensionCount = centroid.getDimensionCount();
+        int dimensionCount = centroid.getArity();
         int noOfDataPoints = pointList.size();
 
         centroid.initializeWithZero();

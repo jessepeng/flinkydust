@@ -1,6 +1,7 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.cluster.Cluster;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 
 import java.io.IOException;
@@ -24,12 +25,12 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
         super(dataSource);
     }
 
-    public static EuclidianDataPointDataSource<DataPoint> readFile(String path) throws IOException {
+    public static EuclidianDataPointDataSource<DustDataPoint> readFile(String path) throws IOException {
         return new EuclidianDataPointStreamDataSource<>(parseFile(path));
     }
 
-    public static EuclidianDataPointDataSource<DataPoint> generateRandomData(Integer size) {
-        List<DataPoint> dataPoints = new LinkedList<>();
+    public static EuclidianDataPointDataSource<DustDataPoint> generateRandomData(Integer size) {
+        List<DustDataPoint> dataPoints = new LinkedList<>();
 
         for (int i = 0; i < size; i++) {
             dataPoints.add(generateRandomTuple());
@@ -54,7 +55,7 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
 
         // Initialie Berechnung der nächsten Nachbarcluster jedes einzelnen Clusters
         // O(n^2)
-        LinkedList<Tuple<Cluster<T>, Cluster<T>>> nearestNeighborList = new LinkedList<>();
+        LinkedList<SimpleTuple<Cluster<T>, Cluster<T>>> nearestNeighborList = new LinkedList<>();
         for (Cluster<T> cluster : clusterList) {
             Cluster<T> nearestNeighbor = null;
             T clusterCentroid = cluster.getCentroid();
@@ -74,7 +75,7 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
                     }
                 }
             }
-            nearestNeighborList.add(new Tuple<>(cluster, nearestNeighbor));
+            nearestNeighborList.add(new SimpleTuple<>(cluster, nearestNeighbor));
         }
 
         // Eigentlicher Algorithmus
@@ -84,8 +85,8 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
             // Finde das Cluster-Paar mit dem geringsten Abstand
             // O(i)
             double minDistance = Double.POSITIVE_INFINITY;
-            Tuple<Cluster<T>, Cluster<T>> closestPair = null;
-            for (Tuple<Cluster<T>, Cluster<T>> clusterPair : nearestNeighborList) {
+            SimpleTuple<Cluster<T>, Cluster<T>> closestPair = null;
+            for (SimpleTuple<Cluster<T>, Cluster<T>> clusterPair : nearestNeighborList) {
                 double pairDistance = clusterPair.f0.getCentroid().getDistanceTo(clusterPair.f1.getCentroid());
                 if (pairDistance < minDistance) {
                     minDistance = pairDistance;
@@ -105,14 +106,14 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
             Cluster<T> mergedCluster = closestPair.f0.merge(closestPair.f1);
 
             // O(1), da LinkedList
-            nearestNeighborList.add(new Tuple<>(mergedCluster, null));
+            nearestNeighborList.add(new SimpleTuple<>(mergedCluster, null));
 
             // Schritt 3
             // Liste der nächsten Nachbarn aktualisieren
             // O(a * m), wobei a die Anzahl der Cluster ist, bei denen einer der beiden vorangegangenen Cluster
             // als nächster Nachbar eingetragen war
-            for (Iterator<Tuple<Cluster<T>, Cluster<T>>> neighborIterator = nearestNeighborList.iterator(); neighborIterator.hasNext(); ) {
-                Tuple<Cluster<T>, Cluster<T>> neighborPair = neighborIterator.next();
+            for (Iterator<SimpleTuple<Cluster<T>, Cluster<T>>> neighborIterator = nearestNeighborList.iterator(); neighborIterator.hasNext(); ) {
+                SimpleTuple<Cluster<T>, Cluster<T>> neighborPair = neighborIterator.next();
                 if (neighborPair.f0 == closestPair.f0 || neighborPair.f0 == closestPair.f1) {
                     // Einträge, die auf die zusammengeführten Cluster verweisen, werden nicht mehr benötigt
                     // O(1), da LinkedList
@@ -126,7 +127,7 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
                     // Bei diesen muss der nächste Nachbar neu bestimmt werden
                     double newMinDistance = Double.POSITIVE_INFINITY;
                     Cluster<T> newNearestNeighbor = null;
-                    for (Tuple<Cluster<T>, Cluster<T>> clusterPair : nearestNeighborList) {
+                    for (SimpleTuple<Cluster<T>, Cluster<T>> clusterPair : nearestNeighborList) {
                         if (neighborPair.f0 != closestPair.f0) {
                             double pairDistance = neighborPair.f0.getCentroid().getDistanceTo(clusterPair.f0.getCentroid());
                             if (pairDistance < newMinDistance) {

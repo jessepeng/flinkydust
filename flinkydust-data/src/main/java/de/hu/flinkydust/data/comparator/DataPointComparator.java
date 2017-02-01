@@ -1,11 +1,10 @@
 package de.hu.flinkydust.data.comparator;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.function.Predicate;
 
@@ -14,7 +13,7 @@ import java.util.function.Predicate;
  *
  * Created by Jan-Christopher on 09.11.2016.
  */
-public abstract class DataPointComparator<R extends Comparable<R>> implements Predicate<DataPoint> {
+public abstract class DataPointComparator<R extends Comparable<R>> implements Predicate<DustDataPoint> {
 
     private String field;
     private R compareValue;
@@ -27,7 +26,7 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
     }
 
     @Override
-    public boolean test(DataPoint t) {
+    public boolean test(DustDataPoint t) {
         int index = t.getFieldIndex(field);
         Object tupleValue;
         if (t.getOptionalValue(index).isPresent()) {

@@ -1,6 +1,7 @@
 package de.hu.flinkydust.data;
 
 import de.hu.flinkydust.data.cluster.Cluster;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ public class EuclidianDataPointStreamDataSourceTest {
     @Ignore
     @Test
     public void testClustering() throws Exception {
-        EuclidianDataPointDataSource<DataPoint> dataSource = EuclidianDataPointStreamDataSource.readFile("data/dust-2014.dat");
+        EuclidianDataPointDataSource<DustDataPoint> dataSource = EuclidianDataPointStreamDataSource.readFile("data/dust-2014.dat");
         long timeBefore = System.nanoTime();
         dataSource.hierarchicalCentroidClustering();
         long timeAfter = System.nanoTime();
@@ -23,8 +24,8 @@ public class EuclidianDataPointStreamDataSourceTest {
 
     @Test
     public void testRandomClustering() throws Exception {
-        EuclidianDataPointDataSource<DataPoint> dataSource = EuclidianDataPointStreamDataSource.generateRandomData(1000);
-        Cluster<DataPoint> cluster = dataSource.hierarchicalCentroidClustering();
+        EuclidianDataPointDataSource<DustDataPoint> dataSource = EuclidianDataPointStreamDataSource.generateRandomData(1000);
+        Cluster<DustDataPoint> cluster = dataSource.hierarchicalCentroidClustering();
     }
 
 }

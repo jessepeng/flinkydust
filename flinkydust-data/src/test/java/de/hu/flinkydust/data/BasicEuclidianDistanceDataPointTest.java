@@ -14,7 +14,7 @@ public class BasicEuclidianDistanceDataPointTest {
         int dimensions = (int)(Math.random() * 100);
         BasicEuclidianDistanceDataPoint dataPoint = new BasicEuclidianDistanceDataPoint(dimensions);
 
-        assertThat(dataPoint.getDimensionCount(), Is.is(dimensions));
+        assertThat(dataPoint.getArity(), Is.is(dimensions));
         for (int i = 0; i < dimensions; i++) {
             assertThat(dataPoint.getDimension(i), Is.is(0.0));
         }
@@ -30,7 +30,7 @@ public class BasicEuclidianDistanceDataPointTest {
 
         BasicEuclidianDistanceDataPoint dataPoint = new BasicEuclidianDistanceDataPoint(dimensionArray);
 
-        assertThat(dataPoint.getDimensionCount(), Is.is(dimensions));
+        assertThat(dataPoint.getArity(), Is.is(dimensions));
         for (int i = 0; i < dimensions; i++) {
             assertThat(dataPoint.getDimension(i), Is.is(dimensionArray[i]));
         }

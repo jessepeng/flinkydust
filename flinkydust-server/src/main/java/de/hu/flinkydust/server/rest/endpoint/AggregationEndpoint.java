@@ -1,6 +1,6 @@
 package de.hu.flinkydust.server.rest.endpoint;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
 import de.hu.flinkydust.data.aggregator.DataPointAggregator;
@@ -26,7 +26,7 @@ public class AggregationEndpoint extends AbstractResourceResponse {
     @Path("/{method:(max|min|avg)}/{field}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response aggregation(@PathParam("method") String method, @PathParam("field") String field) {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
+        DataSource<DustDataPoint> dataSource = DataStore.getInstance().getDataSource(DustDataPoint.class);
 
         if (dataSource == null) {
             return createErrorResponse("Keine DataSource geladen.");
@@ -41,7 +41,7 @@ public class AggregationEndpoint extends AbstractResourceResponse {
     @Path("/{method:(max|min|avg)}/{field}/filter/{filter:(/?[^/]+/(atLeast|lessThan|same)/[^/]+(/or/[^/]+/(atLeast|lessThan|same)/[^/]+)*)+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response filterAggregation(@PathParam("method") String method, @PathParam("field") String field, @PathParam("filter") List<PathSegment> filterList) {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
+        DataSource<DustDataPoint> dataSource = DataStore.getInstance().getDataSource(DustDataPoint.class);
 
         if (dataSource == null) {
             return createErrorResponse("Keine DataSource geladen.");
@@ -52,8 +52,8 @@ public class AggregationEndpoint extends AbstractResourceResponse {
         return createOkResponse(dataSource.stream(), ProjectionEndpoint::writeDataPointAsObject);
     }
 
-    private DataSource<DataPoint> getDataPointDataSource(DataSource<DataPoint> dataSource, String method, String field) {
-        AggregatorFunction<DataPoint> aggregatorFunction = null;
+    private DataSource<DustDataPoint> getDataPointDataSource(DataSource<DustDataPoint> dataSource, String method, String field) {
+        AggregatorFunction<DustDataPoint> aggregatorFunction = null;
         switch (method) {
             case "min":
                 aggregatorFunction = DataPointAggregator.dataPointMinAggregator(field);

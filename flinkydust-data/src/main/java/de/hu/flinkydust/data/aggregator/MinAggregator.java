@@ -1,6 +1,6 @@
 package de.hu.flinkydust.data.aggregator;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
 /**
  * Aggregiert mehrere Tupel auf den Tupel mit dem kleinsten Wert.
@@ -17,7 +17,7 @@ public class MinAggregator<R extends Comparable<R>> extends DataPointCompareOneF
     }
 
     @Override
-    protected DataPoint evaluate(DataPoint tuple1, DataPoint tuple2, R value1, R value2) {
+    protected DustDataPoint evaluate(DustDataPoint tuple1, DustDataPoint tuple2, R value1, R value2) {
         return (value1.compareTo(value2) <= 0 ? tuple1 : tuple2);
     }
 
