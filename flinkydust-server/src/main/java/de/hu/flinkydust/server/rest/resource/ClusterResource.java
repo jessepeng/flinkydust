@@ -55,8 +55,6 @@ public class ClusterResource extends AbstractResourceResponse {
         jsonGenerator.writeStartObject();
         if (dustDataPointCluster instanceof StructuredMeanDistanceCluster) {
             StructuredMeanDistanceCluster<DustDataPoint> structuredCluster = (StructuredMeanDistanceCluster<DustDataPoint>)dustDataPointCluster;
-            jsonGenerator.writeFieldName("dateStart");
-            jsonGenerator.writeObject(structuredCluster.getCentroid().getDate());
             jsonGenerator.writeFieldName("centroid");
             writeDataPointAsObject(structuredCluster.getCentroid(), jsonGenerator);
 
