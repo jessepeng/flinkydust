@@ -5,6 +5,7 @@ import de.hu.flinkydust.data.cluster.Cluster;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.projector.FieldnameProjector;
 import org.hamcrest.core.Is;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class EuclidianDataPointStreamDataSourceTest {
     }
 
     @Test
+    @Ignore
     public void testClusteringClasses() throws Exception {
         List<DustDataPoint> dataPointList = StreamDataSource.readFile("data/dust-32-grain-size-classes-2014.dat")
                 .projection(new FieldnameProjector("MasterTime", "GrainSize0_25", "GrainSize0_28", "GrainSize0_30", "GrainSize0_35", "GrainSize0_40", "GrainSize0_45", "GrainSize0_50", "GrainSize0_58", "GrainSize0_65", "GrainSize0_70", "GrainSize0_80", "GrainSize1_0", "GrainSize1_3", "GrainSize1_6", "GrainSize2_0", "GrainSize2_5", "GrainSize3_0", "GrainSize3_5", "GrainSize4_0", "GrainSize5_0", "GrainSize6_5", "GrainSize7_5", "GrainSize8_0", "GrainSize10_0", "GrainSize12_5", "GrainSize15_0", "GrainSize17_5", "GrainSize20_0", "GrainSize25_0", "GrainSize30_0", "GrainSize32_0"))

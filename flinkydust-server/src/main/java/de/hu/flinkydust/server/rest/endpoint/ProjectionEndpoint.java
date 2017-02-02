@@ -19,7 +19,7 @@ import java.util.List;
 @Path("/projection")
 public class ProjectionEndpoint extends AbstractResourceResponse {
 
-    @Path("{fields:(/?(?!array|filter)[^/]+)+}")
+    @Path("{fields:(/?(?!array|filter|cluster)[^/]+)+}")
     public DataPointResource getProjection(@PathParam("fields") List<PathSegment> fieldList) {
         DataSource<DustDataPoint> dataSource = DataStore.getInstance().getDataSource(DustDataPoint.class);
 

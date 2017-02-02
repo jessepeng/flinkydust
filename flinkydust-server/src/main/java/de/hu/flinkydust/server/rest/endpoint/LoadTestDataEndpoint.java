@@ -1,5 +1,6 @@
 package de.hu.flinkydust.server.rest.endpoint;
 
+import de.hu.flinkydust.data.EuclidianDataPointStreamDataSource;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.StreamDataSource;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
@@ -29,7 +30,25 @@ public class LoadTestDataEndpoint extends AbstractResourceResponse {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadTestData() {
         try {
-            DataStore.getInstance().putDataSource(DustDataPoint.class, StreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-32-grain-size-classes-2014.dat")));
+            DataStore.getInstance().putDataSource(DustDataPoint.class, EuclidianDataPointStreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-2014-v2.dat")));
+        } catch (IOException e) {
+            return createErrorResponse(e.getMessage());
+        }
+
+        return createOkResponse();
+    }
+
+    /**
+     * Lädt die Testdaten ein.
+     * @return
+     *         Reponse-Objekt
+     */
+    @GET
+    @Path("/loadTestClasses")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadTestDataClasses() {
+        try {
+            DataStore.getInstance().putDataSource(DustDataPoint.class, EuclidianDataPointStreamDataSource.parseFile(getClass().getClassLoader().getResourceAsStream("data/dust-32-grain-size-classes-2014.dat")));
         } catch (IOException e) {
             return createErrorResponse(e.getMessage());
         }

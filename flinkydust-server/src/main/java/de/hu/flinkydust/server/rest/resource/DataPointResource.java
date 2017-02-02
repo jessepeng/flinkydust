@@ -1,7 +1,10 @@
 package de.hu.flinkydust.server.rest.resource;
 
-import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
+import de.hu.flinkydust.data.EuclidianDataPointDataSource;
+import de.hu.flinkydust.data.EuclidianDataPointStreamDataSource;
+import de.hu.flinkydust.data.aggregator.TimeWindowAggregator;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 import de.hu.flinkydust.server.rest.endpoint.ProjectionEndpoint;
 
@@ -60,5 +63,16 @@ public class DataPointResource extends AbstractResourceResponse {
         }
         return createOkResponse(dataSource.stream(), ProjectionEndpoint::writeDataPointAsObject);
     }
+
+    @Path("/cluster/window/{hours:\\d+}")
+    public ClusterResource cluster(@PathParam("hours") int hours) {
+        dataSource = dataSource.aggregation(new TimeWindowAggregator(hours));
+        if (dataSource instanceof EuclidianDataPointDataSource) {
+            return new ClusterResource(((EuclidianDataPointDataSource<DustDataPoint>)dataSource).hierarchicalCentroidClustering());
+        } else {
+            return new ClusterResource(new EuclidianDataPointStreamDataSource<>(dataSource.stream()).hierarchicalCentroidClustering());
+        }
+    }
+
 
 }

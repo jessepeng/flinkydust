@@ -34,6 +34,14 @@ public class StructuredMeanDistanceCluster<T extends EuclidianDistanceDataPoint>
         }
     }
 
+    public Cluster<T> getLeftChild() {
+        return this.cluster1;
+    }
+
+    public Cluster<T> getRightChild() {
+        return this.cluster2;
+    }
+
     @Override
     public List<T> getPoints() {
         if (cluster1 == null || cluster2 == null) {

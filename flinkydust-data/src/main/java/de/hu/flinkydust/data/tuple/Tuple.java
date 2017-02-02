@@ -22,16 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The base class of all tuples. Tuples have a fix length and contain a set of fields,
- * which may all be of different types. Because Tuples are strongly typed, each distinct
- * tuple length is represented by its own class. Tuples exists with up to 25 fields and
- * are described in the classes Tuple1 to Tuple25.
- * <p>
- * The fields in the tuples may be accessed directly a public fields, or via position (zero indexed)
- * {@link #getField(int)}.
- * <p>
- * Tuples are in principle serializable. However, they may contain non-serializable fields,
- * in which case serialization will fail.
+ * Basisklasse für ein Tupel, das beliebige Daten speichern kann und beliebig groß sein kann.
  */
 public class Tuple {
 	
