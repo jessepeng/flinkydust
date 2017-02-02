@@ -38,7 +38,7 @@ public class BasicEuclidianDistanceDataPoint implements EuclidianDistanceDataPoi
     }
 
     @Override
-    public int getArity() {
+    public int getDimensionCount() {
         return dimensions.length;
     }
 }

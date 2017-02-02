@@ -3,6 +3,7 @@ package de.hu.flinkydust.data;
 import de.hu.flinkydust.data.aggregator.AvgAggregator;
 import de.hu.flinkydust.data.aggregator.MaxAggregator;
 import de.hu.flinkydust.data.aggregator.MinAggregator;
+import de.hu.flinkydust.data.aggregator.TimeWindowAggregator;
 import de.hu.flinkydust.data.comparator.AtLeastComparator;
 import de.hu.flinkydust.data.comparator.LessThanComparator;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
@@ -309,5 +310,18 @@ public class StreamDataSourceTest {
         long timeAfter1000k = System.nanoTime();
 
         System.out.println("The time in s to project " + 1000000 + " random DustDataPoint objects: " + String.valueOf((timeAfter1000k - timeBefore1000k) / 1000000000.0));
+    }
+
+    @Test
+    public void testTimeWindowAggregation() throws Exception {
+        DataSource<DustDataPoint> dataSource = StreamDataSource.readFile("data/dust-2014.dat");
+
+        long timeBefore = System.nanoTime();
+        DataSource<DustDataPoint> aggregatedDataSource = dataSource.aggregation(new TimeWindowAggregator(6));
+        long timeAfter = System.nanoTime();
+
+        System.out.println("The time for windowing time aggregatio: " + ((timeAfter - timeBefore) / 1000000000.0));
+
+        Assert.assertThat(aggregatedDataSource.stream().count(), Is.is(1459L));
     }
 }

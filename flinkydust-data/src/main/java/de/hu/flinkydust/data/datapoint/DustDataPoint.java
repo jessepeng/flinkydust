@@ -67,6 +67,10 @@ public class DustDataPoint extends Tuple implements EuclidianDistanceDataPoint {
         }
     }
 
+    public <T> void setField(int pos, T value) {
+        setField(Optional.ofNullable(value), pos);
+    }
+
     public <T> void setField(String field, T value) {
         setField(Optional.ofNullable(value), getFieldIndex(field));
     }
@@ -100,7 +104,7 @@ public class DustDataPoint extends Tuple implements EuclidianDistanceDataPoint {
     }
 
     @Override
-    public int getArity() {
+    public int getDimensionCount() {
         return 2;
     }
 }

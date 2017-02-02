@@ -38,10 +38,10 @@ public interface EuclidianDistanceDataPoint extends DistanceDataPoint<EuclidianD
      * @return
      *          Die Anzahl der Dimensionen
      */
-    int getArity();
+    int getDimensionCount();
 
     default void initializeWithZero() {
-        for (int i = 0; i < getArity(); i++) {
+        for (int i = 0; i < getDimensionCount(); i++) {
             setDimension(i, 0.0);
         }
     }

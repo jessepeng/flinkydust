@@ -128,7 +128,7 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
                     double newMinDistance = Double.POSITIVE_INFINITY;
                     Cluster<T> newNearestNeighbor = null;
                     for (SimpleTuple<Cluster<T>, Cluster<T>> clusterPair : nearestNeighborList) {
-                        if (neighborPair.f0 != closestPair.f0) {
+                        if (clusterPair.f0 != neighborPair.f0 && clusterPair.f0 != closestPair.f0 && clusterPair.f0 != closestPair.f1) {
                             double pairDistance = neighborPair.f0.getCentroid().getDistanceTo(clusterPair.f0.getCentroid());
                             if (pairDistance < newMinDistance) {
                                 newMinDistance = pairDistance;
