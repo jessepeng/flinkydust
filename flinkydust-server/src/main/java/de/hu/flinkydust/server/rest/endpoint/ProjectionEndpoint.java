@@ -1,6 +1,6 @@
 package de.hu.flinkydust.server.rest.endpoint;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
 import de.hu.flinkydust.data.projector.FieldnameProjector;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
@@ -19,9 +19,9 @@ import java.util.List;
 @Path("/projection")
 public class ProjectionEndpoint extends AbstractResourceResponse {
 
-    @Path("{fields:(/?(?!array|filter)[^/]+)+}")
+    @Path("{fields:(/?(?!array|filter|cluster)[^/]+)+}")
     public DataPointResource getProjection(@PathParam("fields") List<PathSegment> fieldList) {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
+        DataSource<DustDataPoint> dataSource = DataStore.getInstance().getDataSource(DustDataPoint.class);
 
         if (dataSource == null) {
             return new DataPointResource(null);

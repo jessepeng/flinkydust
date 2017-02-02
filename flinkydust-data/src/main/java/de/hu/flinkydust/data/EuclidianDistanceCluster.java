@@ -24,7 +24,6 @@ public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> impl
         this.dataPoints = new ArrayList<>();
         this.dataPoints.add(dataPoint);
         this.centroid = cloner.deepClone(dataPoint);
-        recalculateCentroid();
     }
 
     public EuclidianDistanceCluster(List<T> dataPoints) {
@@ -33,7 +32,6 @@ public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> impl
         }
         this.dataPoints = dataPoints;
         this.centroid = cloner.deepClone(dataPoints.get(0));
-        recalculateCentroid();
     }
 
     EuclidianDistanceCluster() {
@@ -42,6 +40,7 @@ public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> impl
 
     @Override
     public T getCentroid() {
+        recalculateCentroid();
         return centroid;
     }
 

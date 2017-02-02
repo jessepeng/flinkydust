@@ -2,9 +2,8 @@ package de.hu.flinkydust.server.rest;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
 import de.hu.flinkydust.data.StreamDataSource;
 import de.hu.flinkydust.data.comparator.DataPointComparator;
@@ -14,10 +13,8 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -78,18 +75,18 @@ public abstract class AbstractResourceResponse {
     }
 
     /**
-     * Schreibt einen DataPoint mittels eines JsonGenerators
+     * Schreibt einen DustDataPoint mittels eines JsonGenerators
      * @param dataPoint
-     *          Der DataPoint
+     *          Der DustDataPoint
      * @param jsonGenerator
      *          Der JsonGenerator
      */
     //TODO: Better error handling
-    protected static void writeDataPointAsObject(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+    protected static void writeDataPointAsObject(DustDataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartObject();
             dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
-                Optional<?> optionalValue = dataPoint.getField(fieldIndexEntry.getValue());
+                Optional<?> optionalValue = dataPoint.getOptionalValue(fieldIndexEntry.getValue());
                 if (optionalValue.isPresent()) {
                     try {
                         jsonGenerator.writeFieldName(fieldIndexEntry.getKey());
@@ -104,11 +101,11 @@ public abstract class AbstractResourceResponse {
         }
     }
 
-    protected static void writeDataPointAsArray(DataPoint dataPoint, JsonGenerator jsonGenerator) {
+    protected static void writeDataPointAsArray(DustDataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartArray();
             dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
-                Optional<?> optionalValue = dataPoint.getField(fieldIndexEntry.getValue());
+                Optional<?> optionalValue = dataPoint.getOptionalValue(fieldIndexEntry.getValue());
                 if (optionalValue.isPresent()) {
                     try {
                         jsonGenerator.writeObject(optionalValue.get());
@@ -140,9 +137,9 @@ public abstract class AbstractResourceResponse {
         }).type(MediaType.APPLICATION_JSON).build();
     }
 
-    protected DataSource<DataPoint> filterDataSource(List<PathSegment> filterList, DataSource<DataPoint> dataSource) throws IllegalArgumentException {
-        List<DataPoint> dataList = dataSource.collect();
-        DataSource<DataPoint> retSource = new StreamDataSource<DataPoint>(dataList);
+    protected DataSource<DustDataPoint> filterDataSource(List<PathSegment> filterList, DataSource<DustDataPoint> dataSource) throws IllegalArgumentException {
+        List<DustDataPoint> dataList = dataSource.collect();
+        DataSource<DustDataPoint> retSource = new StreamDataSource<DustDataPoint>(dataList);
         for (int i = 0; i < filterList.size(); i += 3) {
             String field = filterList.get(i).getPath();
             String op = filterList.get(i + 1).getPath();
@@ -167,7 +164,7 @@ public abstract class AbstractResourceResponse {
                     String op1 = filterList.get(i+5).getPath();
                     String value1 = filterList.get(i+6).getPath();
 
-                    DataSource<DataPoint> tempSource = new StreamDataSource<DataPoint>(dataList);
+                    DataSource<DustDataPoint> tempSource = new StreamDataSource<DustDataPoint>(dataList);
                     switch (op1) {
                         case "atLeast":
                             tempSource = tempSource.selection(DataPointComparator.dataPointAtLeastComparator(field1, value1));
@@ -179,7 +176,7 @@ public abstract class AbstractResourceResponse {
                             tempSource = tempSource.selection(DataPointComparator.dataPointSameComparator(field1, value1));
                             break;
                     }
-                    retSource = new StreamDataSource<DataPoint>(Stream.concat(tempSource.stream(),retSource.stream()));
+                    retSource = new StreamDataSource<DustDataPoint>(Stream.concat(tempSource.stream(),retSource.stream()));
 
                     i += 4;
                     if(i+3 >= filterList.size()){

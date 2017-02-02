@@ -1,6 +1,6 @@
 package de.hu.flinkydust.data.projector;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
 import java.util.function.Function;
 
@@ -9,7 +9,7 @@ import java.util.function.Function;
  */
 
 
-public class FieldnameProjector implements Function<DataPoint, DataPoint> {
+public class FieldnameProjector implements Function<DustDataPoint, DustDataPoint> {
 
     private String[] fieldNames;
 
@@ -17,13 +17,13 @@ public class FieldnameProjector implements Function<DataPoint, DataPoint> {
         this.fieldNames = fieldNames;
     }
 
-    public DataPoint apply(DataPoint source){
-        DataPoint p = new DataPoint();
+    public DustDataPoint apply(DustDataPoint source){
+        DustDataPoint p = new DustDataPoint(fieldNames.length);
 
-        for (String field: fieldNames){
-            if (source.getFieldIndex(field) != null) {
-                p.setField(field, source.getOptionalValue(source.getFieldIndex(field)).orElse(null));
-            }
+        int i = 0;
+        for (String field : fieldNames) {
+            p.setFieldIndex(field, i++);
+            p.setField(field, source.getOptionalValue(source.getFieldIndex(field)).orElse(null));
         }
 
         return p;

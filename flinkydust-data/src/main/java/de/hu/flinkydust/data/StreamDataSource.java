@@ -3,6 +3,7 @@ package de.hu.flinkydust.data;
 
 
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -61,7 +62,7 @@ public class StreamDataSource<T> implements DataSource<T> {
      * @throws IOException
      *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
      */
-    public static DataSource<DataPoint> readFile(InputStream inputStream) throws IOException {
+    public static DataSource<DustDataPoint> readFile(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             return new StreamDataSource<>(readFromReader(reader));
         } catch (IOException e) {
@@ -78,7 +79,7 @@ public class StreamDataSource<T> implements DataSource<T> {
      * @throws IOException
      *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
      */
-    public static DataSource<DataPoint> readFile(String path) throws IOException {
+    public static DataSource<DustDataPoint> readFile(String path) throws IOException {
         return new StreamDataSource<>(parseFile(path));
     }
 
@@ -91,7 +92,7 @@ public class StreamDataSource<T> implements DataSource<T> {
      * @throws IOException
      *          Exception bei Lesefehlern
      */
-    public static List<DataPoint> parseFile(String path) throws IOException {
+    public static List<DustDataPoint> parseFile(String path) throws IOException {
         try (BufferedReader fileReader = new BufferedReader(new FileReader(path))) {
             return readFromReader(fileReader);
         } catch (IOException e) {
@@ -109,7 +110,7 @@ public class StreamDataSource<T> implements DataSource<T> {
      * @throws IOException
      *          Wenn ein Fehler beim Lesen aufgetreten ist
      */
-    public static List<DataPoint> parseFile(InputStream inputStream) throws IOException {
+    public static List<DustDataPoint> parseFile(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             return readFromReader(reader);
         } catch (IOException e) {
@@ -117,33 +118,29 @@ public class StreamDataSource<T> implements DataSource<T> {
         }
     }
 
-    private static List<DataPoint> readFromReader(BufferedReader reader) throws IOException {
-        String line;
-        // Erste Zeile überspringen
-        reader.readLine();
-        List<DataPoint> dataPoints = new LinkedList<>();
+    private static List<DustDataPoint> readFromReader(BufferedReader reader) throws IOException {
+        String line = reader.readLine();
+        String[] headerNames = line.split(";");
+        List<DustDataPoint> dataPoints = new LinkedList<>();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         while ((line = reader.readLine()) != null) {
             String[] fields = line.split(";");
-            Date date = null;
+            Object[] fieldsConverted = new Object[fields.length];
             try {
-                date = dateFormat.parse(fields[0]);
+                fieldsConverted[0] = dateFormat.parse(fields[0]);
             } catch (ParseException e) {
             }
-            dataPoints.add(new DataPoint(
-                    date,
-                    fields[1].equals("NA") ? null : Double.valueOf(fields[1]),
-                    fields[2].equals("NA") ? null : Double.valueOf(fields[2]),
-                    fields[3].equals("NA") ? null : Double.valueOf(fields[3]),
-                    fields[4].equals("NA") ? null : Double.valueOf(fields[4])
-            ));
+            for (int i = 1; i < fields.length; i++) {
+                fieldsConverted[i] = fields[i].equals("NA") ? null : Double.valueOf(fields[i]);
+            }
+            dataPoints.add(new DustDataPoint(headerNames, fieldsConverted));
         }
 
         return dataPoints;
     }
 
-    public static DataSource<DataPoint> generateRandomData(Integer size) {
-        List<DataPoint> dataPoints = new LinkedList<>();
+    public static DataSource<DustDataPoint> generateRandomData(Integer size) {
+        List<DustDataPoint> dataPoints = new LinkedList<>();
 
         for (int i = 0; i < size; i++) {
             dataPoints.add(generateRandomTuple());
@@ -152,10 +149,9 @@ public class StreamDataSource<T> implements DataSource<T> {
         return new StreamDataSource<>(dataPoints.stream());
     }
 
-    protected static DataPoint generateRandomTuple() {
+    protected static DustDataPoint generateRandomTuple() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-        DataPoint dataPoint = new DataPoint();
         //generate new dates
         String randomMonth = String.valueOf(ThreadLocalRandom.current().nextDouble(1, 12 + 1));
         String randomDay = String.valueOf(ThreadLocalRandom.current().nextDouble(1, 31 + 1));
@@ -197,7 +193,7 @@ public class StreamDataSource<T> implements DataSource<T> {
             humidity = null;
         }
 
-        return new DataPoint(date, smallParticles, largeParticles, humidity, temperature);
+        return new DustDataPoint(date, smallParticles, largeParticles, humidity, temperature);
     }
 
     private static String addLeadingZeroes(String string) {

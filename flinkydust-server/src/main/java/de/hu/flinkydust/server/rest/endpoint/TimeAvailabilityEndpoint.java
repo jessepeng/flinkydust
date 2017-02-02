@@ -1,8 +1,7 @@
 package de.hu.flinkydust.server.rest.endpoint;
 
-import de.hu.flinkydust.data.DataPoint;
+import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
-import de.hu.flinkydust.data.comparator.DataPointComparator;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 import de.hu.flinkydust.server.rest.datastore.DataStore;
 
@@ -28,7 +27,7 @@ public class TimeAvailabilityEndpoint extends AbstractResourceResponse {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTimeAvailability() {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
+        DataSource<DustDataPoint> dataSource = DataStore.getInstance().getDataSource(DustDataPoint.class);
 
         if (dataSource == null) {
             return createErrorResponse("Keine DataSource geladen.");
@@ -37,11 +36,11 @@ public class TimeAvailabilityEndpoint extends AbstractResourceResponse {
         return getResponse(dataSource);
     }
 
-    private Response getResponse(DataSource<DataPoint> dataSource) {
+    private Response getResponse(DataSource<DustDataPoint> dataSource) {
         Map<Date, Boolean> dateMap = dataSource
-                .selection(DataPoint::hasData)
+                .selection(DustDataPoint::hasData)
                 .stream()
-                .collect(Collectors.groupingBy(DataPoint::getDate, Collectors.reducing(true, e -> true, (b, c) -> true )));
+                .collect(Collectors.groupingBy(DustDataPoint::getDate, Collectors.reducing(true, e -> true, (b, c) -> true )));
         return createOkResponse(dateMap.keySet().stream(), (date, jsonGenerator) -> {
             try {
                 jsonGenerator.writeStartObject();
@@ -58,7 +57,7 @@ public class TimeAvailabilityEndpoint extends AbstractResourceResponse {
     @Path("/filter/{filter:(/?[^/]+/(atLeast|lessThan|same)/[^/]+(/or/[^/]+/(atLeast|lessThan|same)/[^/]+)*)+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response filter(@PathParam("filter") List<PathSegment> filterList) {
-        DataSource<DataPoint> dataSource = DataStore.getInstance().getDataSource(DataPoint.class);
+        DataSource<DustDataPoint> dataSource = DataStore.getInstance().getDataSource(DustDataPoint.class);
 
         if (dataSource == null) {
             return createErrorResponse("Keine DataSource geladen.");

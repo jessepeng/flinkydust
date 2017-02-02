@@ -19,6 +19,7 @@
         <jersey.version>2.24.1</jersey.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ram>1024</ram>
     </properties>
 
     <build>
@@ -30,6 +31,15 @@
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.5</version>
+                    <configuration>
+                        <forkMode>once</forkMode>
+                        <argLine>-Xmx${ram}m</argLine>
                     </configuration>
                 </plugin>
             </plugins>
