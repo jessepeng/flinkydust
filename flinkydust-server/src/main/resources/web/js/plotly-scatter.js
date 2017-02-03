@@ -40,7 +40,7 @@ function refreshScatterplot() {
         var dim = $(this).children('.dimension').val();
         var fil = $(this).children('.filterVal').val();
         var com = $(this).children('.comparator').val();
-        if (dim == 'date') {
+        if (dim == 'MasterTime') {
             var selDate = $(this).find('.filterDate').datepicker('getDate');
             if (selDate == null) {
                 $('.errors').text('Filter not completely set!');
@@ -56,7 +56,7 @@ function refreshScatterplot() {
             var dim1 = $(this).children('.dimension').val();
             var fil1 = $(this).children('.filterVal').val();
             var com1 = $(this).children('.comparator').val();
-            if (dim1 == 'date') {
+            if (dim1 == 'MasterTime') {
                 var selDate = $(this).find('.filterDate').datepicker('getDate');
                 if (selDate == null) {
                     $('.errors').text('Filter not completely set!');
@@ -95,7 +95,7 @@ function refreshScatterplot() {
     }
 
     // Create REST URL
-    var restlink = '/rest/projection/' + x + '/' + y + '/date/';
+    var restlink = '/rest/projection/' + x + '/' + y + '/MasterTime/';
 
     if (filters.length > 0) {
         restlink += 'filter/';
@@ -202,12 +202,10 @@ function refreshScatterplot() {
                     //Add history
                     var historyDiv = document.createElement("div");
                     historyDiv.style.width = "97%";
-                    historyDiv.style.height = "400px";
-                    historyDiv.className = "row";
+                    historyDiv.className = "row col-margin-top";
 
                     var divHistoryChart = document.createElement("div");
                     divHistoryChart.style.width = "47%";
-                    divHistoryChart.style.height = "400px";
                     divHistoryChart.className = "col-md-12";
 
                     Plotly.newPlot(divHistoryChart, [], layout,
@@ -223,7 +221,6 @@ function refreshScatterplot() {
 
                     var divHistoryTimeline = document.createElement("div");
                     divHistoryTimeline.style.width = "47%";
-                    divHistoryTimeline.style.height = "400px";
                     divHistoryTimeline.className = "col-md-12";
 
                     var timeLineLayout = {
@@ -265,7 +262,7 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
         mode: 'markers',
         type: 'scattergl',
         text: [],
-        marker: {size: 3, color: selection ? 'grey' : 'blue'},
+        marker: {size: 3, color: selection ? 'grey' : 'rgb(158,202,225)'},
         name: selection ? 'Not selected' : 'All'
     };
     var timelinePoints = {
@@ -274,7 +271,7 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
         mode: 'markers',
         type: 'scattergl',
         text: [],
-        marker: {symbol: 'square', size: 10, color: selection ? 'grey' : 'blue'},
+        marker: {symbol: 'square', size: 10, color: selection ? 'grey' : 'rgb(158,202,225)'},
         name: selection ? 'Not selected' : 'All'
     };
     if (selection) {
@@ -284,7 +281,7 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
             mode: 'markers',
             type: 'scattergl',
             text: [],
-            marker: {size: 3, color: 'blue'},
+            marker: {size: 3, color: 'rgb(158,202,225)'},
             name: 'Selected'
         };
         var timelinePointsSelected = {
@@ -293,7 +290,7 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
             mode: 'markers',
             type: 'scattergl',
             text: [],
-            marker: {symbol: 'square', size: 10, color: 'blue'},
+            marker: {symbol: 'square', size: 10, color: 'rgb(158,202,225)'},
             name: 'Selected'
         };
 
@@ -322,7 +319,7 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
 
     function preparePlots() {
         $.each(restData, function (key, value) {
-            var date = value['date'].slice(0, 10);
+            var date = value['MasterTime'].slice(0, 10);
             if (selection) {
                 var xValue = value[x];
                 var yValue = value[y];
@@ -334,9 +331,9 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
                     var upperXSplit = upperX.slice(0, 10).split('-');
                     var compareDateUpper = new Date(upperXSplit[0], upperXSplit[1] - 1, upperXSplit[2]);
                     if (dateObject > compareDateLower && dateObject < compareDateUpper) {
-                        dataPointsSelected.x.push((x == 'date') ? date : xValue);
-                        dataPointsSelected.y.push((y == 'date') ? date : yValue);
-                        dataPointsSelected.text.push('Date: ' + value['date']);
+                        dataPointsSelected.x.push((x == 'MasterTime') ? date : xValue);
+                        dataPointsSelected.y.push((y == 'MasterTime') ? date : yValue);
+                        dataPointsSelected.text.push('Date: ' + value['MasterTime']);
                         if (timelinePointsSelected.x.indexOf(date) == -1) {
                             timelinePointsSelected.x.push(date);
                             timelinePointsSelected.y.push(1);
@@ -346,9 +343,9 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
                     }
                 } else {
                     if (xValue > lowerX && xValue < upperX && yValue > lowerY && yValue < upperY) {
-                        dataPointsSelected.x.push((x == 'date') ? date : xValue);
-                        dataPointsSelected.y.push((y == 'date') ? date : yValue);
-                        dataPointsSelected.text.push('Date: ' + value['date']);
+                        dataPointsSelected.x.push((x == 'MasterTime') ? date : xValue);
+                        dataPointsSelected.y.push((y == 'MasterTime') ? date : yValue);
+                        dataPointsSelected.text.push('Date: ' + value['MasterTime']);
                         if (timelinePointsSelected.x.indexOf(date) == -1) {
                             timelinePointsSelected.x.push(date);
                             timelinePointsSelected.y.push(1);
@@ -358,9 +355,9 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
                     }
                 }
             }
-            dataPoints.x.push((x == 'date') ? date : value[x]);
-            dataPoints.y.push((y == 'date') ? date : value[y]);
-            dataPoints.text.push('Date: ' + value['date']);
+            dataPoints.x.push((x == 'MasterTime') ? date : value[x]);
+            dataPoints.y.push((y == 'MasterTime') ? date : value[y]);
+            dataPoints.text.push('Date: ' + value['MasterTime']);
             if (timelinePoints.x.indexOf(date) == -1) {
                 timelinePoints.x.push(date);
                 timelinePoints.y.push(1);
@@ -463,25 +460,28 @@ function addFilter() {
     filterCnt += 1;
     $('#filter-container').append(
         '<div class="col-md-12 filter" id="filter-' + filterCnt + '">' +
-            '<select class="dimension" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
+            '<select class="dimension form-control" style="display:inline;" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
                 '<option value="" disabled selected>Dimension</option>' +
-                '<option value="date">Date</option>' +
-                '<option value="small">Small</option>' +
-                '<option value="large">Large</option>' +
-                '<option value="relHumid">Rel. Humidity</option>' +
-                '<option value="temp">Temperature</option>' +
+                '<option value="MasterTime">Date</option>' +
+                '<option value="Small">Small</option>' +
+                '<option value="Large">Large</option>' +
+                '<option value="RelHumidity">Rel. Humidity</option>' +
+                '<option value="OutdoorTemp">Temperature</option>' +
             '</select>' +
-            '<select class="comparator" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
+            '<select class="comparator form-control" style="display:inline;" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
                 '<option value="" disabled selected>Comparator</option>' +
                 '<option value="atLeast">greater</option>' +
                 '<option value="same">equal</option>' +
                 '<option value="lessThan">less</option>' +
             '</select>' +
-            '<input class="filterVal" type="text" placeholder="Insert value">' +
-            '<input class="filterDate" type="text" placeholder="Insert value">' +
+            '<input class="filterVal form-control" style="display:inline;" type="text" placeholder="Insert value">' +
+            '<input class="filterDate form-control" style="display:inline;" type="text" placeholder="Insert value">' +
             '<span style="width:49%;margin-right:1%;">' +
-                '<span class="filter-delete" onclick="removeFilter(' + filterCnt + ')">x</span>' +
-                '<span class="filter-button" onclick="addOrToFilter(' + filterCnt + ')">Add "or"</span>' +
+//                '<span class="filter-delete" onclick="removeFilter(' + filterCnt + ')">x</span>' +
+//                '<span class="filter-button" onclick="addOrToFilter(' + filterCnt + ')">Add "or"</span>' +
+                '<button name="deleteOrFilter" onclick="removeFilter(' + filterCnt + ')" style="float: right;margin: 5px 5px 0 0;" type="button" class="btn btn-xs btn-default">x</button>' +
+                '<button name="addOrFilter" onclick="addOrToFilter(' + filterCnt + ')" style="float: right;margin: 5px 5px 0 0;" type="button" class="btn btn-xs btn-default">Add "or"</button>' +
+
             '</span>' +
         '</div>');
 
@@ -489,7 +489,7 @@ function addFilter() {
                 var inputText = $(this).parent().find('.filterVal');
                 var inputDate = $(this).parent().find('.filterDate');
 
-                if ($(this).val() == 'date') {
+                if ($(this).val() == 'MasterTime') {
                     inputDate.datepicker({
                         dateFormat: 'yy-mm-dd',
                         minDate: '2014-01-01',
@@ -514,24 +514,25 @@ function addOrToFilter(id) {
     filterCnt += 1;
     $("#filter-" + id).append(
     '<div id="filter-' + filterCnt + '" class="subfilter">' +
-        '<select class="dimension" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
+        '<select class="dimension form-control" style="display:inline;" name="filter' + filterCnt + '"  id="filter' + filterCnt + '">' +
             '<option value="" disabled selected>Dimension</option>' +
-            '<option value="date">Date</option>' +
-            '<option value="small">Small</option>' +
-            '<option value="large">Large</option>' +
-            '<option value="relHumid">Rel. Humidity</option>' +
-            '<option value="temp">Temperature</option>' +
+            '<option value="MasterTime">Date</option>' +
+            '<option value="Small">Small</option>' +
+            '<option value="Large">Large</option>' +
+            '<option value="RelHumidity">Rel. Humidity</option>' +
+            '<option value="OutdoorTemp">Temperature</option>' +
         '</select>' +
-        '<select class="comparator" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
+        '<select class="comparator form-control" style="display:inline;" name="comparator' + filterCnt + '" id="comparator' + filterCnt + '">' +
             '<option value="" disabled selected>Comparator</option>' +
             '<option value="atLeast">greater</option>' +
             '<option value="same">equal</option>' +
             '<option value="lessThan">less</option>' +
         '</select>' +
-        '<input class="filterVal" type="text" placeholder="Insert value">' +
-        '<input class="filterDate" type="text" placeholder="Insert value">' +
+        '<input class="filterVal form-control" type="text" placeholder="Insert value">' +
+        '<input class="filterDate form-control" type="text" placeholder="Insert value">' +
         '<span style="width:49%;margin-right:1%;text-align:right;">' +
-            '<span class="filter-delete" onclick="removeFilter(' + filterCnt + ')">x</span>' +
+//            '<span class="filter-delete" onclick="removeFilter(' + filterCnt + ')">x</span>' +
+            '<button name="deleteFilter" onclick="removeFilter(' + filterCnt + ')" style="float: right;margin: 5px 5px 0 0;" type="button" class="btn btn-xs btn-default">x</button>' +
         '</span>' +
     '</div>'
      );
@@ -540,7 +541,7 @@ function addOrToFilter(id) {
              var inputText = $(this).parent().find('.filterVal');
              var inputDate = $(this).parent().find('.filterDate');
 
-             if ($(this).val() == 'date') {
+             if ($(this).val() == 'MasterTime') {
                  inputDate.datepicker({
                      dateFormat: 'yy-mm-dd',
                      minDate: '2014-01-01',
@@ -558,142 +559,142 @@ function addOrToFilter(id) {
 }
 
 
-
+var clusterData;
+var currentPos = "";
 function refreshClusters(){
-    $('#cluster-container').empty();
+    $('#timeline').empty();
     var days = $('#days').val();
     var hours = $('#hours').val();
-    var minutes = $('#minutes').val();
-
-    var clusters = $('#clusternum').val();
 
     // Create REST URL
-    var restlink = '/rest/clustering/' + days + '/' + hours + '/' +minutes + '/' + clusters;
+    var restlink = '/rest/projection/MasterTime/Small/Large/cluster/window/' + hours + '/';
+    $('#treepos').val("");
+    $.getJSON(restlink, function (data) {
+        if (data.status !== "ok") {
+            $(".errors").text(data.message);
+            loading.hide();
+        } else {
+            clusterData = data.data[0];
 
-    // Create Charts
-    var clusterNum = parseInt(clusters);
+            console.warn(clusterData);
 
-    var widthPercent = (clusterNum < 3)? 100 / clusterNum : 33;
-    var heightPercent = 100 / Math.max(1, Math.floor((clusterNum / 3)));
+            if (clusterData.length == 0) {
+                loading.hide();
+                $('.nodata').show();
+                return;
+            }
 
-    var docWidth = $(document).width() - 100;
-    var docHeight = $(window).height();
-    var perSide = Math.ceil(Math.sqrt(clusterNum));
+            createClusters("");
+        }
 
-//    var widthPx = (clusterNum < 3)? docWidth / clusterNum : docWidth / 3;
-//    var heightPx = docHeight/2;
+    });
+}
 
-    var widthPx = docWidth / perSide;
-    var heightPx = docHeight/ perSide;
+function navigateClusters(direction){
 
-    for(var i = 1; i <= clusterNum; i++){
-        addHistogram(i, widthPx, heightPx);
+    switch(direction){
+        case "up":
+            currentPos = currentPos.substring(0, currentPos.length - 1);
+            break;
+        case "left":
+            currentPos += "0";
+            break;
+        case "right":
+            currentPos += "1";
+            break;
+        case "toPos":
+            currentPos = $('#treepos').val();
+        break;
     }
 
-//    $.getJSON(restlink, function (data) {
-//        if (data.status !== "ok") {
-//            $(".errors").text(data.message);
-//            loading.hide();
-//        } else {
-//            restData = data.data;
-//
-//            if (restData.length == 0) {
-//                loading.hide();
-//                $('.nodata').show();
-//                return;
-//            }
-//        }
-//
-//        for(var i = 0; i< clusterNum; i++){
-//             var dataPoints = {
-//                x: restData[i].x,
-//                y: restData[i].y,
-//                type: 'histogram'
-//               // text: [],
-//               // marker: {size: 3, color: selection ? 'grey' : 'blue'},
-//             };
-//            var id = 'cluster' + i+1;
-//            Plotly.newPlot(id, dataPoints);
-//        }
-//    });
-
-
-            var yVals = [];
-            for(var i = 0; i<31;i++){
-                yVals[i] = Math.floor(Math.random() * (25));
-            }
-
-            var xVals = ['0.25','0.28','0.3','0.35','0.4','0.45','0.5','0.58','0.65','0.7','0.8','1','1.3','1.6','2','2.5','3','3.5','4','5','6.5','7.5','8','10','12.5','15','17.5','20','25','30','32'];
-
-            for(var i = 0; i < clusterNum; i++){
-                 var dataPoints = [{
-                      x: xVals,
-                      y: yVals,
-                      type: 'bar',
-                      marker: {
-                        color: 'rgb(158,202,225)',
-                        opacity: 0.6,
-                        line: {
-                          color: 'rbg(8,48,107)',
-                          width: 1.5
-                        }
-                      }
-                 }];
-
-//                 var annotationContent = [];
-                 var layout = {
-                       title: 'Cluster ' + (i+1),
-                       xaxis: {
-                         title: 'Grain Size',
-                         type: 'category',
-                         fixedrange: true,
-                         tickangle: -90
-                       },
-                       yaxis: {
-                            title: 'Vol (%)',
-                            fixedrange: true
-                       },
-                         autosize: false,
-                         width: widthPx,
-                         height: heightPx,
-
-                       margin: {
-                            t: 60
-                       }
-
-//                       annotations: annotationContent
-                 };
-
-//                 for( var j = 0 ; j < xVals.length ; j++ ){
-//                       var result = {
-//                         x: xVals[j],
-//                         y: yVals[j],
-//                         text: yVals[j],
-//                         xanchor: 'center',
-//                         yanchor: 'bottom',
-//                         showarrow: false
-//                       };
-//                       annotationContent.push(result);
-//                 }
-
-                var id = 'cluster' + (i+1);
-                Plotly.newPlot(id, dataPoints, layout, {displayModeBar: false});
-            }
-
-
+    $('#treepos').val(currentPos);
+    $('#Centroid').empty();
+    $('#Left').empty();
+    $('#Right').empty();
+    createClusters(currentPos);
 }
 
+function createClusters(treeString){
 
-function addHistogram(id, width, height) {
-    $('#cluster-container').append(
-        '<div class="cluster-div" id="cluster' + id + '" style="width:' + width + 'px; height: ' + height + 'px; float:left;" >' +
-        '</div>');
+    // Navigate through tree based on navigation String - "1001"
+    clusters = clusterData;
+    for (var i = 0, len = treeString.length; i < len; i++) {
+        var c = treeString.charAt(i);
+        if(c == '0'){   // go down left in tree
+            if(clusters.hasOwnProperty("left")){
+                clusters = clusters.left;
+            }
+        }else{
+            if(clusters.hasOwnProperty("right")){
+            clusters = clusters.right;
+            }
+        }
+    }
+
+    var level = treeString.length;
+    drawCluster(clusters.centroid, "Centroid", level, treeString);
+    if(clusters.hasOwnProperty("left")){
+        drawCluster(clusters.left.centroid, "Left", level+1, treeString + "0");
+    }
+    if(clusters.hasOwnProperty("right")){
+        drawCluster(clusters.right.centroid, "Right", level+1, treeString + "1");
+    }
 }
 
-window.onresize = function() {
-    Plotly.Plots.resize(gd);
-};
+function drawCluster(hist, id, level, posName){
+
+    var xVals = [];
+    var yVals = [];
+
+    for(var key in hist){
+        if (hist.hasOwnProperty(key)) {
+            if(key != "MasterTime"){
+                xVals.push(key);
+                yVals.push(hist[key]);
+            }
+        }
+    }
+
+    var dataPoints = [{
+      x: xVals,
+      y: yVals,
+      type: 'bar',
+      marker: {
+        color: 'rgb(158,202,225)',
+        opacity: 0.6,
+        line: {
+          color: 'rbg(8,48,107)',
+          width: 1.5
+        }
+      }
+    }];
+
+    var titleStr = id + ' Cluster - Level ' + level;
+    if(level > 0){
+        titleStr += " - Position '" + posName + "'"
+    }
+    var layout = {
+        title: titleStr,
+        xaxis: {
+          title: 'Grain Size',
+          type: 'category',
+          fixedrange: true,
+          tickangle: -90
+        },
+        yaxis: {
+             title: 'Vol (%)',
+             fixedrange: true
+        },
+        margin: {
+             t: 60
+        }
+    };
+
+    Plotly.newPlot(id, dataPoints, layout, {displayModeBar: false});
+}
+
 
 $(document).ready(function () {
     $.ajax("/rest/data/loadTest");
+//    setTimeout(refreshScatterplot,2500);
 });

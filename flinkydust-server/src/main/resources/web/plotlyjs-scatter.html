@@ -42,7 +42,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#scatter" aria-controls="scatter" role="tab"
                                                           data-toggle="tab">Scatterplot</a></li>
-                <li role="presentation"><a href="#cluster" aria-controls="cluster" role="tab" data-toggle="tab">Clustering</a>
+                <li role="presentation"><a href="#cluster" aria-controls="cluster" role="tab" data-toggle="tab" onclick="refreshClusters()">Clustering</a>
                 </li>
             </ul>
         </div>
@@ -55,33 +55,36 @@
                         <h2>Options</h2>
                         <div class="col-md-12">
                             <label for="xAxis">x-Axis</label>
-                            <select name="xAxis" id="xAxis">
-                                <option value="date">Date</option>
-                                <option selected="selected" value="small">Small</option>
-                                <option value="large">Large</option>
-                                <option value="relHumid">Rel. Humidity</option>
-                                <option value="temp">Temperature</option>
+                            <select name="xAxis" class="form-control" style="display:inline;" id="xAxis">
+                                <option value="MasterTime">Date</option>
+                                <option selected="selected" value="Small">Small</option>
+                                <option value="Large">Large</option>
+                                <option value="RelHumidity">Rel. Humidity</option>
+                                <option value="OutdoorTemp">Temperature</option>
                             </select>
                         </div>
                         <div class="col-md-12">
                             <label for="yAxis">y-Axis</label>
-                            <select name="yAxis" id="yAxis">
-                                <option value="date">Date</option>
-                                <option value="small">Small</option>
-                                <option selected="selected" value="large">Large</option>
-                                <option value="relHumid">Rel. Humidity</option>
-                                <option value="temp">Temperature</option>
+                            <select name="yAxis" class="form-control" style="display:inline;" id="yAxis">
+                                <option value="MasterTime">Date</option>
+                                <option value="Small">Small</option>
+                                <option selected="selected" value="Large">Large</option>
+                                <option value="RelHumidity">Rel. Humidity</option>
+                                <option value="OutdoorTemp">Temperature</option>
                             </select>
                         </div>
                         <div class="col-md-12 col-margin-top">
-                            <b>Filter: <span class="filter-button" onclick="addFilter()">Add "and" Filter</span></b>
+                            <button name="addFilter" onclick="addFilter()" type="button" class="btn btn-xs btn-default">
+                                Add "and" Filter
+                            </button>
+
                             <div id="filter-container">
 
                             </div>
                         </div>
 
                         <div class="col-md-12 col-margin-large-top">
-                            <button name="refresh" onclick="refreshScatterplot()" type="button" class="btn btn-default">
+                            <button name="refresh" onclick="setTimeout('refreshScatterplot();', 1000);" type="button" class="btn btn-primary">
                                 Refresh
                             </button>
                         </div>
@@ -118,16 +121,41 @@
                         <div class="col-md-12" style="margin-top:6px;">
                             <span><b>Time Aggregation:</b></span>&nbsp;&nbsp;&nbsp;
                             <label for="days">Days</label>&nbsp;
-                            <input id="days" class="clusterinput" type="text" value="0">&nbsp;&nbsp;&nbsp;
+                            <input id="days" class="clusterinput form-control" type="text" value="0">&nbsp;&nbsp;&nbsp;
+
                             <label for="hours">Hours</label>&nbsp;
-                            <input id="hours" class="clusterinput" type="text" value="6">&nbsp;&nbsp;&nbsp;
-                            <label for="minutes">Minutes</label>&nbsp;
-                            <input id="minutes" class="clusterinput" type="text" value="0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <select name="hours" class="form-control" style="display:inline; width: 80px;" id="hours">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="4">4</option>
+                                <option selected="selected" value="6">6</option>
+                                <option value="8">8</option>
+                                <option value="12">12</option>
+                            </select>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <label for="clusternum">Clusters:</label>
-                            <input id="clusternum" class="clusterinput" type="text" value="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button name="refreshCluster" onclick="refreshClusters()" type="button" class="btn btn-default">
+
+                            <button name="refreshCluster" onclick="refreshClusters()" type="button" class="btn btn-primary">
                                 Refresh
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span><b>Exploration:</b></span>&nbsp;&nbsp;&nbsp;
+                            <button name="refreshCluster" onclick="navigateClusters('up')" type="button" class="btn btn-default">
+                                Up
+                            </button>
+
+                            <button name="refreshCluster" onclick="navigateClusters('left')" type="button" class="btn btn-default">
+                                Left
+                            </button>
+
+                            <button name="refreshCluster" onclick="navigateClusters('right')" type="button" class="btn btn-default">
+                                Right
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="treepos">Position</label>&nbsp;
+                            <input id="treepos" class="clusterinput form-control" type="text" value="">&nbsp;&nbsp;&nbsp;
+                            <button name="refreshCluster" onclick="navigateClusters('toPos')" type="button" class="btn btn-default">
+                                To Position
                             </button>
                         </div>
                     </div>
@@ -135,6 +163,15 @@
                 <div class="row">
                     <div class="col-md-12" style="margin-top:15px;">
                         <div id="cluster-container">
+
+                            <div class="cluster-div" id="Centroid" style="width: 100%; height:45vh;">
+                            </div>
+
+                            <div class="cluster-div" id="Left" style="width: 50%; height:45vh; float:left;margin-top:2px;">
+                            </div>
+
+                            <div class="cluster-div" id="Right" style="width: 50%; height:45vh; float:left;margin-top:2px;">
+                            </div>
 
                         </div>
                     </div>
