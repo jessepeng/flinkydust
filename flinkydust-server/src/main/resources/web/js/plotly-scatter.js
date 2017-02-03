@@ -319,7 +319,10 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
 
     function preparePlots() {
         $.each(restData, function (key, value) {
-            var date = value['MasterTime'].slice(0, 10);
+//            var date = value['MasterTime'].slice(0, 23);
+//            date = date.replace("T"," ");
+              var date = value['MasterTime'].slice(0, 10);
+
             if (selection) {
                 var xValue = value[x];
                 var yValue = value[y];
@@ -374,6 +377,7 @@ function createPlots(lowerX, upperX, lowerY, upperY, compareDates, callback) {
                 dataPointsSelected.text[key] = tooltipText;
             });
         }
+
         return {
             dataPoints: dataPoints,
             dataPointsSelected: dataPointsSelected,
@@ -559,10 +563,18 @@ function addOrToFilter(id) {
 }
 
 
+/******************************************* CLUSTERING ***********************************************/
+
 var clusterData;
 var currentPos = "";
+var clusterTimelineData = [];
+var selectedPoints = [];
+
+/**
+    API Call and Initialization
+**/
 function refreshClusters(){
-    $('#timeline').empty();
+//    $('#clusterTimeline').empty();
     var days = $('#days').val();
     var hours = $('#hours').val();
 
@@ -576,20 +588,22 @@ function refreshClusters(){
         } else {
             clusterData = data.data[0];
 
-            console.warn(clusterData);
-
             if (clusterData.length == 0) {
                 loading.hide();
                 $('.nodata').show();
                 return;
             }
 
-            createClusters("");
+            clusterTimelineData = getClusterTimelineData(clusterData);
+            refreshClusterPlots("");
         }
 
     });
 }
 
+/**
+    Navigates the Cluster Tree drawing the new Plots
+**/
 function navigateClusters(direction){
 
     switch(direction){
@@ -611,11 +625,24 @@ function navigateClusters(direction){
     $('#Centroid').empty();
     $('#Left').empty();
     $('#Right').empty();
-    createClusters(currentPos);
+    refreshClusterPlots(currentPos);
+
 }
 
-function createClusters(treeString){
 
+/**
+    Redraws the Plots based on Position String
+**/
+function refreshClusterPlots(treeString){
+    getClusterNodeFromString(treeString);
+    createTimeline(treeString);
+    createClusters(treeString);
+}
+
+/**
+    Navigates to a certain Node in the trree based on Position String and sets global "Clusters" var to it.
+**/
+function getClusterNodeFromString(treeString){
     // Navigate through tree based on navigation String - "1001"
     clusters = clusterData;
     for (var i = 0, len = treeString.length; i < len; i++) {
@@ -630,7 +657,12 @@ function createClusters(treeString){
             }
         }
     }
+}
 
+/**
+    Wrapper for Drawing the Cluster Plots
+**/
+function createClusters(treeString){
     var level = treeString.length;
     drawCluster(clusters.centroid, "Centroid", level, treeString);
     if(clusters.hasOwnProperty("left")){
@@ -641,8 +673,80 @@ function createClusters(treeString){
     }
 }
 
-function drawCluster(hist, id, level, posName){
+/**
+    Draws the Cluster Timeline
+**/
+function createTimeline(treeString){
 
+    var timelineSubset = getClusterTimelineData(clusters);
+    $('#clusterTimeline').empty();
+
+    var unselectedSubset = [[],[],[]];
+    for (key in clusterTimelineData[0]){
+        var item = clusterTimelineData[0][key];
+        if(timelineSubset[0].indexOf(item) === -1){
+            // wenn der wert nicht selektiert ist, füge ihn hier hinzu
+            unselectedSubset[0].push(item);
+            unselectedSubset[1].push(1);
+            unselectedSubset[2].push("Date: " + item);
+        }
+    }
+
+    var timelinePoints = {
+        x: unselectedSubset[0], // overall Timeline Data
+        y: unselectedSubset[1],
+        mode: 'markers',
+        type: 'scattergl',
+        text: unselectedSubset[2],
+        marker: {symbol: 'square', size: 10, color: 'grey'},
+        name: 'Not selected'
+    };
+    var timelinePointsSelected = {
+        x: timelineSubset[0],
+        y: timelineSubset[1],
+        mode: 'markers',
+        type: 'scattergl',
+        text: timelineSubset[2],
+        marker: {symbol: 'square', size: 10, color: 'rgb(158,202,225)'},
+        name: 'Selected'
+    };
+
+    var timeLineLayout = {
+        yaxis: {
+            range: [0, 2],
+
+            showgrid: false,
+            zeroline: false,
+            showline: false,
+            autotick: true,
+            ticks: '',
+            showticklabels: false,
+            fixedrange: true
+        },
+        xaxis: {type: 'date', title: 'Data in Centroid'}
+    };
+
+
+    var traces = [];
+    if(unselectedSubset[0].length > 0){
+        traces.push(timelinePoints);
+    }
+    if(timelineSubset[0].length > 0){
+        traces.push(timelinePointsSelected);
+    }
+
+    Plotly.newPlot('clusterTimeline', traces, timeLineLayout, {
+        displaylogo: false,
+        displayModeBar: true,
+    });
+}
+
+
+
+/**
+    Draws the cluster plots
+**/
+function drawCluster(hist, id, level, posName){
     var xVals = [];
     var yVals = [];
 
@@ -669,10 +773,23 @@ function drawCluster(hist, id, level, posName){
       }
     }];
 
-    var titleStr = id + ' Cluster - Level ' + level;
+    var titleStr = id + " - Aggregates " ;
+    switch (id){
+        case "Centroid":
+            titleStr += selectedPoints[0];
+            break;
+        case "Left":
+            titleStr += selectedPoints[1];
+            break;
+        case "Right":
+            titleStr += selectedPoints[2];
+            break;
+    }
+    titleStr += ' time spans - Level ' + level;
     if(level > 0){
         titleStr += " - Position '" + posName + "'"
     }
+
     var layout = {
         title: titleStr,
         xaxis: {
@@ -690,8 +807,98 @@ function drawCluster(hist, id, level, posName){
         }
     };
 
-    Plotly.newPlot(id, dataPoints, layout, {displayModeBar: false});
+    Plotly.newPlot(id, dataPoints, layout); // , {displayModeBar: false}
 }
+
+
+/**
+   Retrieves the overall timeline data (all Timestamps of Aggregated Time Slots)
+**/
+function getClusterTimelineData(data){
+    // Check all Members of this Object
+    var result = [[],[],[]];
+    var noleft = true;
+    var noright = true;
+
+    if(data.hasOwnProperty("left")){
+        var subresult = getChildClusterTimelineDate(data.left);
+        result[0] = result[0].concat(subresult[0]);
+        result[1] = result[1].concat(subresult[1]);
+        result[2] = result[2].concat(subresult[2]);
+        selectedPoints[1]= subresult[3][0];     // number of points in left subtree
+        selectedPoints[0] = subresult[3][0];
+        noleft = false;
+    }
+
+    if(data.hasOwnProperty("right")){
+        var subresult = getChildClusterTimelineDate(data.right);
+        result[0] = result[0].concat(subresult[0]);
+        result[1] = result[1].concat(subresult[1]);
+        result[2] = result[2].concat(subresult[2]);
+        selectedPoints[2]= subresult[3][0];     // number of points in right subtree
+        selectedPoints[0] += subresult[3][0];   // number of points in centroid tree
+        noright = false;
+    }
+
+    if(noleft && noright){
+        if(data.hasOwnProperty("point")){
+            var date = data["point"].MasterTime.slice(0,23);
+            date = date.replace("T"," ");
+            result[0].push(date);   // x
+            result[1].push(1);                                  // y
+            result[2].push("Date: " + date);
+            selectedPoints[0] = 1;
+        }
+    }
+
+    return result;
+}
+
+function getChildClusterTimelineDate(data){
+    var result = [[],[],[],[]];
+    var queue = [];
+    queue.push(data);
+    var selPoints = 0;
+
+    var qlen = queue.length;
+    while(qlen > 0){
+        data = queue.shift();
+        for(var key in data){
+            switch(key){
+                case "point":
+                    // Save Leaf Mastertime
+                    var date = data[key].MasterTime.slice(0,23);
+                    date = date.replace("T"," ");
+                    result[0].push(date);   // x
+                    result[1].push(1);                                  // y
+                    result[2].push("Date: " + date);
+                    selPoints++;
+                    break;
+                case "right":
+                case "left":
+                    // Add to queue
+                    queue.push(data[key]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        qlen = queue.length;
+    }
+    result[3].push(selPoints);
+    return result;
+}
+
+function showTimeline(id){
+    if(id == 0){
+        $('#clusterTimeline').css('display','none');
+        $('#timeline').css('display','block');
+    }else{
+        $('#timeline').css('display','none');
+        $('#clusterTimeline').css('display','block');
+    }
+}
+
 
 
 $(document).ready(function () {

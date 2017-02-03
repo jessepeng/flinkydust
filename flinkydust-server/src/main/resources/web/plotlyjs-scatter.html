@@ -35,14 +35,15 @@
                 <div class="timelineContainer">
                     <div id="timeline">
                     </div>
+                    <div id="clusterTimeline" style="display:none;"></div>
                 </div>
             </div>
         </div>
         <div class="row" style="margin-top:20px;">
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#scatter" aria-controls="scatter" role="tab"
-                                                          data-toggle="tab">Scatterplot</a></li>
-                <li role="presentation"><a href="#cluster" aria-controls="cluster" role="tab" data-toggle="tab" onclick="refreshClusters()">Clustering</a>
+                                                          data-toggle="tab" onclick="showTimeline(0)">Scatterplot</a></li>
+                <li role="presentation"><a href="#cluster" aria-controls="cluster" role="tab" data-toggle="tab" onclick="showTimeline(1)">Clustering</a>
                 </li>
             </ul>
         </div>
@@ -66,7 +67,7 @@
                         <div class="col-md-12">
                             <label for="yAxis">y-Axis</label>
                             <select name="yAxis" class="form-control" style="display:inline;" id="yAxis">
-                                <option value="MasterTime">Date</option>
+                                <!--<option value="MasterTime">Date</option>-->
                                 <option value="Small">Small</option>
                                 <option selected="selected" value="Large">Large</option>
                                 <option value="RelHumidity">Rel. Humidity</option>

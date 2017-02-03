@@ -8,6 +8,11 @@
     width: 98%;
 }
 
+.timelineContainer #clusterTimeline {
+    height: 98%;
+    width: 98%;
+}
+
 .historyContainer {
     width: 97%;
 }
