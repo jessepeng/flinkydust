@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.hu.flinkydust.data.StructuredMeanDistanceCluster;
 import de.hu.flinkydust.data.cluster.Cluster;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
+import de.hu.flinkydust.data.function.CommonMappingFunctions;
 import de.hu.flinkydust.server.rest.AbstractResourceResponse;
 
 import javax.ws.rs.GET;
@@ -56,7 +57,7 @@ public class ClusterResource extends AbstractResourceResponse {
         if (dustDataPointCluster instanceof StructuredMeanDistanceCluster) {
             StructuredMeanDistanceCluster<DustDataPoint> structuredCluster = (StructuredMeanDistanceCluster<DustDataPoint>)dustDataPointCluster;
             jsonGenerator.writeFieldName("centroid");
-            writeDataPointAsObject(structuredCluster.getCentroid(), jsonGenerator);
+            writeDataPointAsObject(CommonMappingFunctions.distributionMapper.apply(structuredCluster.getCentroid()), jsonGenerator);
 
             if (structuredCluster.getLeftChild() != null && structuredCluster.getRightChild() != null) {
                 jsonGenerator.writeFieldName("left");
@@ -65,7 +66,7 @@ public class ClusterResource extends AbstractResourceResponse {
                 writeClusterAsJsonObject(jsonGenerator, structuredCluster.getRightChild());
             } else {
                 jsonGenerator.writeFieldName("point");
-                writeDataPointAsObject(structuredCluster.getPoints().get(0), jsonGenerator);
+                writeDataPointAsObject(CommonMappingFunctions.distributionMapper.apply(structuredCluster.getPoints().get(0)), jsonGenerator);
             }
         }
         jsonGenerator.writeEndObject();
