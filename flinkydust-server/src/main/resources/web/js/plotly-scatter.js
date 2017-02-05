@@ -575,7 +575,7 @@ var selectedPoints = [];
 **/
 function refreshClusters(){
 //    $('#clusterTimeline').empty();
-    var days = $('#days').val();
+//    var days = $('#days').val();
     var hours = $('#hours').val();
 
     // Create REST URL
