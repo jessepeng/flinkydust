@@ -18,11 +18,13 @@ public class DustDataPoint extends Tuple implements EuclidianDistanceDataPoint {
     }
 
     public DustDataPoint(Object... values) {
-        super(convertValuesToOptionals(values));
+        //super(convertValuesToOptionals(values));
+        super(values);
     }
 
     public DustDataPoint(String[] fieldNames, Object[] values) {
-        super(fieldNames, convertValuesToOptionals(values));
+        //super(fieldNames, convertValuesToOptionals(values));
+        super(fieldNames, values);
     }
 
     private static Object[] convertValuesToOptionals(Object[] values) {
@@ -63,6 +65,15 @@ public class DustDataPoint extends Tuple implements EuclidianDistanceDataPoint {
         try {
             return (Optional<T>)getField(fieldIndex);
         } catch (IndexOutOfBoundsException e) {
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getOptionalValue(String field) {
+        try {
+            return (Optional<T>)getField(field);
+        }  catch (IndexOutOfBoundsException e) {
             return Optional.empty();
         }
     }

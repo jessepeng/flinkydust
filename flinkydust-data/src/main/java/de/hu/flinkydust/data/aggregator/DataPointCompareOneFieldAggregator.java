@@ -28,10 +28,10 @@ public abstract class DataPointCompareOneFieldAggregator<R extends Comparable<R>
         Object field1;
         Object field2;
         R number1, number2;
-        if (!value1.getOptionalValue(index).isPresent()) {
+        if (!value1.getOptionalValue(field).isPresent()) {
             return value2;
         }
-        if (!value2.getOptionalValue(index).isPresent()) {
+        if (!value2.getOptionalValue(field).isPresent()) {
             return value1;
         }
         if ((field1 = value1.getOptionalValue(index).get()).getClass().isAssignableFrom(comparableClass)) {

@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -127,11 +128,11 @@ public class StreamDataSource<T> implements DataSource<T> {
             String[] fields = line.split(";");
             Object[] fieldsConverted = new Object[fields.length];
             try {
-                fieldsConverted[0] = dateFormat.parse(fields[0]);
+                fieldsConverted[0] = Optional.of(dateFormat.parse(fields[0]));
             } catch (ParseException e) {
             }
             for (int i = 1; i < fields.length; i++) {
-                fieldsConverted[i] = fields[i].equals("NA") ? null : Double.valueOf(fields[i]);
+                fieldsConverted[i] = fields[i].equals("NA") ? Optional.empty() : Optional.of(Double.valueOf(fields[i]));
             }
             dataPoints.add(new DustDataPoint(headerNames, fieldsConverted));
         }
