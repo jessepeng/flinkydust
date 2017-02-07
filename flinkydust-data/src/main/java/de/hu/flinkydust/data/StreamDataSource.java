@@ -1,7 +1,6 @@
 package de.hu.flinkydust.data;
 
 
-
 import de.hu.flinkydust.data.aggregator.AggregatorFunction;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
@@ -9,10 +8,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -26,9 +22,9 @@ import java.util.stream.Stream;
  * sind dabei intermediäre Operationen, das heißt sie arbeiten nicht unmittelbar sofort auf den Daten.
  * Erst ein Aufruf der Methode {@link DataSource#collect()} oder {@link DataSource#print()}
  * führt dazu, dass die eigentlichen Daten bearbeitet werden.<br><br>
- *
+ * <p>
  * Dies erlaubt das Aneinanderketten verschiedener Operatoren, wie bspw. <code>DataSource.projection(...).selection(...).aggregation(...)</code>.<br><br>
- *
+ * <p>
  * Created by Jan-Christopher on 09.11.2016.
  */
 public class StreamDataSource<T> implements DataSource<T> {
@@ -37,8 +33,8 @@ public class StreamDataSource<T> implements DataSource<T> {
 
     /**
      * Erzeugt eine neue StreamDataSource aus einer Liste
-     * @param list
-     *          Die Liste, aus der die DataSource erzeugt werden soll.
+     *
+     * @param list Die Liste, aus der die DataSource erzeugt werden soll.
      */
     public StreamDataSource(List<T> list) {
         this.wrappedStream = list.stream();
@@ -47,8 +43,7 @@ public class StreamDataSource<T> implements DataSource<T> {
     /**
      * Erzeugt eine neue StreamDataSource aus einem vorhandenen Java8 Stream.
      *
-     * @param dataSource
-     *           Der Java8 Stream, das als Speicherstruktur verwendet werden soll.
+     * @param dataSource Der Java8 Stream, das als Speicherstruktur verwendet werden soll.
      */
     public StreamDataSource(Stream<T> dataSource) {
         this.wrappedStream = dataSource;
@@ -56,12 +51,10 @@ public class StreamDataSource<T> implements DataSource<T> {
 
     /**
      * Liest eine CSV-Datei mit den Staubdaten ein und erzeugt eine neue StreamDataSource mit einer In-Memory-Collection der Daten.
-     * @param inputStream
-     *          Ein InputStream, der die Daten zur Verfügung stellt
-     * @return
-     *          Die DataSource mit den Datensätzen aus der CSV-Datei
-     * @throws IOException
-     *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
+     *
+     * @param inputStream Ein InputStream, der die Daten zur Verfügung stellt
+     * @return Die DataSource mit den Datensätzen aus der CSV-Datei
+     * @throws IOException Wenn eine Ausnahme beim Lesen der Datei auftrat.
      */
     public static DataSource<DustDataPoint> readFile(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -73,12 +66,10 @@ public class StreamDataSource<T> implements DataSource<T> {
 
     /**
      * Liest eine CSV-Datei mit den Staubdaten ein und erzeugt eine neue StreamDataSource mit einer In-Memory-Collection der Daten.
-     * @param path
-     *          Der Pfad zur CSV-Datei mit den Staubdaten
-     * @return
-     *          Die DataSource mit den Datensätzen aus der CSV-Datei
-     * @throws IOException
-     *          Wenn eine Ausnahme beim Lesen der Datei auftrat.
+     *
+     * @param path Der Pfad zur CSV-Datei mit den Staubdaten
+     * @return Die DataSource mit den Datensätzen aus der CSV-Datei
+     * @throws IOException Wenn eine Ausnahme beim Lesen der Datei auftrat.
      */
     public static DataSource<DustDataPoint> readFile(String path) throws IOException {
         return new StreamDataSource<>(parseFile(path));
@@ -86,12 +77,10 @@ public class StreamDataSource<T> implements DataSource<T> {
 
     /**
      * Lese eine Datei mit Staubdaten ein und gib sie als Liste zurück.
-     * @param path
-     *          Pfad zur Datei
-     * @return
-     *          Liste mit Datenpunkten
-     * @throws IOException
-     *          Exception bei Lesefehlern
+     *
+     * @param path Pfad zur Datei
+     * @return Liste mit Datenpunkten
+     * @throws IOException Exception bei Lesefehlern
      */
     public static List<DustDataPoint> parseFile(String path) throws IOException {
         try (BufferedReader fileReader = new BufferedReader(new FileReader(path))) {
@@ -104,12 +93,10 @@ public class StreamDataSource<T> implements DataSource<T> {
 
     /**
      * Parst eine Datei aus einem InputStream und gibt eine Liste an DataPoints zurück
-     * @param inputStream
-     *          Der InputStream, von dem gelesen werden soll
-     * @return
-     *          Die Liste der DataPoints
-     * @throws IOException
-     *          Wenn ein Fehler beim Lesen aufgetreten ist
+     *
+     * @param inputStream Der InputStream, von dem gelesen werden soll
+     * @return Die Liste der DataPoints
+     * @throws IOException Wenn ein Fehler beim Lesen aufgetreten ist
      */
     public static List<DustDataPoint> parseFile(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -122,11 +109,13 @@ public class StreamDataSource<T> implements DataSource<T> {
     private static List<DustDataPoint> readFromReader(BufferedReader reader) throws IOException {
         String line = reader.readLine();
         String[] headerNames = line.split(";");
+        Map<String, Integer> fieldIndexMap = DustDataPoint.createFieldMap(headerNames);
         List<DustDataPoint> dataPoints = new LinkedList<>();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         while ((line = reader.readLine()) != null) {
             String[] fields = line.split(";");
             Object[] fieldsConverted = new Object[fields.length];
+
             try {
                 fieldsConverted[0] = Optional.of(dateFormat.parse(fields[0]));
             } catch (ParseException e) {
@@ -134,7 +123,7 @@ public class StreamDataSource<T> implements DataSource<T> {
             for (int i = 1; i < fields.length; i++) {
                 fieldsConverted[i] = fields[i].equals("NA") ? Optional.empty() : Optional.of(Double.valueOf(fields[i]));
             }
-            dataPoints.add(new DustDataPoint(headerNames, fieldsConverted));
+            dataPoints.add(new DustDataPoint(fieldsConverted, fieldIndexMap));
         }
 
         return dataPoints;
@@ -194,7 +183,7 @@ public class StreamDataSource<T> implements DataSource<T> {
             humidity = null;
         }
 
-        return new DustDataPoint(date, smallParticles, largeParticles, humidity, temperature);
+        return new DustDataPoint(new Object[]{Optional.of(date), Optional.ofNullable(smallParticles), Optional.ofNullable(largeParticles), Optional.ofNullable(humidity), Optional.ofNullable(temperature)});
     }
 
     private static String addLeadingZeroes(String string) {
@@ -229,7 +218,7 @@ public class StreamDataSource<T> implements DataSource<T> {
     }
 
     @Override
-    public void print(){
+    public void print() {
         /* Vorsicht: kann viele Daten enthalten */
         try {
             this.wrappedStream.collect(Collectors.toList()).forEach(System.out::print);

@@ -67,8 +67,38 @@ h3 {
     top: 48%;
 }
 
+.loading-initial {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.loading-initial .fa {
+    left: 44%;
+    top: 48%;
+    position: absolute;
+}
+
+.loading-initial span {
+    position: absolute;
+    color: white;
+    left: 44%;
+    top: 60%;
+    text-align: center;
+}
+
 .nodata {
     display: none;
+    position: absolute;
+    left: 44%;
+    top: 48%;
+}
+
+.error-msg {
     position: absolute;
     left: 44%;
     top: 48%;

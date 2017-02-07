@@ -1,6 +1,7 @@
 package de.hu.flinkydust.data.aggregator;
 
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
+import de.hu.flinkydust.data.tuple.NoFieldMappingException;
 
 /**
  * Abstrakte Aggregator Klasse, um ein Feld eines Tupels in einer Aggregation zu verwenden.
@@ -22,16 +23,16 @@ public abstract class DataPointCompareOneFieldAggregator<R extends Comparable<R>
         int index;
         try {
             index = value1.getFieldIndex(field);
-        } catch (IllegalArgumentException e) {
+        } catch (NoFieldMappingException e) {
             index = value2.getFieldIndex(field);
         }
         Object field1;
         Object field2;
         R number1, number2;
-        if (!value1.getOptionalValue(field).isPresent()) {
+        if (!value1.getOptionalValue(index).isPresent()) {
             return value2;
         }
-        if (!value2.getOptionalValue(field).isPresent()) {
+        if (!value2.getOptionalValue(index).isPresent()) {
             return value1;
         }
         if ((field1 = value1.getOptionalValue(index).get()).getClass().isAssignableFrom(comparableClass)) {

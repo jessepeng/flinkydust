@@ -29,41 +29,62 @@ public class Tuple {
 	private Object[] values;
 	private int arity;
 
-	private Map<String, Integer> fieldIndexMap = new HashMap<>();
+	private Map<String, Integer> fieldIndexMap;
 
 	public Tuple(int arity) {
 		this.arity = arity;
 		this.values = new Object[arity];
 	}
 
-	public Tuple(Object... values) {
+	public Tuple(Object[] values) {
 		this.values = values;
 		this.arity = values.length;
 	}
 
-	public Tuple(String[] fieldNames, Object[] values) {
-		if (fieldNames.length != values.length) {
-			throw new IllegalArgumentException("Länge der Feldnamen und Werte muss übereinstimmen.");
-		}
-
+	public Tuple(Object[] values, Map<String, Integer> fieldIndexMap) {
 		this.values = values;
 		this.arity = values.length;
+		this.fieldIndexMap = fieldIndexMap;
+	}
 
-		for (int i = 0; i < fieldNames.length; i++) {
-			fieldIndexMap.put(fieldNames[i], i);
+	public Tuple(int arity, Map<String, Integer> fieldIndexMap) {
+		this.values = new Object[arity];
+		this.arity = arity;
+		this.fieldIndexMap = fieldIndexMap;
+	}
+
+	/**
+	 * Erzeugt eine Map mit dem gewünschten Fieldmapping.
+	 * @param fieldNames
+	 * 			Die Namen der Felder
+	 * @return
+	 * 			Die Map der Feldnamen.
+	 */
+	public static Map<String, Integer> createFieldMap(String[] fieldNames) {
+		Map<String, Integer> fieldIndexMap = new HashMap<>();
+		for (int headerIndex = 0; headerIndex < fieldNames.length; headerIndex++) {
+			fieldIndexMap.put(fieldNames[headerIndex], headerIndex);
 		}
+		return fieldIndexMap;
 	}
 
 	public int getFieldIndex(String fieldName) {
+		if (fieldIndexMap == null) {
+			throw new NoFieldMappingException("Es wurde kein Feldmapping angegeben!");
+		}
 		Integer value = fieldIndexMap.get(fieldName);
 		if (value == null) {
-			throw new IllegalArgumentException("Das Feld mit dem Namen " + fieldName + " konnte nicht gefunden werden.");
+			throw new FieldNotFoundException("Das Feld mit dem Namen " + fieldName + " konnte nicht gefunden werden.");
 		}
 		return value;
 	}
 
 	public Map<String, Integer> getFieldIndexMap() {
 		return fieldIndexMap;
+	}
+
+	public void setFieldIndexMap(Map<String, Integer> fieldIndexMap) {
+		this.fieldIndexMap = fieldIndexMap;
 	}
 
 	public void setFieldIndex(String fieldName, int index) {

@@ -4,6 +4,7 @@ import de.hu.flinkydust.data.point.EuclidianDistanceDataPoint;
 import de.hu.flinkydust.data.tuple.Tuple;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -13,27 +14,24 @@ import java.util.Optional;
  */
 public class DustDataPoint extends Tuple implements EuclidianDistanceDataPoint {
 
+    public DustDataPoint() {
+        super(new Object[0]);
+    }
+
     public DustDataPoint(int arity) {
         super(arity);
     }
 
-    public DustDataPoint(Object... values) {
-        //super(convertValuesToOptionals(values));
+    public DustDataPoint(Object[] values) {
         super(values);
     }
 
-    public DustDataPoint(String[] fieldNames, Object[] values) {
-        //super(fieldNames, convertValuesToOptionals(values));
-        super(fieldNames, values);
+    public DustDataPoint(Object[] values, Map<String, Integer> fieldIndexMap) {
+        super(values, fieldIndexMap);
     }
 
-    private static Object[] convertValuesToOptionals(Object[] values) {
-        for (int i = 0; i < values.length; i++) {
-            if (!(values[i] instanceof Optional<?>)) {
-                values[i] = Optional.ofNullable(values[i]);
-            }
-        }
-        return values;
+    public DustDataPoint(int arity, Map<String, Integer> fieldIndexMap) {
+        super(arity, fieldIndexMap);
     }
 
     @SuppressWarnings("unchecked")

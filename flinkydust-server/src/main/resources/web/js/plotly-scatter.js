@@ -579,7 +579,9 @@ function refreshClusters(){
     var hours = $('#hours').val();
 
     // Create REST URL
-    var restlink = '/rest/projection/MasterTime/Small/Large/cluster/window/' + hours + '/';
+    var restlink = '/rest/projection/MasterTime/GrainSize0_25/GrainSize0_28/GrainSize0_30/GrainSize0_35/GrainSize0_40/GrainSize0_45/GrainSize0_50/GrainSize0_58/GrainSize0_65/GrainSize0_70/GrainSize0_80/GrainSize1_0/GrainSize1_3/GrainSize1_6/GrainSize2_0/GrainSize2_5/GrainSize3_0/GrainSize3_5/GrainSize4_0/GrainSize5_0/GrainSize6_5/GrainSize7_5/GrainSize8_0/GrainSize10_0/GrainSize12_5/GrainSize15_0/GrainSize17_5/GrainSize20_0/GrainSize25_0/GrainSize30_0/GrainSize32_0/cluster/window/' + hours + '/';
+    var loading = $('.loading-initial');
+    loading.show();
     $('#treepos').val("");
     $.getJSON(restlink, function (data) {
         if (data.status !== "ok") {
@@ -596,6 +598,7 @@ function refreshClusters(){
 
             clusterTimelineData = getClusterTimelineData(clusterData);
             refreshClusterPlots("");
+            loading.hide();
         }
 
     });
@@ -902,6 +905,11 @@ function showTimeline(id){
 
 
 $(document).ready(function () {
-    $.ajax("/rest/data/loadTest");
+    $("body").append('<div class="loading-initial"><i class="fa fa-refresh fa-spin fa-5x"></i><span>Bitte warten, Daten werden geladen...</span></div>');
+    $.ajax("/rest/data/loadTestClasses", {
+        "success": function() {
+            $(".loading-initial").hide();
+        }
+    });
 //    setTimeout(refreshScatterplot,2500);
 });

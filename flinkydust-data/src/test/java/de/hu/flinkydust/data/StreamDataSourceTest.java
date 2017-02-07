@@ -8,6 +8,7 @@ import de.hu.flinkydust.data.comparator.AtLeastComparator;
 import de.hu.flinkydust.data.comparator.LessThanComparator;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.projector.FieldnameProjector;
+import de.hu.flinkydust.data.tuple.FieldNotFoundException;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -95,10 +96,20 @@ public class StreamDataSourceTest {
         System.out.println(selectedList2.get(0));
 
         Assert.assertThat(selectedList.get(0).getDoubleField("Small"), Is.is(3680.0));
-        Assert.assertThat(selectedList.get(0).getOptionalValue("Large").isPresent(), Is.is(false));
+        try {
+            selectedList.get(0).getDoubleField("Large");
+            fail("Erwartete Exception wurde nicht geworfen.");
+        } catch (FieldNotFoundException e) {
+
+        }
 
         Assert.assertThat(selectedList2.get(0).getDoubleField("Large"), Is.is(10.0));
-        Assert.assertThat(selectedList2.get(0).getOptionalValue("Small").isPresent(), Is.is(false));
+        try {
+            selectedList2.get(0).getDoubleField("Small");
+            fail("Erwartete Exception wurde nicht geworfen.");
+        } catch (FieldNotFoundException e) {
+
+        }
     }
 
     @Test

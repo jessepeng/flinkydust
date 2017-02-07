@@ -3,6 +3,7 @@ package de.hu.flinkydust.data.aggregator;
 import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import de.hu.flinkydust.data.DataSource;
 import de.hu.flinkydust.data.SimpleTuple;
+import de.hu.flinkydust.data.tuple.NoFieldMappingException;
 
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class AvgAggregator implements AggregatorFunction<DustDataPoint> {
     private SimpleTuple<DustDataPoint, Long> reduce(SimpleTuple<DustDataPoint, Long> value1, SimpleTuple<DustDataPoint, Long> value2) {
         try {
             index = value1.f0.getFieldIndex(field);
-        } catch (IllegalArgumentException e) {
+        } catch (NoFieldMappingException e) {
             index = value2.f0.getFieldIndex(field);
         }
 

@@ -4,6 +4,7 @@ import de.hu.flinkydust.data.datapoint.DustDataPoint;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -14,28 +15,22 @@ import java.util.function.Function;
 
 public class FieldnameProjector implements Function<DustDataPoint, DustDataPoint> {
 
-    private Set<String> fieldNames;
+    private Map<String, Integer> fieldNameMap;
+    private int arity;
 
-    public FieldnameProjector(String... fieldNames ){
-        this.fieldNames = new HashSet<>(Arrays.asList(fieldNames));
+    public FieldnameProjector(String...fieldNames) {
+        this.fieldNameMap = DustDataPoint.createFieldMap(fieldNames);
+        this.arity = fieldNames.length;
     }
 
     public DustDataPoint apply(DustDataPoint source){
-//        DustDataPoint p = new DustDataPoint(fieldNames.length);
-//
-//        int i = 0;
-//        for (String field : fieldNames) {
-//            p.setFieldIndex(field, i);
-//            p.setField(i++, source.getOptionalValue(source.getFieldIndex(field)).orElse(null));
-//        }
-//
-//        return p;
-        for (String oldField : source.getFieldIndexMap().keySet()) {
-            if (!fieldNames.contains(oldField)) {
-                source.setField(oldField, null);
-            }
+        DustDataPoint result = new DustDataPoint(arity, fieldNameMap);
+
+        for (Map.Entry<String, Integer> fieldEntry : fieldNameMap.entrySet()) {
+            result.setField(fieldEntry.getValue(), source.getOptionalValue(fieldEntry.getKey()).orElse(null));
         }
-        return source;
+
+        return result;
     }
 
 }
