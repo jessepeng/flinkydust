@@ -85,7 +85,10 @@ public abstract class AbstractResourceResponse {
     protected static void writeDataPointAsObject(DustDataPoint dataPoint, JsonGenerator jsonGenerator) {
         try {
             jsonGenerator.writeStartObject();
-            dataPoint.getFieldIndexMap().entrySet().forEach((fieldIndexEntry) -> {
+            dataPoint.getFieldIndexMap().entrySet()
+                    .stream()
+                    .sorted((entry1, entry2) -> (entry1.getValue().compareTo(entry2.getValue())))
+                    .forEach((fieldIndexEntry) -> {
                 Optional<?> optionalValue = dataPoint.getOptionalValue(fieldIndexEntry.getValue());
                 if (optionalValue.isPresent()) {
                     try {
