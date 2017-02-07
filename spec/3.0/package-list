@@ -1,0 +1,9 @@
+de.hu.flinkydust.data
+de.hu.flinkydust.data.aggregator
+de.hu.flinkydust.data.cluster
+de.hu.flinkydust.data.comparator
+de.hu.flinkydust.data.datapoint
+de.hu.flinkydust.data.function
+de.hu.flinkydust.data.point
+de.hu.flinkydust.data.projector
+de.hu.flinkydust.data.tuple

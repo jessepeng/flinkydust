@@ -12,4 +12,4 @@ echo
 echo "Starting server..."
 echo
 
-java -classpath "flinkydust-server-2.0.war:../lib/*;" de.hu.flinkydust.server.main.Server "$@"
+java -classpath "flinkydust-server-3.0.war:../lib/*;" de.hu.flinkydust.server.main.Server "$@"
