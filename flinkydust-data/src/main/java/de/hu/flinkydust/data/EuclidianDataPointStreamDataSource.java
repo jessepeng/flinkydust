@@ -25,10 +25,26 @@ public class EuclidianDataPointStreamDataSource<T extends EuclidianDistanceDataP
         super(dataSource);
     }
 
+    /**
+     * Liest eine Datei als DataSource ein.
+     * @param path
+     *      Pfad der Datei
+     * @return
+     *      DataSource
+     * @throws IOException
+     *      Falls das Einlesen nicht möglich ist.
+     */
     public static EuclidianDataPointDataSource<DustDataPoint> readFile(String path) throws IOException {
         return new EuclidianDataPointStreamDataSource<>(parseFile(path));
     }
 
+    /**
+     * Generiert zufällige Testdaten für eine DataSource
+     * @param size
+     *      Größe der DataSource
+     * @return
+     *      DataSource mit Testdaten
+     */
     public static EuclidianDataPointDataSource<DustDataPoint> generateRandomData(Integer size) {
         List<DustDataPoint> dataPoints = new LinkedList<>();
 

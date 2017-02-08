@@ -25,6 +25,13 @@ public abstract class DataPointComparator<R extends Comparable<R>> implements Pr
         this.compareClass = compareClass;
     }
 
+    /**
+     * Überprüft ob ein Datenpunkt vergleichbar ist.
+     * @param t
+     *      Der Datenpunkt, der auf Vergleichbarkeit geprüft wird.
+     * @return
+     *      true falls vergleichbar, false falls nicht vergleichbar
+     */
     @Override
     public boolean test(DustDataPoint t) {
         int index = t.getFieldIndex(field);

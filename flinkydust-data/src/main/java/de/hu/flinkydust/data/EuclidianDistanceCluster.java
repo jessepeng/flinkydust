@@ -14,8 +14,14 @@ import java.util.List;
  */
 public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> implements Cluster<T> {
 
+    /**
+     * Centroid des Clusters
+     */
     protected T centroid;
 
+    /**
+     * Datenpunkte im Cluster
+     */
     private List<T> dataPoints;
 
     protected static Cloner cloner = new Cloner();
@@ -38,6 +44,11 @@ public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> impl
 
     }
 
+    /**
+     * gibt den neu berechneten Centroid zurück
+     * @return
+     *      den Centroid
+     */
     @Override
     public T getCentroid() {
         recalculateCentroid();
@@ -49,6 +60,13 @@ public class EuclidianDistanceCluster<T extends EuclidianDistanceDataPoint> impl
         return dataPoints;
     }
 
+    /**
+     * Vereinigt zwei Cluster
+     * @param otherCluster
+     *          Der andere Cluster, mit der dieser Cluster zusammengeführt werden soll
+     * @return
+     *      Das neue Cluster
+     */
     @Override
     public Cluster<T> merge(Cluster<T> otherCluster) {
         EuclidianDistanceCluster<T> newCluster = new EuclidianDistanceCluster<>(getPoints());

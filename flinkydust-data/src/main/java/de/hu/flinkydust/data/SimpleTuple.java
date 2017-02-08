@@ -1,6 +1,8 @@
 package de.hu.flinkydust.data;
 
 /**
+ * Ein simples Tupel mit zwei Werten.
+ *
  * Created by Jan-Christopher on 30.01.2017.
  */
 public class SimpleTuple<T, Y> {

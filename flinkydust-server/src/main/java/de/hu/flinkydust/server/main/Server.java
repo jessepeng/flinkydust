@@ -12,6 +12,13 @@ import java.net.URI;
  */
 public class Server {
 
+    /**
+     * Sets up a server instance for flinkydust
+     * @param args
+     *      optional: port where flinkydust should run
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public static void main(String[] args) throws IOException, InterruptedException {
         String baseUrl = (args.length > 0) ? "http://localhost:" + args[0] + "/rest": "http://localhost:80/rest";
 

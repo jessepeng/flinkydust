@@ -16,13 +16,26 @@ import java.util.List;
  */
 public class StructuredMeanDistanceCluster<T extends EuclidianDistanceDataPoint> extends EuclidianDistanceCluster<T> {
 
+    /**
+     * Tochtercluster 1
+     */
     private Cluster<T> cluster1 = null;
+    /**
+     * Tochtercluster 2
+     */
     private Cluster<T> cluster2 = null;
 
     public StructuredMeanDistanceCluster(T dataPoint) {
         super(dataPoint);
     }
 
+    /**
+     * Erzeugt ein neues Cluster
+     * @param cluster1
+     *      Tochtercluster 1
+     * @param cluster2
+     *      Tochtercluster 2
+     */
     public StructuredMeanDistanceCluster(Cluster<T> cluster1, Cluster<T> cluster2) {
         this.cluster1 = cluster1;
         this.cluster2 = cluster2;
@@ -42,6 +55,11 @@ public class StructuredMeanDistanceCluster<T extends EuclidianDistanceDataPoint>
         return this.cluster2;
     }
 
+    /**
+     * Returned alle Punkte im Cluster
+     * @return
+     *      Die Punkte um Cluster
+     */
     @Override
     public List<T> getPoints() {
         if (cluster1 == null || cluster2 == null) {
@@ -52,11 +70,22 @@ public class StructuredMeanDistanceCluster<T extends EuclidianDistanceDataPoint>
         return pointList;
     }
 
+    /**
+     * Gibt den Centroid des Clusters zurück
+     * @return
+     *      Den Centroid
+     */
     @Override
     public T getCentroid() {
         return this.centroid;
     }
 
+    /**
+     * Mergt das Cluster mit einem andere Cluster
+     * @param otherCluster
+     *          Der andere Cluster, mit der dieser Cluster zusammengeführt werden soll
+     * @return
+     */
     @Override
     public Cluster<T> merge(Cluster<T> otherCluster) {
         return new StructuredMeanDistanceCluster<>(this, otherCluster);

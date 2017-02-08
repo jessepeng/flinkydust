@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
  */
 public class TimeWindowAggregator implements AggregatorFunction<DustDataPoint> {
 
+    /**
+     * Länge des Zeitfensters
+     */
     private int hours;
 
     public TimeWindowAggregator(int hours) {
@@ -24,6 +27,14 @@ public class TimeWindowAggregator implements AggregatorFunction<DustDataPoint> {
         this.hours = hours;
     }
 
+    /**
+     * Aggregiert Datenpunkte aus einem gegebenen Zeitfenster.
+     * @param dataSource
+     *          Die DataSource mit den Datensätzen, die aggregiert werden sollen.
+     * @param count
+     *          Ohne Funktion
+     * @return
+     */
     @Override
     public DataSource<DustDataPoint> aggregate(DataSource<DustDataPoint> dataSource, int count) {
         Map<Date, DustDataPoint> groupedDataPoints = dataSource.stream()

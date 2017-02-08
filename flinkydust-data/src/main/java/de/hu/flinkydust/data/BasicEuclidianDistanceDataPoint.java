@@ -11,6 +11,9 @@ import java.util.Arrays;
  */
 public class BasicEuclidianDistanceDataPoint implements EuclidianDistanceDataPoint {
 
+    /**
+     * Anzahl Dimensionen des Raumes
+     */
     private double[] dimensions;
 
     public BasicEuclidianDistanceDataPoint(int dimensions) {

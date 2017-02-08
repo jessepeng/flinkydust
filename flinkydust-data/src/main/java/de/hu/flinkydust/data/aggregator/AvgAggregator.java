@@ -14,7 +14,13 @@ import java.util.Optional;
  */
 public class AvgAggregator implements AggregatorFunction<DustDataPoint> {
 
+    /**
+     * Das Feld, über das aggregiert werden soll.
+     */
     private String field;
+    /**
+     * Index des Feldes
+     */
     private int index;
 
     public AvgAggregator(String field) {
@@ -25,6 +31,14 @@ public class AvgAggregator implements AggregatorFunction<DustDataPoint> {
         this.field = field;
     }
 
+    /**
+     * Aggregiert zwei DustDataPoints.
+     * @param value1
+     *      Der erste DustDatapoint, der aggregiert werden soll
+     * @param value2
+     *      Der zweite DustDatapoint, der aggregiert werden soll
+     * @return
+     */
     private SimpleTuple<DustDataPoint, Long> reduce(SimpleTuple<DustDataPoint, Long> value1, SimpleTuple<DustDataPoint, Long> value2) {
         try {
             index = value1.f0.getFieldIndex(field);
@@ -45,6 +59,14 @@ public class AvgAggregator implements AggregatorFunction<DustDataPoint> {
         return new SimpleTuple<>(newTuple, (field1.isPresent() ? value1.f1 : 0L ) + (field2.isPresent() ? value2.f1 : 0L));
     }
 
+    /**
+     * Aggregiert n DustDataPoints einer DataSource.
+     * @param dataSource
+     *          Die DataSource mit den Datensätzen.
+     * @param count
+     *          Die Anzahl an Datensätzen, die aggregiert werden sollen. Wenn count > 0, dann alle Datensätze.
+     * @return
+     */
     @Override
     public DataSource<DustDataPoint> aggregate(DataSource<DustDataPoint> dataSource, int count) {
         DataSource<DustDataPoint> countedDataSource = (count > 0 ? dataSource.firstN(count) : dataSource);

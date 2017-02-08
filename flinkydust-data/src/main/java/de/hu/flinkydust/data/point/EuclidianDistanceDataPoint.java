@@ -46,6 +46,13 @@ public interface EuclidianDistanceDataPoint extends DistanceDataPoint<EuclidianD
         }
     }
 
+    /**
+     * Gibt die Distanz zwischen zwei Datapoints an.
+     * @param dataPoint
+     *      Der Datapoint dessen Abstand zu diesem Datapoint gemessen werden soll
+     * @return
+     *      Die Distanz
+     */
     default double getDistanceTo(EuclidianDistanceDataPoint dataPoint) {
         double[] thisDimensions = getAllDimensions();
         double[] otherDimensions = dataPoint.getAllDimensions();

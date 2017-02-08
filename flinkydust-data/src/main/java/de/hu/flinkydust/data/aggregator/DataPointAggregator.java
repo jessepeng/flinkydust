@@ -5,7 +5,9 @@ import de.hu.flinkydust.data.datapoint.DustDataPoint;
 import java.util.Date;
 
 /**
- * Created by Jan-Christopher on 11.12.2016.
+ * Aggregiert mehrere DataPoints zu einem Datenpunkt.
+ *
+ * Created by Jan-Christopher on 09.11.2016.
  */
 public class DataPointAggregator {
 

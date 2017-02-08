@@ -25,10 +25,19 @@ import java.util.Map;
  * Basisklasse für ein Tupel, das beliebige Daten speichern kann und beliebig groß sein kann.
  */
 public class Tuple {
-	
+
+	/**
+	 * Werte des Tupels
+	 */
 	private Object[] values;
+	/**
+	 * Arität des Tupels
+	 */
 	private int arity;
 
+	/**
+	 * Mappt die Feldnamen auf die Indexe der Wertemap
+	 */
 	private Map<String, Integer> fieldIndexMap;
 
 	public Tuple(int arity) {
@@ -68,6 +77,13 @@ public class Tuple {
 		return fieldIndexMap;
 	}
 
+	/**
+	 * Gibt den Index für einen Feldnamen zurück
+	 * @param fieldName
+	 * 		Feldname für den ein Index gefunden werden soll
+	 * @return
+	 * 		Den Index
+	 */
 	public int getFieldIndex(String fieldName) {
 		if (fieldIndexMap == null) {
 			throw new NoFieldMappingException("Es wurde kein Feldmapping angegeben!");
@@ -87,6 +103,13 @@ public class Tuple {
 		this.fieldIndexMap = fieldIndexMap;
 	}
 
+	/**
+	 * Setzt den Feldnamen für einen Index
+	 * @param fieldName
+	 * 		Feldname
+	 * @param index
+	 * 		Index
+	 */
 	public void setFieldIndex(String fieldName, int index) {
 		fieldIndexMap.put(fieldName, index);
 	}

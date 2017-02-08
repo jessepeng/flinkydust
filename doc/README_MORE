@@ -15,3 +15,11 @@ Eigene Leistungen und Bibliothekenverwendung:
 - Eigene Implementierung der Filter
 - Eigene History Implementierung
 - Eigene Anpassungen des in Plotly.js enthaltenen automatischen Zooms
+
+———————Milestone 4
+
+- Eigene Implementierung eines hierarchischen Centroid Verfahrens zur Exploration der Grain Sizes
+- Individuelle Histogrammintervalle möglich
+- Visualisierung ermöglicht Cluster-Baum-Traversierung
+- Verbindung der Timeline mit dem Inhalt der einzelnen Histogramme
+- Histogramme auch für small und big ermöglicht

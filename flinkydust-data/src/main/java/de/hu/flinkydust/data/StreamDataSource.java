@@ -106,6 +106,14 @@ public class StreamDataSource<T> implements DataSource<T> {
         }
     }
 
+    /**
+     * Liest Daten aus einem Reader ein.
+     * @param reader
+     *      Der Reader aus dem eingelesen wird
+     * @return
+     *      Die eingelesenen Datenpunkte
+     * @throws IOException
+     */
     private static List<DustDataPoint> readFromReader(BufferedReader reader) throws IOException {
         String line = reader.readLine();
         String[] headerNames = line.split(";");
@@ -129,6 +137,13 @@ public class StreamDataSource<T> implements DataSource<T> {
         return dataPoints;
     }
 
+    /**
+     * Generiert zufällige Daten
+     * @param size
+     *      Größe der DataSource
+     * @return
+     *      Die DataSource
+     */
     public static DataSource<DustDataPoint> generateRandomData(Integer size) {
         List<DustDataPoint> dataPoints = new LinkedList<>();
 
@@ -139,6 +154,11 @@ public class StreamDataSource<T> implements DataSource<T> {
         return new StreamDataSource<>(dataPoints.stream());
     }
 
+    /**
+     * Generiert einen zufälligen DustDataPoint
+     * @return
+     *      Den DataPoint
+     */
     protected static DustDataPoint generateRandomTuple() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 

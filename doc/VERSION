@@ -18,3 +18,8 @@ v2.0:
 
 Known Issues:
 - Die Achsenbeschriftung in den Graphen ist doppelt (aufgrund Selektionsimplementation)
+
+—————————————Milestone 4
+
+v3.0:
+- Centroid Verfahren für Grain Sizes
