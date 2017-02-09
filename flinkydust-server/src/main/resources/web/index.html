@@ -2,14 +2,193 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <title>Flinkydust</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="css/flinkydust.css">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified plotly.js JavaScript -->
+    <script type="text/javascript" src="js/plotly-latest.js"></script>
+
+    <script type="text/javascript" src="js/plotly-scatter.js"></script>
+
+    <title>Flinkydust | Dust Data Exploration 2014</title>
 </head>
 <body>
-<div class="col-md-12">
-    <h1>Flinkydust</h1>
-    <a href="plotlyjs-scatter.html">Scatterplot</a>
+<div class="col-md-12 col-margin-bottom">
+    <h1>Dust Data 2014</h1>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Timeline</h2>
+                <div class="timelineContainer">
+                    <div id="timeline">
+                    </div>
+                    <div id="clusterTimeline" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px;">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#scatter" aria-controls="scatter" role="tab"
+                                                          data-toggle="tab" onclick="showTimeline(0)">Scatterplot</a></li>
+                <li role="presentation"><a href="#cluster" aria-controls="cluster" role="tab" data-toggle="tab" onclick="showTimeline(1)">Clustering</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="scatter">
+
+                <div class="row">
+                    <div class="col-md-2 col-margin-top">
+                        <h2>Options</h2>
+                        <div class="col-md-12">
+                            <label for="xAxis">x-Axis</label>
+                            <select name="xAxis" class="form-control" style="display:inline;" id="xAxis">
+                                <option value="MasterTime">Date</option>
+                                <option selected="selected" value="Small">Small</option>
+                                <option value="Large">Large</option>
+                                <option value="RelHumidity">Rel. Humidity</option>
+                                <option value="OutdoorTemp">Temperature</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="yAxis">y-Axis</label>
+                            <select name="yAxis" class="form-control" style="display:inline;" id="yAxis">
+                                <!--<option value="MasterTime">Date</option>-->
+                                <option value="Small">Small</option>
+                                <option selected="selected" value="Large">Large</option>
+                                <option value="RelHumidity">Rel. Humidity</option>
+                                <option value="OutdoorTemp">Temperature</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 col-margin-top">
+                            <button name="addFilter" onclick="addFilter()" type="button" class="btn btn-xs btn-default">
+                                Add "and" Filter
+                            </button>
+
+                            <div id="filter-container">
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-margin-large-top">
+                            <button name="refresh" onclick="setTimeout('refreshScatterplot();', 1000);" type="button" class="btn btn-primary">
+                                Refresh
+                            </button>
+                        </div>
+
+                        <div class="col-md-12 errors">
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-10">
+                        <h2>Scatterplot</h2>
+                        <div class="chart-container">
+                            <div id="chart">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="scatterHistory" class="row">
+                    <div class="col-md-12 col-margin-large-top">
+                        <h2>History</h2>
+                        <div class="historyContainer">
+                            <div>
+                                <div id="history">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="cluster">
+                <div class="row">
+
+                    <div class="col-md-12 col-margin-top">
+                        <div class="col-md-12" style="margin-top:6px;">
+                            <span><b>Time Aggregation:</b></span>&nbsp;&nbsp;&nbsp;
+                            <!--<label for="days">Days</label>&nbsp;-->
+                            <!--<input id="days" class="clusterinput form-control" type="text" value="0">&nbsp;&nbsp;&nbsp;-->
+
+                            <label for="hours">Hours</label>&nbsp;
+                            <select name="hours" class="form-control" style="display:inline; width: 80px;" id="hours">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="4">4</option>
+                                <option selected="selected" value="6">6</option>
+                                <option value="8">8</option>
+                                <option value="12">12</option>
+                            </select>
+
+                                <label for="grains">Grain Sizes</label>&nbsp;
+                                <select name="grains" class="form-control" style="display:inline; width: 80px;" id="grains">
+                                    <option value="2">2</option>
+                                    <option selected="selected" value="32">32</option>
+                                </select>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                            <button name="refreshCluster" onclick="refreshClusters()" type="button" class="btn btn-primary">
+                                Refresh
+                            </button>
+
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span><b>Exploration:</b></span>&nbsp;&nbsp;&nbsp;
+                            <button name="refreshCluster" onclick="navigateClusters('up')" type="button" class="btn btn-default">
+                                Up
+                            </button>
+
+                            <button name="refreshCluster" onclick="navigateClusters('left')" type="button" class="btn btn-default">
+                                Left
+                            </button>
+
+                            <button name="refreshCluster" onclick="navigateClusters('right')" type="button" class="btn btn-default">
+                                Right
+                            </button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label for="treepos">Position</label>&nbsp;
+                            <input id="treepos" class="clusterinput form-control" type="text" value="">&nbsp;&nbsp;&nbsp;
+                            <button name="refreshCluster" onclick="navigateClusters('toPos')" type="button" class="btn btn-default">
+                                To Position
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="margin-top:15px;">
+                        <div id="cluster-container">
+
+                            <div class="cluster-div" id="Centroid" style="width: 100%; height:45vh;">
+                            </div>
+
+                            <div class="cluster-div" id="Left" style="width: 50%; height:45vh; float:left;margin-top:2px;">
+                            </div>
+
+                            <div class="cluster-div" id="Right" style="width: 50%; height:45vh; float:left;margin-top:2px;">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 </body>
 </html>

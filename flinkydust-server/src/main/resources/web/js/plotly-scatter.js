@@ -22,7 +22,11 @@ function turnOffFinishListener() {
 }
 
 function refreshScatterplot() {
-    loadData(2);
+    previousClusterSize = 0;
+    loadData(2, refreshScatterplotData);
+}
+
+function refreshScatterplotData() {
     var chart = $('#chart');
     chart.empty();
     var timeline = $('#timeline');
@@ -571,26 +575,44 @@ var currentPos = "";
 var clusterTimelineData = [];
 var selectedPoints = [];
 
+var previousClusterSize = 0;
+
 /**
     API Call and Initialization
 **/
-function refreshClusters(){
+function refreshClusters() {
 //    $('#clusterTimeline').empty();
 //    var days = $('#days').val();
     var hours = $('#hours').val();
     var grains = $('#grains').val();
 
-    var restlink = '';
-    // Create REST URL
-    if(grains == 32){
-        loadData(32);
-        restlink = '/rest/projection/MasterTime/GrainSize0_25/GrainSize0_28/GrainSize0_30/GrainSize0_35/GrainSize0_40/GrainSize0_45/GrainSize0_50/GrainSize0_58/GrainSize0_65/GrainSize0_70/GrainSize0_80/GrainSize1_0/GrainSize1_3/GrainSize1_6/GrainSize2_0/GrainSize2_5/GrainSize3_0/GrainSize3_5/GrainSize4_0/GrainSize5_0/GrainSize6_5/GrainSize7_5/GrainSize8_0/GrainSize10_0/GrainSize12_5/GrainSize15_0/GrainSize17_5/GrainSize20_0/GrainSize25_0/GrainSize30_0/GrainSize32_0/cluster/window/' + hours + '/';
-    }else if( grains == 2){
-        loadData(2);
-        restlink = '/rest/projection/MasterTime/Small/Large/cluster/window/' + hours + '/';
+    if (previousClusterSize !== grains) {
+        var restlink = '';
+        previousClusterSize = grains;
+        // Create REST URL
+        if (grains == 32) {
+            restlink = '/rest/projection/MasterTime/GrainSize0_25/GrainSize0_28/GrainSize0_30/GrainSize0_35/GrainSize0_40/GrainSize0_45/GrainSize0_50/GrainSize0_58/GrainSize0_65/GrainSize0_70/GrainSize0_80/GrainSize1_0/GrainSize1_3/GrainSize1_6/GrainSize2_0/GrainSize2_5/GrainSize3_0/GrainSize3_5/GrainSize4_0/GrainSize5_0/GrainSize6_5/GrainSize7_5/GrainSize8_0/GrainSize10_0/GrainSize12_5/GrainSize15_0/GrainSize17_5/GrainSize20_0/GrainSize25_0/GrainSize30_0/GrainSize32_0/cluster/window/' + hours + '/';
+            loadData(32, function () {
+                refreshClustersCallback(restlink);
+            });
+        } else if (grains == 2) {
+            restlink = '/rest/projection/MasterTime/Small/Large/cluster/window/' + hours + '/';
+            loadData(2, function () {
+                refreshClustersCallback(restlink);
+            });
+        }
+    } else {
+        if (grains == 32) {
+            restlink = '/rest/projection/MasterTime/GrainSize0_25/GrainSize0_28/GrainSize0_30/GrainSize0_35/GrainSize0_40/GrainSize0_45/GrainSize0_50/GrainSize0_58/GrainSize0_65/GrainSize0_70/GrainSize0_80/GrainSize1_0/GrainSize1_3/GrainSize1_6/GrainSize2_0/GrainSize2_5/GrainSize3_0/GrainSize3_5/GrainSize4_0/GrainSize5_0/GrainSize6_5/GrainSize7_5/GrainSize8_0/GrainSize10_0/GrainSize12_5/GrainSize15_0/GrainSize17_5/GrainSize20_0/GrainSize25_0/GrainSize30_0/GrainSize32_0/cluster/window/' + hours + '/';
+        } else if (grains == 2) {
+            restlink = '/rest/projection/MasterTime/Small/Large/cluster/window/' + hours + '/';
+        }
+        refreshClustersCallback(restlink);
     }
 
+}
 
+function refreshClustersCallback(restlink) {
     var loading = $('.loading-initial');
     loading.show();
     $('#treepos').val("");
@@ -914,7 +936,7 @@ function showTimeline(id){
 }
 
 
-function loadData(classes){
+function loadData(classes, successCallback){
     var restlink;
     if(classes == 32){
         restlink = "/rest/data/loadTestClasses";
@@ -922,12 +944,17 @@ function loadData(classes){
         restlink = "/rest/data/loadTest"
     }
 
-    $("body").append('<div class="loading-initial"><i class="fa fa-refresh fa-spin fa-5x"></i><span>Bitte warten, Daten werden geladen...</span></div>');
+    var loadingInitial = $('.loading-initial');
+    if (!loadingInitial.length) {
+        loadingInitial = $('<div class="loading-initial"><i class="fa fa-refresh fa-spin fa-5x"></i><span>Bitte warten, Daten werden geladen...</span></div>').appendTo('body');
+    } else {
+        loadingInitial.show();
+    }
 
     $.ajax(restlink, {
-        "async": false,
         "success": function() {
-            $(".loading-initial").hide();
+            loadingInitial.hide();
+            successCallback();
         }
     });
 

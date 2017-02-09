@@ -64,7 +64,7 @@ public class AvgAggregator implements AggregatorFunction<DustDataPoint> {
      * @param dataSource
      *          Die DataSource mit den Datensätzen.
      * @param count
-     *          Die Anzahl an Datensätzen, die aggregiert werden sollen. Wenn count > 0, dann alle Datensätze.
+     *          Die Anzahl an Datensätzen, die aggregiert werden sollen. Wenn count &gt; 0, dann alle Datensätze.
      * @return
      */
     @Override
