@@ -15,7 +15,7 @@ public class CommonMappingFunctions {
         if (sumOfDimensions != 0.0) {
             for (int i = 0; i < dustDataPoint.getArity(); i++) {
                 if (i != dustDataPoint.getFieldIndex("MasterTime")) {
-                    dustDataPoint.setField(i, dustDataPoint.getDoubleField(i) / sumOfDimensions);
+                    dustDataPoint.setField(i, dustDataPoint.getDoubleField(i) / sumOfDimensions * 100);
                 }
             }
         }
